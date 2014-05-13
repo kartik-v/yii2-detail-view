@@ -1,6 +1,6 @@
 {
     "name": "kartik-v/yii2-detail-view",
-    "description": "Yii 2 DetailView on steroids. Various enhancements and utilities for the Yii 2.0 GridView widget.",
+    "description": "Various enhancements to the Yii 2 Detail View with ability to edit data and manage Bootstrap 3 styles.",
     "keywords": ["yii2", "extension", "widget", "grid"],
     "homepage": "https://github.com/kartik-v/yii2-grid",
     "type": "yii2-extension",
