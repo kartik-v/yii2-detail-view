@@ -14,15 +14,8 @@
 
     var KvDetailView = function (element, options) {
         this.$element = $(element);
-        this.buttons1 = options.buttons1;
-        this.buttons2 = options.buttons2;
-        this.$buttons = self.$element.find('.kv-buttons');
-        this.$btnUpdate = self.$element.find('.kv-btn-update');
-        this.$btnDelete = self.$element.find('.kv-btn-delete');
-        this.$btnView = self.$element.find('.kv-btn-view');
-        this.$attribs = self.$element.find('.kv-attribute');
-        this.$formAttribs = self.$element.find('.kv-form-attribute');
-        self.init();
+        this.initElements();
+        this.init();
     };
 
     KvDetailView.prototype = {
@@ -32,13 +25,27 @@
             self.$btnUpdate.on('click', function (e) {
                 self.$attribs.addClass('kv-hide');
                 self.$formAttribs.removeClass('kv-hide');
-                self.$buttons.html(self.buttons2);
+                self.$buttons1.addClass('kv-hide');
+                self.$buttons2.removeClass('kv-hide');
+                self.initElements();
             });
             self.$btnView.on('click', function (e) {
                 self.$attribs.removeClass('kv-hide');
                 self.$formAttribs.addClass('kv-hide');
-                self.$buttons.html(self.buttons1);
+                self.$buttons1.removeClass('kv-hide');
+                self.$buttons2.addClass('kv-hide');
+                self.initElements();
             });
+        },
+        initElements: function() {
+            var self = this;
+            self.$btnUpdate = self.$element.find('.kv-btn-update');
+            self.$btnDelete = self.$element.find('.kv-btn-delete');
+            self.$btnView = self.$element.find('.kv-btn-view');
+            self.$attribs = self.$element.find('.kv-attribute');
+            self.$formAttribs = self.$element.find('.kv-form-attribute');
+            self.$buttons1 = self.$element.find('.kv-buttons-1');
+            self.$buttons2 = self.$element.find('.kv-buttons-2');
         }
     };
 

@@ -60,13 +60,17 @@ class DetailView extends \yii\widgets\DetailView
      */
     // input types
     const INPUT_TEXT = 'textInput';
+    const INPUT_PASSWORD = 'passwordInput';
     const INPUT_TEXTAREA = 'textArea';
     const INPUT_CHECKBOX = 'checkbox';
     const INPUT_RADIO = 'radio';
+    const INPUT_LIST_BOX = 'listBox';
     const INPUT_DROPDOWN_LIST = 'dropDownList';
     const INPUT_CHECKBOX_LIST = 'checkboxList';
     const INPUT_RADIO_LIST = 'radioList';
+    const INPUT_FILE = 'fileInput';
     const INPUT_HTML5_INPUT = 'input';
+    const INPUT_WIDGET= 'widget';
 
     // input widget classes
     const INPUT_SELECT2 = '\kartik\widgets\Select2';
@@ -115,6 +119,17 @@ class DetailView extends \yii\widgets\DetailView
         self::INPUT_RADIO_LIST => 'radioList',
 
     ];
+
+    /**
+     * @var array the HTML attributes for the label column
+     */
+    public $labelColOptions = ['style' => 'width:20%'];
+
+    /**
+     * @var array the HTML attributes for the value column
+     */
+    public $valueColOptions = [];
+
 
     /**
      * @var array the HTML attributes for the detail view table
@@ -209,8 +224,6 @@ class DetailView extends \yii\widgets\DetailView
      * - `type`: string, the panel contextual type (one of the TYPE constants,
      *    if not set will default to `default` or `self::TYPE_DEFAULT`),
      * - `footer`: string, the panel footer. If not set, will not be displayed.
-     * - 'preBody': string, content to be placed before/above the detail view table (after the header).
-     * - 'postBody': string, any content to be placed after/below the detail view table (before the footer).
      */
     public $panel = [];
 
@@ -255,7 +268,7 @@ class DetailView extends \yii\widgets\DetailView
      *    Defaults to '<span class="glyphicon glyphicon-pencil"></span>'.
      * - `url`: the edit button url. If not set will default to `#`.
      */
-    public $updateButtonOptions = [];
+    public $updateOptions = [];
 
     /**
      * @var array the HTML attributes for the edit button. The following special options are recognized:
@@ -263,7 +276,7 @@ class DetailView extends \yii\widgets\DetailView
      *    Defaults to '<span class="glyphicon glyphicon-trash"></span>'.
      * - `url`: the edit button url. If not set will default to `#`.
      */
-    public $deleteButtonOptions = [];
+    public $deleteOptions = [];
 
     /**
      * @var array the HTML attributes for the save button. This will default to a form submit button.
@@ -271,7 +284,7 @@ class DetailView extends \yii\widgets\DetailView
      * - `label`: the save button label. This will not be HTML encoded.
      *    Defaults to '<span class="glyphicon glyphicon-floppy-disk"></span>'.
      */
-    public $saveButtonOptions = [];
+    public $saveOptions = [];
 
     /**
      * @var array the HTML attributes for the view button. This will toggle the view from edit mode to view mode.
@@ -279,9 +292,14 @@ class DetailView extends \yii\widgets\DetailView
      * - `label`: the save button label. This will not be HTML encoded.
      *    Defaults to '<span class="glyphicon glyphicon-eye-open"></span>'.
      */
-    public $viewButtonOptions = [];
+    public $viewOptions = [];
 
-    protected $this->_form;
+    /**
+     * @var array the the internalization configuration for this module
+     */
+    public $i18n = [];
+
+    protected $_form;
 
     private $_id;
 
@@ -304,13 +322,31 @@ class DetailView extends \yii\widgets\DetailView
             }
         }
         parent:: init();
+        $this->initI18N();
         $this->_id = $this->getId();
+        $this->template = strtr($this->template, [
+           '<th>' => Html::beginTag('th', $this->labelColOptions),
+           '<td>' => Html::beginTag('td', $this->valueColOptions)
+        ]);
         Html::addCssClass($this->formOptions, 'kv-detail-view-form');
         $this->formOptions['fieldConfig']['template'] = "{input}\n{hint}\n{error}";
         $this->_form = ActiveForm::begin($this->formOptions);
         $this->registerAssets();
     }
 
+    public function initI18N()
+    {
+        Yii::setAlias('@kvdetail', dirname(__FILE__));
+        if (empty($this->i18n)) {
+            $this->i18n = [
+                'class' => 'yii\i18n\PhpMessageSource',
+                'basePath' => '@kvdetail/messages',
+                'forceTranslation' => true
+            ];
+        }
+        Yii::$app->i18n->translations['kvdetail'] = $this->i18n;
+    }
+    
     /**
      * Renders the detail view.
      * This is the main entry of the whole detail view rendering.
@@ -321,10 +357,34 @@ class DetailView extends \yii\widgets\DetailView
         if (is_array($this->panel) && !empty($this->panel) && $this->panel !== false) {
             $output = $this->renderPanel($output);
         }
+        $output = '<div id="' . $this->_id . '">' . $output . '</div>';
         echo strtr($output, [
-            '{buttons1}' => $this->renderButtons(1)
+            '{buttons}' => '<span class="kv-buttons-1">' . $this->renderButtons(1) .
+                '</span> <span class="kv-buttons-2 kv-hide">' . $this->renderButtons(2) . '</span>'
         ]);
         ActiveForm::end();
+    }
+
+    /**
+     * Renders a single attribute.
+     * @param array $attribute the specification of the attribute to be rendered.
+     * @param integer $index the zero-based index of the attribute in the [[attributes]] array
+     * @return string the rendering result
+     */
+    protected function renderAttribute($attribute, $index)
+    {
+        $output = '<div class="kv-attribute">' . $this->formatter->format($attribute['value'], $attribute['format']) . "</div>\n";
+        if ($this->enableEditMode) {
+            $output .= '<div class="kv-form-attribute kv-hide">' . $this->renderFormAttribute($attribute) . '</div>';
+        }
+        if (is_string($this->template)) {
+            return strtr($this->template, [
+                '{label}' => $attribute['label'],
+                '{value}' => $output
+            ]);
+        } else {
+            return call_user_func($this->template, $attribute, $index, $this);
+        }
     }
 
     /**
@@ -335,18 +395,13 @@ class DetailView extends \yii\widgets\DetailView
         $rows = [];
         $i = 0;
         foreach ($this->attributes as $attribute) {
-            $attr = '<div class="kv-attribute">' . $this->renderAttribute($attribute, $i++) . "</div>\n";
-            if ($this->enableEditMode) {
-                $rows[] = $attr . '<div class="kv-form-attribute kv-hide">' . $this->renderFormAttribute($attribute) . '</div>';
-            } else {
-                $rows[] = $attr;
-            }
+            $rows[] = $this->renderAttribute($attribute, $i++) ;
         }
         $tag = ArrayHelper::remove($this->options, 'tag', 'table');
         $output = Html::tag($tag, implode("\n", $rows), $this->options);
         return ($this->bootstrap && $this->responsive) ?
-            '<div id="' . $this->_id . '" class="table-responsive">' . $output . '</div>' :
-            '<div id="' . $this->_id . '">' . $output . '</div>';
+            '<div class="table-responsive">' . $output . '</div>' :
+            $output;
     }
 
     /**
@@ -360,7 +415,7 @@ class DetailView extends \yii\widgets\DetailView
     {
         $attr = ArrayHelper::getValue($config, 'updateAttr', $config['attribute']);
         $input = ArrayHelper::getValue($config, 'type', self::INPUT_TEXT);
-        if ($input !== self::INPUT_WIDGET && !in_array($input, static::$_inputsList) && !in_array($input, static::$_widgetsList)) {
+        if ($input !== self::INPUT_WIDGET && !in_array($input, static::$_inputsList) && !in_array($input, static::$_inputWidgets)) {
             throw new InvalidConfigException("Invalid input type '{$input}' defined for the attribute '" . $config['attribute'] . "'.");
         }
         $options = ArrayHelper::getValue($config, 'options', []);
@@ -369,21 +424,21 @@ class DetailView extends \yii\widgets\DetailView
         if (!empty($config['options'])) {
             $widgetOptions['options'] = $config['options'];
         }
-        if (in_array($input, static::$_widgetsList)) {
+        if (in_array($input, static::$_inputWidgets)) {
             $class = $input;
-            return $this->_form($this->model, $attr)->widget($class, $widgetOptions);
+            return $this->_form->field($this->model, $attr)->widget($class, $widgetOptions);
         }
         if ($input === self::INPUT_WIDGET) {
             if ($class == '') {
                 throw new InvalidConfigException("Widget class not defined in 'widgetOptions' for {$input}'.");
             }
-            return $this->_form($this->model, $attr)->widget($class, $widgetOptions);
+            return $this->_form->field($this->model, $attr)->widget($class, $widgetOptions);
         }
         if (in_array($input, static::$_dropDownInputs)) {
             $items = ArrayHelper::getValue($config, 'items', []);
-            return $this->_form($this->model, $attr)->$input($items, $options);
+            return $this->_form->field($this->model, $attr)->$input($items, $options);
         }
-        return $this->_form($this->model, $attr)->$input($options);
+        return $this->_form->field($this->model, $attr)->$input($options);
     }
 
     /**
@@ -395,12 +450,12 @@ class DetailView extends \yii\widgets\DetailView
     protected function renderButtons($mode = 1)
     {
         $buttons = "buttons{$mode}";
-        return '<div class="kv-buttons">' . strtr($this->$buttons, [
+        return strtr($this->$buttons, [
             '{view}' => $this->renderButton('view'),
             '{update}' => $this->renderButton('update'),
             '{delete}' => $this->renderButton('delete'),
             '{save}' => $this->renderButton('save'),
-        ]) . '</div>';
+        ]);
     }
 
     /**
@@ -413,9 +468,9 @@ class DetailView extends \yii\widgets\DetailView
     {
         $panel = $this->panel;
         $type = ArrayHelper::remove($panel, 'type', self::TYPE_DEFAULT);
-        $panel['heading'] = '<div class="pull-right">{buttons1}</div>' .
+        $panel['heading'] = '<div class="pull-right">{buttons}</div>' .
             ArrayHelper::getValue($panel, 'heading', '');
-        $panel['body'] = $content;
+        $panel['preBody'] = $content;
         return Html::panel($panel, $type);
     }
 
@@ -427,11 +482,38 @@ class DetailView extends \yii\widgets\DetailView
         $view = $this->getView();
         DetailViewAsset::register($view);
         if ($this->enableEditMode) {
-            $options = [
-                'buttons1' => $this->renderButtons(1),
-                'buttons2' => $this->renderButtons(2)
+            $view->registerJs('$("#' . $this->_id . '").kvDetailView();');
+        }
+    }
+
+    /**
+     * Renders a button
+     *
+     * @param string $type the button type
+     * @return string
+     */
+    protected function getDefaultButton($type, $label, $title, $options) {
+        $btnStyle = empty($this->panel['type']) ? self::TYPE_DEFAULT : $this->panel['type'];
+        $label = ArrayHelper::remove($options, 'label', $label);
+        if (empty($options['class'])) {
+            $options['class'] = 'btn btn-xs btn-' . $btnStyle;
+        }
+        Html::addCssClass($options, 'kv-btn-' . $type);
+        $options += ['title' => Yii::t('kvdetail', $title)];
+        if ($type !== 'delete' && $type !== 'save') {
+            $options['type'] = 'button';
+            return Html::button($label, $options);
+        }
+        elseif ($type === 'delete') {
+            $url = ArrayHelper::remove($options, 'url', '#');
+            $options += [
+                'data-confirm' => Yii::t('kvdetail', 'Are you sure to delete this item?'),
+                'data-method' => 'post'
             ];
-            $view->registerJs('$("#' . $this->_id . '").kvDetailView(' . Json::encode($options) . ');');
+            return Html::a($label, $url, $options);
+        }
+        else {
+            return Html::submitButton($label, $options);
         }
     }
 
@@ -447,37 +529,16 @@ class DetailView extends \yii\widgets\DetailView
             return '';
         }
         if ($type === 'view') {
-            $options = $this->viewOptions;
-            $label = ArrayHelper::remove($options, 'label', '<span class="glyphicon glyphicon-eye-open"></span>');
-            Html::addCssClass($options, 'kv-btn-view');
-            $options += ['title' => Yii::t('kv-detail', 'View')];
-            return Html::button($label, $options);
+            return $this->getDefaultButton('view', '<span class="glyphicon glyphicon-eye-open"></span>', 'View', $this->viewOptions);
         }
         if ($type === 'update') {
-            $options = $this->updateOptions;
-            $label = ArrayHelper::remove($options, 'label', '<span class="glyphicon glyphicon-pencil"></span>');
-            Html::addCssClass($options, 'kv-btn-update');
-            $options += ['title' => Yii::t('kv-detail', 'Update')];
-            return Html::button($label, $options);
+            return $this->getDefaultButton('update', '<span class="glyphicon glyphicon-pencil"></span>', 'Update', $this->updateOptions);
         }
         if ($type === 'delete') {
-            $options = $this->deleteOptions;
-            $label = ArrayHelper::remove($options, 'label', '<span class="glyphicon glyphicon-trash"></span>');
-            $url = ArrayHelper::remove($options, 'url', '#');
-            Html::addCssClass($options, 'kv-btn-delete');
-            $options += [
-                'title' => Yii::t('kv-detail', 'Delete'),
-                'data-confirm' => Yii::t('kv-detail', 'Are you sure to delete this item?'),
-                'data-method' => 'post'
-            ];
-            return Html::a($label, $url, $options);
+            return $this->getDefaultButton('delete', '<span class="glyphicon glyphicon-trash"></span>', 'Delete', $this->deleteOptions);
         }
         if ($type === 'save') {
-            $options = $this->saveOptions;
-            $label = ArrayHelper::remove($options, 'label', '<span class="glyphicon glyphicon-floppy-disk"></span>');
-            Html::addCssClass($options, 'kv-btn-save');
-            $options += ['title' => Yii::t('yii', 'Save')];
-            return Html::submitButton($label, $options);
+            return $this->getDefaultButton('save', '<span class="glyphicon glyphicon-floppy-disk"></span>', 'Save', $this->saveOptions);
         }
     }
 }

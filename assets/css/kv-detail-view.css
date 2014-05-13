@@ -12,3 +12,6 @@
 .kv-hide {
     display:none;
 }
+.kv-form-attribute .help-block {
+    margin-bottom: -15px;
+}
