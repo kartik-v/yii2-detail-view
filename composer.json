@@ -1,0 +1,24 @@
+{
+    "name": "kartik-v/yii2-detail-view",
+    "description": "Yii 2 DetailView on steroids. Various enhancements and utilities for the Yii 2.0 GridView widget.",
+    "keywords": ["yii2", "extension", "widget", "grid"],
+    "homepage": "https://github.com/kartik-v/yii2-grid",
+    "type": "yii2-extension",
+    "license": "BSD 3-Clause",
+    "authors": [
+        {
+            "name": "Kartik Visweswaran",
+            "email": "kartikv2@gmail.com",
+            "homepage": "http://www.krajee.com/"
+        }
+    ],
+    "require": {
+        "kartik-v/yii2-helpers": "*",
+        "kartik-v/yii2-widgets": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "kartik\\": ""
+        }
+    }
+}
