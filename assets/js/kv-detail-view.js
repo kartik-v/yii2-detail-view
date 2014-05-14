@@ -14,6 +14,7 @@
 
     var KvDetailView = function (element, options) {
         this.$element = $(element);
+        this.mode = options.mode;
         this.initElements();
         this.init();
     };
@@ -22,20 +23,34 @@
         constructor: KvDetailView,
         init: function () {
             var self = this;
+            self.setMode(self.mode);
             self.$btnUpdate.on('click', function (e) {
+                self.setMode('edit');
+            });
+            self.$btnView.on('click', function (e) {
+                self.setMode('view');
+            });
+        },
+        setMode: function(mode) {
+            var self = this;
+            self.$attribs.removeClass('kv-hide');
+            self.$formAttribs.removeClass('kv-hide');
+            self.$buttons1.removeClass('kv-hide');
+            self.$buttons2.removeClass('kv-hide');
+            
+            if (mode === 'edit') {
                 self.$attribs.addClass('kv-hide');
                 self.$formAttribs.removeClass('kv-hide');
                 self.$buttons1.addClass('kv-hide');
                 self.$buttons2.removeClass('kv-hide');
-                self.initElements();
-            });
-            self.$btnView.on('click', function (e) {
+            }
+            else {
                 self.$attribs.removeClass('kv-hide');
                 self.$formAttribs.addClass('kv-hide');
                 self.$buttons1.removeClass('kv-hide');
                 self.$buttons2.addClass('kv-hide');
-                self.initElements();
-            });
+            }
+            self.initElements();
         },
         initElements: function() {
             var self = this;
@@ -68,4 +83,3 @@
         });
     };
 }(jQuery));
-

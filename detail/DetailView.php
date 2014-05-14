@@ -2,7 +2,7 @@
 
 /**
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2013
- * @package yii2-grid
+ * @package yii2-detail-view
  * @version 1.0.0
  */
 
@@ -29,6 +29,11 @@ use yii\bootstrap\ButtonDropdown;
  */
 class DetailView extends \yii\widgets\DetailView
 {
+    /**
+     * Detail View Modes
+     */
+    const MODE_VIEW = 'view';
+    const MODE_EDIT = 'edit';
 
     /**
      * Bootstrap Contextual Color Types
@@ -56,6 +61,21 @@ class DetailView extends \yii\widgets\DetailView
     const NOWRAP = 'kv-nowrap';
 
     /**
+     * @var string the mode for the Detail View when its initialized
+     */
+    public $mode = self::MODE_VIEW;
+
+    /**
+     * @var string the horizontal alignment for the label column
+     */
+    public $hAlign = self::ALIGN_RIGHT;
+
+    /**
+     * @var string the vertical alignment for the label column
+     */
+    public $vAlign = self::ALIGN_MIDDLE;
+
+    /**
      * Edit input types
      */
     // input types
@@ -70,9 +90,10 @@ class DetailView extends \yii\widgets\DetailView
     const INPUT_RADIO_LIST = 'radioList';
     const INPUT_FILE = 'fileInput';
     const INPUT_HTML5_INPUT = 'input';
-    const INPUT_WIDGET= 'widget';
+    const INPUT_WIDGET = 'widget';
 
     // input widget classes
+    const INPUT_DEPDROP = '\kartik\widgets\DepDrop';
     const INPUT_SELECT2 = '\kartik\widgets\Select2';
     const INPUT_TYPEAHEAD = '\kartik\widgets\Typeahead';
     const INPUT_SWITCH = '\kartik\widgets\SwitchInput';
@@ -100,6 +121,7 @@ class DetailView extends \yii\widgets\DetailView
     ];
 
     private static $_inputWidgets = [
+        self::INPUT_DEPDROP => '\kartik\widgets\DepDrop',
         self::INPUT_SELECT2 => '\kartik\widgets\Select2',
         self::INPUT_TYPEAHEAD => '\kartik\widgets\Typeahead',
         self::INPUT_SWITCH => '\kartik\widgets\SwitchInput',
@@ -123,13 +145,12 @@ class DetailView extends \yii\widgets\DetailView
     /**
      * @var array the HTML attributes for the label column
      */
-    public $labelColOptions = ['style' => 'width:20%'];
+    public $labelColOptions = ['style' => 'width: 20%'];
 
     /**
      * @var array the HTML attributes for the value column
      */
     public $valueColOptions = [];
-
 
     /**
      * @var array the HTML attributes for the detail view table
@@ -191,16 +212,18 @@ class DetailView extends \yii\widgets\DetailView
      *   Please refer to [[Formatter]] for supported types.
      * - visible: whether the attribute is visible. If set to `false`, the attribute will NOT be displayed.
      *
-     * Additional special attributes are:
-     * - updateAttr: string, the name of the attribute to be updated, when in edit mode. If not set, will default to the
-     *   `attribute` setting.
+     * Additional special settings (for edit mode) are:
+     * - updateAttr: string, optional, the name of the attribute to be updated, when in edit mode. This will default to the
+     *   the `attribute` setting.
+     * - displayOnly: boolean, if the input is to be set to as `display only` in edit mode.
      * - type: string, the input type for rendering the attribute in edit mode. Must be one of the [[self::INPUT_]] constants.
      * - widgetOptions: array, the widget options if you set `type` to [[self::INPUT_WIDGET]]. The following special options are
      *   recognized:
      *   - `class': string the fully namespaced widget class.
      * - items: array, the list of data items  for dropDownList, listBox, checkboxList & radioList
      * - inputType: string, the HTML 5 input type if `type` is set to [[self::INPUT_HTML 5]].
-     * - options: array, the HTML attributes for the input
+     * - fieldConfig: array, optional, the Active field configuration.
+     * - options: array, optional, the HTML attributes for the input.
      */
     public $attributes;
 
@@ -321,12 +344,13 @@ class DetailView extends \yii\widgets\DetailView
                 Html::addCssClass($this->options, 'table-condensed');
             }
         }
+        Html::addCssStyle($this->labelColOptions, "text-align:{$this->hAlign};vertical-align:{$this->vAlign};");
         parent:: init();
         $this->initI18N();
         $this->_id = $this->getId();
         $this->template = strtr($this->template, [
-           '<th>' => Html::beginTag('th', $this->labelColOptions),
-           '<td>' => Html::beginTag('td', $this->valueColOptions)
+            '<th>' => Html::beginTag('th', $this->labelColOptions),
+            '<td>' => Html::beginTag('td', $this->valueColOptions)
         ]);
         Html::addCssClass($this->formOptions, 'kv-detail-view-form');
         $this->formOptions['fieldConfig']['template'] = "{input}\n{hint}\n{error}";
@@ -346,7 +370,7 @@ class DetailView extends \yii\widgets\DetailView
         }
         Yii::$app->i18n->translations['kvdetail'] = $this->i18n;
     }
-    
+
     /**
      * Renders the detail view.
      * This is the main entry of the whole detail view rendering.
@@ -367,15 +391,18 @@ class DetailView extends \yii\widgets\DetailView
 
     /**
      * Renders a single attribute.
+     *
      * @param array $attribute the specification of the attribute to be rendered.
      * @param integer $index the zero-based index of the attribute in the [[attributes]] array
      * @return string the rendering result
      */
     protected function renderAttribute($attribute, $index)
     {
-        $output = '<div class="kv-attribute">' . $this->formatter->format($attribute['value'], $attribute['format']) . "</div>\n";
+        $dispAttr = $this->formatter->format($attribute['value'], $attribute['format']);
+        $output = '<div class="kv-attribute">' . $dispAttr . "</div>\n";
         if ($this->enableEditMode) {
-            $output .= '<div class="kv-form-attribute kv-hide">' . $this->renderFormAttribute($attribute) . '</div>';
+            $editInput = (!empty($attribute['displayOnly']) && $attribute['displayOnly']) ? $dispAttr : $this->renderFormAttribute($attribute);
+            $output .= '<div class="kv-form-attribute kv-hide">' . $editInput . '</div>';
         }
         if (is_string($this->template)) {
             return strtr($this->template, [
@@ -395,7 +422,7 @@ class DetailView extends \yii\widgets\DetailView
         $rows = [];
         $i = 0;
         foreach ($this->attributes as $attribute) {
-            $rows[] = $this->renderAttribute($attribute, $i++) ;
+            $rows[] = $this->renderAttribute($attribute, $i++);
         }
         $tag = ArrayHelper::remove($this->options, 'tag', 'table');
         $output = Html::tag($tag, implode("\n", $rows), $this->options);
@@ -415,6 +442,7 @@ class DetailView extends \yii\widgets\DetailView
     {
         $attr = ArrayHelper::getValue($config, 'updateAttr', $config['attribute']);
         $input = ArrayHelper::getValue($config, 'type', self::INPUT_TEXT);
+        $fieldConfig = ArrayHelper::getValue($config, 'fieldConfig', []);
         if ($input !== self::INPUT_WIDGET && !in_array($input, static::$_inputsList) && !in_array($input, static::$_inputWidgets)) {
             throw new InvalidConfigException("Invalid input type '{$input}' defined for the attribute '" . $config['attribute'] . "'.");
         }
@@ -426,19 +454,19 @@ class DetailView extends \yii\widgets\DetailView
         }
         if (in_array($input, static::$_inputWidgets)) {
             $class = $input;
-            return $this->_form->field($this->model, $attr)->widget($class, $widgetOptions);
+            return $this->_form->field($this->model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }
         if ($input === self::INPUT_WIDGET) {
             if ($class == '') {
                 throw new InvalidConfigException("Widget class not defined in 'widgetOptions' for {$input}'.");
             }
-            return $this->_form->field($this->model, $attr)->widget($class, $widgetOptions);
+            return $this->_form->field($this->model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }
         if (in_array($input, static::$_dropDownInputs)) {
             $items = ArrayHelper::getValue($config, 'items', []);
-            return $this->_form->field($this->model, $attr)->$input($items, $options);
+            return $this->_form->field($this->model, $attr, $fieldConfig)->$input($items, $options);
         }
-        return $this->_form->field($this->model, $attr)->$input($options);
+        return $this->_form->field($this->model, $attr, $fieldConfig)->$input($options);
     }
 
     /**
@@ -482,17 +510,19 @@ class DetailView extends \yii\widgets\DetailView
         $view = $this->getView();
         DetailViewAsset::register($view);
         if ($this->enableEditMode) {
-            $view->registerJs('$("#' . $this->_id . '").kvDetailView();');
+            $options = ['mode' => $this->mode];
+            $view->registerJs('$("#' . $this->_id . '").kvDetailView(' . Json::encode($options) . ');');
         }
     }
 
     /**
-     * Renders a button
+     * Gets the default button
      *
      * @param string $type the button type
      * @return string
      */
-    protected function getDefaultButton($type, $label, $title, $options) {
+    protected function getDefaultButton($type, $label, $title, $options)
+    {
         $btnStyle = empty($this->panel['type']) ? self::TYPE_DEFAULT : $this->panel['type'];
         $label = ArrayHelper::remove($options, 'label', $label);
         if (empty($options['class'])) {
@@ -503,16 +533,11 @@ class DetailView extends \yii\widgets\DetailView
         if ($type !== 'delete' && $type !== 'save') {
             $options['type'] = 'button';
             return Html::button($label, $options);
-        }
-        elseif ($type === 'delete') {
+        } elseif ($type === 'delete') {
             $url = ArrayHelper::remove($options, 'url', '#');
-            $options += [
-                'data-confirm' => Yii::t('kvdetail', 'Are you sure to delete this item?'),
-                'data-method' => 'post'
-            ];
+            $options += ['data-method' => 'post'];
             return Html::a($label, $url, $options);
-        }
-        else {
+        } else {
             return Html::submitButton($label, $options);
         }
     }
