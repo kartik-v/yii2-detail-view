@@ -57,8 +57,6 @@ class DetailView extends \yii\widgets\DetailView
     const ALIGN_TOP = 'top';
     const ALIGN_MIDDLE = 'middle';
     const ALIGN_BOTTOM = 'bottom';
-    // CSS for preventing cell wrapping
-    const NOWRAP = 'kv-nowrap';
 
     /**
      * @var string the mode for the Detail View when its initialized
@@ -187,7 +185,13 @@ class DetailView extends \yii\widgets\DetailView
     public $responsive = true;
 
     /**
-     * @var bool whether to enable edit mode for the grid. Defaults to `true`.
+     * @var bool whether the grid table will highlight row on `hover`.
+     * Applicable only if `bootstrap` is `true`. Defaults to `false`.
+     */
+    public $hover = false;
+
+    /**
+     * @var bool whether to enable edit mode for the detail view. Defaults to `true`.
      */
     public $enableEditMode = true;
 
@@ -213,17 +217,18 @@ class DetailView extends \yii\widgets\DetailView
      * - visible: whether the attribute is visible. If set to `false`, the attribute will NOT be displayed.
      *
      * Additional special settings (for edit mode) are:
-     * - updateAttr: string, optional, the name of the attribute to be updated, when in edit mode. This will default to the
-     *   the `attribute` setting.
-     * - displayOnly: boolean, if the input is to be set to as `display only` in edit mode.
      * - type: string, the input type for rendering the attribute in edit mode. Must be one of the [[self::INPUT_]] constants.
+     * - displayOnly: boolean, if the input is to be set to as `display only` in edit mode.
      * - widgetOptions: array, the widget options if you set `type` to [[self::INPUT_WIDGET]]. The following special options are
      *   recognized:
      *   - `class': string the fully namespaced widget class.
      * - items: array, the list of data items  for dropDownList, listBox, checkboxList & radioList
      * - inputType: string, the HTML 5 input type if `type` is set to [[self::INPUT_HTML 5]].
+     * - inputWidth: string, the width of the container holding the input, should be appended along with the width unit (`px` or `%`)
      * - fieldConfig: array, optional, the Active field configuration.
      * - options: array, optional, the HTML attributes for the input.
+     * - updateAttr: string, optional, the name of the attribute to be updated, when in edit mode. This will default to the
+     *   the `attribute` setting.
      */
     public $attributes;
 
@@ -231,12 +236,6 @@ class DetailView extends \yii\widgets\DetailView
      * @var array the options for the ActiveForm that will be generated in edit mode.
      */
     public $formOptions = [];
-
-    /**
-     * @var bool whether the grid table will highlight row on `hover`.
-     * Applicable only if `bootstrap` is `true`. Defaults to `false`.
-     */
-    public $hover = false;
 
     /**
      * @var array the panel settings. If this is set, the grid widget
@@ -252,17 +251,10 @@ class DetailView extends \yii\widgets\DetailView
 
     /**
      * @var string the main template to render the detail view. The following tags will be replaced:
-     * - `{view}`: will be replaced by the rendered detail view
-     * - `{buttons}`: the buttons to edit and save.
+     * - `{detail}`: will be replaced by the rendered detail view
+     * - `{buttons}`: the buttons to be displayed as set in `buttons1` and `buttons2`.
      */
-    public $mainTemplate = "{view}";
-
-    /**
-     * @var callable a callback that creates a button URL using the specified model information.
-     * The signature of the callback should be the same as that of [[createUrl()]].
-     * If this property is not set, button URLs will be created using [[createUrl()]].
-     */
-    public $urlCreator;
+    public $mainTemplate = "{detail}";
 
     /**
      * @var string the buttons to show when in view mode. The following tags will be replaced:
@@ -285,11 +277,18 @@ class DetailView extends \yii\widgets\DetailView
     public $buttons2 = '{view} {save}';
 
     /**
+     * @var array the HTML attributes for the view button. This will toggle the view from edit mode to view mode.
+     * The following special options are recognized:
+     * - `label`: the save button label. This will not be HTML encoded.
+     *    Defaults to '<span class="glyphicon glyphicon-eye-open"></span>'.
+     */
+    public $viewOptions = [];
+
+    /**
      * @var array the HTML attributes for the update button. This button will toggle the edit mode on.
      * The following special options are recognized:
      * - `label`: the update button label. This will not be HTML encoded.
      *    Defaults to '<span class="glyphicon glyphicon-pencil"></span>'.
-     * - `url`: the edit button url. If not set will default to `#`.
      */
     public $updateOptions = [];
 
@@ -297,7 +296,7 @@ class DetailView extends \yii\widgets\DetailView
      * @var array the HTML attributes for the edit button. The following special options are recognized:
      * - `label`: the delete button label. This will not be HTML encoded.
      *    Defaults to '<span class="glyphicon glyphicon-trash"></span>'.
-     * - `url`: the edit button url. If not set will default to `#`.
+     * - `url`: the delete button url. If not set will default to `#`.
      */
     public $deleteOptions = [];
 
@@ -310,21 +309,19 @@ class DetailView extends \yii\widgets\DetailView
     public $saveOptions = [];
 
     /**
-     * @var array the HTML attributes for the view button. This will toggle the view from edit mode to view mode.
-     * The following special options are recognized:
-     * - `label`: the save button label. This will not be HTML encoded.
-     *    Defaults to '<span class="glyphicon glyphicon-eye-open"></span>'.
+     * @var array the HTML attributes for the widget container
      */
-    public $viewOptions = [];
+    public $container = [];
 
     /**
      * @var array the the internalization configuration for this module
      */
     public $i18n = [];
 
+    /**
+     * @var ActiveForm the form instance
+     */
     protected $_form;
-
-    private $_id;
 
     public function init()
     {
@@ -346,8 +343,10 @@ class DetailView extends \yii\widgets\DetailView
         }
         Html::addCssStyle($this->labelColOptions, "text-align:{$this->hAlign};vertical-align:{$this->vAlign};");
         parent:: init();
+        if (empty($this->container['id'])) {
+            $this->container['id'] = $this->getId();
+        }
         $this->initI18N();
-        $this->_id = $this->getId();
         $this->template = strtr($this->template, [
             '<th>' => Html::beginTag('th', $this->labelColOptions),
             '<td>' => Html::beginTag('td', $this->valueColOptions)
@@ -381,7 +380,9 @@ class DetailView extends \yii\widgets\DetailView
         if (is_array($this->panel) && !empty($this->panel) && $this->panel !== false) {
             $output = $this->renderPanel($output);
         }
-        $output = '<div id="' . $this->_id . '">' . $output . '</div>';
+        $output = strtr($this->mainTemplate, [
+            '{detail}' => '<div id="' . $this->container['id'] . '">' . $output . '</div>'
+        ]);
         echo strtr($output, [
             '{buttons}' => '<span class="kv-buttons-1">' . $this->renderButtons(1) .
                 '</span> <span class="kv-buttons-2 kv-hide">' . $this->renderButtons(2) . '</span>'
@@ -443,6 +444,11 @@ class DetailView extends \yii\widgets\DetailView
         $attr = ArrayHelper::getValue($config, 'updateAttr', $config['attribute']);
         $input = ArrayHelper::getValue($config, 'type', self::INPUT_TEXT);
         $fieldConfig = ArrayHelper::getValue($config, 'fieldConfig', []);
+        $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
+        if ($inputWidth != '') {
+            $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
+            $fieldConfig['template'] = "<div style='width:{$inputWidth};'>{$template}</div>";
+        }
         if ($input !== self::INPUT_WIDGET && !in_array($input, static::$_inputsList) && !in_array($input, static::$_inputWidgets)) {
             throw new InvalidConfigException("Invalid input type '{$input}' defined for the attribute '" . $config['attribute'] . "'.");
         }
@@ -511,7 +517,7 @@ class DetailView extends \yii\widgets\DetailView
         DetailViewAsset::register($view);
         if ($this->enableEditMode) {
             $options = ['mode' => $this->mode];
-            $view->registerJs('$("#' . $this->_id . '").kvDetailView(' . Json::encode($options) . ');');
+            $view->registerJs('$("#' . $this->container['id'] . '").kvDetailView(' . Json::encode($options) . ');');
         }
     }
 

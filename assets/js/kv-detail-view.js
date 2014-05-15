@@ -2,7 +2,7 @@
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014
  * @version 1.0.0
  *
- * Client actions for yii2-detail-view extension 
+ * Client extension for the yii2-detail-view extension 
  * 
  * Author: Kartik Visweswaran
  * Copyright: 2014, Kartik Visweswaran, Krajee.com
@@ -31,13 +31,13 @@
                 self.setMode('view');
             });
         },
-        setMode: function(mode) {
+        setMode: function (mode) {
             var self = this;
             self.$attribs.removeClass('kv-hide');
             self.$formAttribs.removeClass('kv-hide');
             self.$buttons1.removeClass('kv-hide');
             self.$buttons2.removeClass('kv-hide');
-            
+
             if (mode === 'edit') {
                 self.$attribs.addClass('kv-hide');
                 self.$formAttribs.removeClass('kv-hide');
@@ -52,7 +52,7 @@
             }
             self.initElements();
         },
-        initElements: function() {
+        initElements: function () {
             var self = this;
             self.$btnUpdate = self.$element.find('.kv-btn-update');
             self.$btnDelete = self.$element.find('.kv-btn-delete');
