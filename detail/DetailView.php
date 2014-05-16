@@ -102,6 +102,8 @@ class DetailView extends \yii\widgets\DetailView
     const INPUT_DATETIME = '\kartik\widgets\DateTimePicker';
     const INPUT_RANGE = '\kartik\widgets\RangeInput';
     const INPUT_COLOR = '\kartik\widgets\ColorInput';
+    const INPUT_RATING = '\kartik\widgets\StarRating';
+    const INPUT_FILEINPUT = '\kartik\widgets\FileInput';
 
     private static $_inputsList = [
         self::INPUT_TEXT => 'textInput',
@@ -130,6 +132,8 @@ class DetailView extends \yii\widgets\DetailView
         self::INPUT_DATETIME => '\kartik\widgets\DateTimePicker',
         self::INPUT_RANGE => '\kartik\widgets\RangeInput',
         self::INPUT_COLOR => '\kartik\widgets\ColorInput',
+        self::INPUT_RATING => '\kartik\widgets\StarRating',
+        self::INPUT_FILEINPUT => '\kartik\widgets\FileInput',
     ];
 
     private static $_dropDownInputs = [
