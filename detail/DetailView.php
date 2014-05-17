@@ -453,7 +453,7 @@ class DetailView extends \yii\widgets\DetailView
             $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
             $fieldConfig['template'] = "<div style='width:{$inputWidth};'>{$template}</div>";
         }
-        if ($input !== self::INPUT_WIDGET && !in_array($input, static::$_inputsList) && !in_array($input, static::$_inputWidgets)) {
+        if ($input !== self::INPUT_WIDGET && !in_array($input, self::$_inputsList) && !in_array($input, self::$_inputWidgets)) {
             throw new InvalidConfigException("Invalid input type '{$input}' defined for the attribute '" . $config['attribute'] . "'.");
         }
         $options = ArrayHelper::getValue($config, 'options', []);
@@ -462,7 +462,7 @@ class DetailView extends \yii\widgets\DetailView
         if (!empty($config['options'])) {
             $widgetOptions['options'] = $config['options'];
         }
-        if (in_array($input, static::$_inputWidgets)) {
+        if (in_array($input, self::$_inputWidgets)) {
             $class = $input;
             return $this->_form->field($this->model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }
@@ -472,7 +472,7 @@ class DetailView extends \yii\widgets\DetailView
             }
             return $this->_form->field($this->model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }
-        if (in_array($input, static::$_dropDownInputs)) {
+        if (in_array($input, self::$_dropDownInputs)) {
             $items = ArrayHelper::getValue($config, 'items', []);
             return $this->_form->field($this->model, $attr, $fieldConfig)->$input($items, $options);
         }
