@@ -545,7 +545,10 @@ class DetailView extends \yii\widgets\DetailView
             return Html::button($label, $options);
         } elseif ($type === 'delete') {
             $url = ArrayHelper::remove($options, 'url', '#');
-            $options += ['data-method' => 'post'];
+            $options += [
+                'data-method' => 'post', 
+                'data-confirm' => Yii::t('kvdetail', 'Are you sure you want to delete this item?')
+            ];
             return Html::a($label, $url, $options);
         } else {
             return Html::submitButton($label, $options);
