@@ -441,17 +441,28 @@ class DetailView extends \yii\widgets\DetailView
 
     /**
      * Check if attribute name is valid
+     *
      * @param mixed $attribute
      * @throws \yii\base\InvalidConfigException
      */
-    protected static function validateAttribute($attribute) {
+    protected static function validateAttribute($attribute)
+    {
+        if (is_array($attribute) && !empty($attribute['updateAttr'])) {
+            $attrib = $attribute['updateAttr'];
+            if (ctype_alnum(str_replace('_', '', $attrib))) {
+                return;
+            } else {
+                throw new InvalidConfigException("The 'updateAttr' name '{$attrib}' is invalid.");
+            }
+        }
         $attrib = is_string($attribute) ? $attribute : (empty($attribute['attribute']) ? '' : $attribute['attribute']);
         if (strpos($attrib, '.') > 0) {
-            throw new InvalidConfigException("The attribute '{$attrib}' is invalid. You cannot directly pass relational ".
+            throw new InvalidConfigException("The attribute '{$attrib}' is invalid. You cannot directly pass relational " .
                 "attributes in string format within '\kartik\widgets\DetailView'. Instead use the array format with 'attribute' " .
                 "property set to base field, and the 'value' property returning the relational data.");
         }
     }
+
     /**
      * Renders each form attribute
      *
@@ -562,7 +573,7 @@ class DetailView extends \yii\widgets\DetailView
         } elseif ($type === 'delete') {
             $url = ArrayHelper::remove($options, 'url', '#');
             $options += [
-                'data-method' => 'post', 
+                'data-method' => 'post',
                 'data-confirm' => Yii::t('kvdetail', 'Are you sure you want to delete this item?')
             ];
             return Html::a($label, $url, $options);
