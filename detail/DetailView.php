@@ -104,6 +104,8 @@ class DetailView extends \yii\widgets\DetailView
     const INPUT_COLOR = '\kartik\widgets\ColorInput';
     const INPUT_RATING = '\kartik\widgets\StarRating';
     const INPUT_FILEINPUT = '\kartik\widgets\FileInput';
+    const INPUT_SLIDER = '\kartik\slider\Slider';
+    const INPUT_MONEY = '\kartik\money\MaskMoney';
 
     private static $_inputsList = [
         self::INPUT_TEXT => 'textInput',
