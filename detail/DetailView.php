@@ -229,7 +229,7 @@ class DetailView extends \yii\widgets\DetailView
      * - displayOnly: boolean, if the input is to be set to as `display only` in edit mode.
      * - widgetOptions: array, the widget options if you set `type` to [[self::INPUT_WIDGET]]. The following special options are
      *   recognized:
-     *   - `class': string the fully namespaced widget class.
+     *   - `class`: string the fully namespaced widget class.
      * - items: array, the list of data items  for dropDownList, listBox, checkboxList & radioList
      * - inputType: string, the HTML 5 input type if `type` is set to [[self::INPUT_HTML 5]].
      * - inputWidth: string, the width of the container holding the input, should be appended along with the width unit (`px` or `%`)
