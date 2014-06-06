@@ -136,6 +136,8 @@ class DetailView extends \yii\widgets\DetailView
         self::INPUT_COLOR => '\kartik\widgets\ColorInput',
         self::INPUT_RATING => '\kartik\widgets\StarRating',
         self::INPUT_FILEINPUT => '\kartik\widgets\FileInput',
+        self::INPUT_SLIDER => '\kartik\slider\Slider',
+        self::INPUT_MONEY => '\kartik\money\MaskMoney',
     ];
 
     private static $_dropDownInputs = [
