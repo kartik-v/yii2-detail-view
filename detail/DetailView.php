@@ -378,7 +378,9 @@ class DetailView extends \yii\widgets\DetailView
                 'forceTranslation' => true
             ];
         }
-        Yii::$app->i18n->translations['kvdetail'] = $this->i18n;
+        if(empty(Yii::$app->i18n->translations['kvdetail'])) {
+             Yii::$app->i18n->translations['kvdetail'] = $this->i18n;
+        }
     }
 
     /**
