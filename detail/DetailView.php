@@ -570,16 +570,16 @@ class DetailView extends \yii\widgets\DetailView
             $options['class'] = 'btn btn-xs btn-' . $btnStyle;
         }
         Html::addCssClass($options, 'kv-btn-' . $type);
-        $options += ['title' => Yii::t('kvdetail', $title)];
+        $options = ArrayHelper::merge(['title' => Yii::t('kvdetail', $title)], $options);
         if ($type !== 'delete' && $type !== 'save') {
             $options['type'] = 'button';
             return Html::button($label, $options);
         } elseif ($type === 'delete') {
             $url = ArrayHelper::remove($options, 'url', '#');
-            $options += [
+            $options = ArrayHelper::merge([
                 'data-method' => 'post',
                 'data-confirm' => Yii::t('kvdetail', 'Are you sure you want to delete this item?')
-            ];
+            ], $options);
             return Html::a($label, $url, $options);
         } else {
             return Html::submitButton($label, $options);
