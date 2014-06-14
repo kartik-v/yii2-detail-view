@@ -106,6 +106,7 @@ class DetailView extends \yii\widgets\DetailView
     const INPUT_FILEINPUT = '\kartik\widgets\FileInput';
     const INPUT_SLIDER = '\kartik\slider\Slider';
     const INPUT_MONEY = '\kartik\money\MaskMoney';
+    const INPUT_CHECKBOX_X = '\kartik\checkbox\CheckboxX';
 
     private static $_inputsList = [
         self::INPUT_TEXT => 'textInput',
@@ -138,6 +139,7 @@ class DetailView extends \yii\widgets\DetailView
         self::INPUT_FILEINPUT => '\kartik\widgets\FileInput',
         self::INPUT_SLIDER => '\kartik\slider\Slider',
         self::INPUT_MONEY => '\kartik\money\MaskMoney',
+        self::INPUT_CHECKBOX_X => '\kartik\checkbox\CheckboxX',
     ];
 
     private static $_dropDownInputs = [
