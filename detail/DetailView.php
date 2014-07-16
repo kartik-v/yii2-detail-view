@@ -135,6 +135,8 @@ class DetailView extends \yii\widgets\DetailView
         self::INPUT_DATE => '\kartik\widgets\DatePicker',
         self::INPUT_TIME => '\kartik\widgets\TimePicker',
         self::INPUT_DATETIME => '\kartik\widgets\DateTimePicker',
+        self::INPUT_DATE_RANGE => '\kartik\widgets\DateRangePicker',
+        self::INPUT_SORTABLE => '\kartik\sortinput\SortableInput',
         self::INPUT_RANGE => '\kartik\widgets\RangeInput',
         self::INPUT_COLOR => '\kartik\widgets\ColorInput',
         self::INPUT_RATING => '\kartik\widgets\StarRating',
