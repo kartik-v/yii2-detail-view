@@ -100,6 +100,8 @@ class DetailView extends \yii\widgets\DetailView
     const INPUT_DATE = '\kartik\widgets\DatePicker';
     const INPUT_TIME = '\kartik\widgets\TimePicker';
     const INPUT_DATETIME = '\kartik\widgets\DateTimePicker';
+    const INPUT_DATE_RANGE = '\kartik\daterange\DateRangePicker';
+    const INPUT_SORTABLE = '\kartik\sortinput\SortableInput';
     const INPUT_RANGE = '\kartik\widgets\RangeInput';
     const INPUT_COLOR = '\kartik\widgets\ColorInput';
     const INPUT_RATING = '\kartik\widgets\StarRating';
@@ -147,7 +149,6 @@ class DetailView extends \yii\widgets\DetailView
         self::INPUT_DROPDOWN_LIST => 'dropDownList',
         self::INPUT_CHECKBOX_LIST => 'checkboxList',
         self::INPUT_RADIO_LIST => 'radioList',
-
     ];
 
     /**
