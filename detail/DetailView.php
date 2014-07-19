@@ -64,7 +64,7 @@ class DetailView extends \yii\widgets\DetailView
     public $mode = self::MODE_VIEW;
     
     /**
-     * @var integer the animation fade delay in microseconds when 
+     * @var integer the fade animation delay in microseconds when 
      * toggling between the view and edit modes.
      */
     public $fadeDelay = 800;
