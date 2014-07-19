@@ -67,6 +67,12 @@ class DetailView extends \yii\widgets\DetailView
      * @var string the horizontal alignment for the label column
      */
     public $hAlign = self::ALIGN_RIGHT;
+    
+    /**
+     * @var integer the animation fade delay in microseconds when 
+     * toggling between the view and edit modes.
+     */
+    public $fadeDelay = 800;
 
     /**
      * @var string the vertical alignment for the label column
@@ -555,8 +561,9 @@ class DetailView extends \yii\widgets\DetailView
     {
         $view = $this->getView();
         DetailViewAsset::register($view);
+        $options = ['fadeDelay' => $this->fadeDelay];
         if ($this->enableEditMode) {
-            $options = ['mode' => $this->mode];
+            $options['mode'] = $this->mode;
             $view->registerJs('$("#' . $this->container['id'] . '").kvDetailView(' . Json::encode($options) . ');');
         }
     }

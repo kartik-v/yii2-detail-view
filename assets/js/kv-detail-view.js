@@ -15,6 +15,7 @@
     var KvDetailView = function (element, options) {
         this.$element = $(element);
         this.mode = options.mode;
+        this.fadeDelay = options.fadeDelay;
         this.initElements();
         this.init();
     };
@@ -32,23 +33,22 @@
             });
         },
         setMode: function (mode) {
-            var self = this;
-            self.$attribs.removeClass('kv-hide');
-            self.$formAttribs.removeClass('kv-hide');
-            self.$buttons1.removeClass('kv-hide');
-            self.$buttons2.removeClass('kv-hide');
-
+            var self = this, t = self.fadeDelay;
             if (mode === 'edit') {
-                self.$attribs.addClass('kv-hide');
-                self.$formAttribs.removeClass('kv-hide');
-                self.$buttons1.addClass('kv-hide');
-                self.$buttons2.removeClass('kv-hide');
+                self.$attribs.fadeOut(t, function() {
+                    self.$formAttribs.fadeIn(t);
+                });
+                self.$buttons1.fadeOut(t, function() {
+                    self.$buttons2.fadeIn(t);
+                });
             }
             else {
-                self.$attribs.removeClass('kv-hide');
-                self.$formAttribs.addClass('kv-hide');
-                self.$buttons1.removeClass('kv-hide');
-                self.$buttons2.addClass('kv-hide');
+                self.$formAttribs.fadeOut(t, function() {
+                    self.$attribs.fadeIn(t);
+                });
+                self.$buttons2.fadeOut(t, function() {
+                    self.$buttons1.fadeIn(t);
+                });
             }
             self.initElements();
         },
@@ -63,7 +63,7 @@
             self.$buttons2 = self.$element.find('.kv-buttons-2');
         }
     };
-
+    
     //Detail View plugin definition
     $.fn.kvDetailView = function (option) {
         var args = Array.apply(null, arguments);
@@ -81,5 +81,10 @@
                 data[option].apply(data, args);
             }
         });
+    };
+
+    $.fn.kvDetailView.defaults = {
+        mode: 'view',
+        fadeDelay: 800
     };
 }(jQuery));
