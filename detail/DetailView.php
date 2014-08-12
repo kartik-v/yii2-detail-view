@@ -564,7 +564,7 @@ class DetailView extends \yii\widgets\DetailView
         $options = ['fadeDelay' => $this->fadeDelay];
         if ($this->enableEditMode) {
             $options['mode'] = $this->mode;
-            $view->registerJs('$("#' . $this->container['id'] . '").kvDetailView(' . Json::encode($options) . ');');
+            $view->registerJs('jQuery("#' . $this->container['id'] . '").kvDetailView(' . Json::encode($options) . ');');
         }
     }
 
