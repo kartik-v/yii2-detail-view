@@ -3,6 +3,7 @@ version 1.1.0
 **Date:** 2014-07-15
 
 - enh #10: Added animation to fade out between view and edit modes
+- PSR4 alias change
 
 version 1.0.0
 =============
