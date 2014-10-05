@@ -21,7 +21,7 @@ class DetailViewAsset extends AssetBundle
 
 	public function init()
 	{
-		$this->setSourcePath(__DIR__ . '/../assets');
+		$this->setSourcePath(__DIR__ . '/assets');
 		$this->setupAssets('js', ['js/kv-detail-view']);
 		$this->setupAssets('css', ['css/kv-detail-view']);
 		parent::init();
