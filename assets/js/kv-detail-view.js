@@ -1,6 +1,6 @@
 /*!
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014
- * @version 1.0.0
+ * @version 1.2.0
  *
  * Client extension for the yii2-detail-view extension 
  * 
@@ -24,7 +24,7 @@
         constructor: KvDetailView,
         init: function () {
             var self = this;
-            self.setMode(self.mode);
+            self.initElements();
             self.$btnUpdate.on('click', function (e) {
                 self.setMode('edit');
             });
@@ -50,7 +50,6 @@
                     self.$buttons1.fadeIn(t);
                 });
             }
-            self.initElements();
         },
         initElements: function () {
             var self = this;

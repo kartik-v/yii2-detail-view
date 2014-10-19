@@ -1,3 +1,11 @@
+version 1.2.0
+=============
+**Date:** 2014-10-19
+
+- enh #13: Improve hide of elements and remove fade delay at initialization
+- enh #14: Add various container properties to configure HTML options
+- enh # 15: Refactor and optimize client code
+
 version 1.1.0
 =============
 **Date:** 2014-07-15

@@ -1,6 +1,6 @@
 /*!
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014
- * @version 1.0.0
+ * @version 1.2.0
  *
  * Styles for yii2-detail-view extension 
  * 
@@ -9,9 +9,6 @@
  * For more JQuery plugins visit http://plugins.krajee.com
  * For more Yii related demos visit http://demos.krajee.com
  */
-.kv-hide {
-    display:none;
-}
 .kv-form-attribute .help-block {
     margin-bottom: -15px;
 }

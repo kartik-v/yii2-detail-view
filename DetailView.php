@@ -3,7 +3,7 @@
 /**
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2013
  * @package yii2-detail-view
- * @version 1.0.0
+ * @version 1.2.0
  */
 
 namespace kartik\detail;
@@ -296,6 +296,26 @@ class DetailView extends \yii\widgets\DetailView
     public $buttons2 = '{view} {save}';
 
     /**
+     * @var array the HTML attributes for the container displaying the VIEW mode attributes.
+     */
+    public $viewAttributeContainer = [];
+
+    /**
+     * @var array the HTML attributes for the container displaying the EDIT mode attributes.
+     */
+    public $editAttributeContainer = [];
+
+    /**
+     * @var array the HTML attributes for the container displaying the VIEW mode buttons.
+     */
+    public $viewButtonsContainer = [];
+
+    /**
+     * @var array the HTML attributes for the container displaying the EDIT mode buttons.
+     */
+    public $editButtonsContainer = [];
+    
+    /**
      * @var array the HTML attributes for the view button. This will toggle the view from edit mode to view mode.
      * The following special options are recognized:
      * - `label`: the save button label. This will not be HTML encoded.
@@ -348,6 +368,7 @@ class DetailView extends \yii\widgets\DetailView
             static::validateAttribute($attribute);
         }
         Html::addCssClass($this->options, 'detail-view');
+        $this->validateDisplay();
         if ($this->bootstrap) {
             Html::addCssClass($this->options, 'table');
             if ($this->hover) {
@@ -379,6 +400,25 @@ class DetailView extends \yii\widgets\DetailView
         $this->registerAssets();
     }
 
+    /**
+     * Validates the display of correct attributes and buttons
+     * at initialization based on mode
+     */
+    protected function validateDisplay()
+    {
+        $none = 'display:none';
+        if ($this->mode === self::MODE_VIEW) {
+            Html::addCssStyle($this->editAttributeContainer, $none);
+            Html::addCssStyle($this->editButtonsContainer, $none);
+        } else {
+            Html::addCssStyle($this->viewAttributeContainer, $none);
+            Html::addCssStyle($this->viewButtonsContainer, $none);
+        }
+    }
+    
+    /**
+     * Initialization for i18n translations
+     */
     public function initI18N()
     {
         Yii::setAlias('@kvdetail', dirname(__FILE__));
@@ -391,7 +431,6 @@ class DetailView extends \yii\widgets\DetailView
         }
         Yii::$app->i18n->translations['kvdetail'] = $this->i18n;
     }
-
     /**
      * Renders the detail view.
      * This is the main entry of the whole detail view rendering.
@@ -403,11 +442,13 @@ class DetailView extends \yii\widgets\DetailView
             $output = $this->renderPanel($output);
         }
         $output = strtr($this->mainTemplate, [
-            '{detail}' => '<div id="' . $this->container['id'] . '">' . $output . '</div>'
+            '{detail}' => Html::tag('div', $output, $this->container)
         ]);
+        Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
+        Html::addCssClass($this->editButtonsContainer, 'kv-buttons-2');
         echo strtr($output, [
-            '{buttons}' => '<span class="kv-buttons-1">' . $this->renderButtons(1) .
-                '</span> <span class="kv-buttons-2 kv-hide">' . $this->renderButtons(2) . '</span>'
+            '{buttons}' => Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer) .
+                Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer)
         ]);
         ActiveForm::end();
     }
@@ -422,10 +463,12 @@ class DetailView extends \yii\widgets\DetailView
     protected function renderAttribute($attribute, $index)
     {
         $dispAttr = $this->formatter->format($attribute['value'], $attribute['format']);
-        $output = '<div class="kv-attribute">' . $dispAttr . "</div>\n";
+        Html::addCssClass($this->viewAttributeContainer, 'kv-attribute');
+        Html::addCssClass($this->editAttributeContainer, 'kv-form-attribute');
+        $output = Html::tag('div', $dispAttr, $this->viewAttributeContainer) . "\n";
         if ($this->enableEditMode) {
             $editInput = (!empty($attribute['displayOnly']) && $attribute['displayOnly']) ? $dispAttr : $this->renderFormAttribute($attribute);
-            $output .= '<div class="kv-form-attribute kv-hide">' . $editInput . '</div>';
+            $output .= Html::tag('div', $editInput, $this->editAttributeContainer);
         }
         if (is_string($this->template)) {
             return strtr($this->template, [
@@ -438,6 +481,8 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
+     * Renders the main detail view widget
+     *
      * @return string the detail view content
      */
     protected function renderDetailView()
