@@ -6,7 +6,6 @@ version 1.3.0
 - Set dependency on Krajee base components
 - Better validation of Krajee input widgets 
 - Set release to stable
-- Default view and edit mode enhancements
 - Delete button default option enhancements
 
 version 1.2.0

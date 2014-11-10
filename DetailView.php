@@ -387,11 +387,11 @@ class DetailView extends \yii\widgets\DetailView
     {
         $none = 'display:none';
         if ($this->mode === self::MODE_EDIT) {
-            Html::addCssStyle($this->editAttributeContainer, $none);
-            Html::addCssStyle($this->editButtonsContainer, $none);
-        } else {
             Html::addCssStyle($this->viewAttributeContainer, $none);
             Html::addCssStyle($this->viewButtonsContainer, $none);
+        } else {
+            Html::addCssStyle($this->editAttributeContainer, $none);
+            Html::addCssStyle($this->editButtonsContainer, $none);
         }
     }
     
