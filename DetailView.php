@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2013
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014
  * @package yii2-detail-view
- * @version 1.2.0
+ * @version 1.3.0
  */
 
 namespace kartik\detail;
@@ -17,6 +17,7 @@ use yii\helpers\Json;
 use kartik\helpers\Html;
 use yii\base\InvalidConfigException;
 use yii\bootstrap\ButtonDropdown;
+use kartik\base\Config;
 
 /**
  * Enhances the Yii DetailView widget with various options to include Bootstrap
@@ -97,21 +98,20 @@ class DetailView extends \yii\widgets\DetailView
     const INPUT_WIDGET = 'widget';
 
     // input widget classes
-    const INPUT_DEPDROP = '\kartik\widgets\DepDrop';
-    const INPUT_SELECT2 = '\kartik\widgets\Select2';
-    const INPUT_TYPEAHEAD = '\kartik\widgets\Typeahead';
-    const INPUT_SWITCH = '\kartik\widgets\SwitchInput';
-    const INPUT_SPIN = '\kartik\widgets\TouchSpin';
-    const INPUT_STAR = '\kartik\widgets\StarRating';
-    const INPUT_DATE = '\kartik\widgets\DatePicker';
-    const INPUT_TIME = '\kartik\widgets\TimePicker';
-    const INPUT_DATETIME = '\kartik\widgets\DateTimePicker';
+    const INPUT_DEPDROP = '\kartik\depdrop\DepDrop';
+    const INPUT_SELECT2 = '\kartik\select2\Select2';
+    const INPUT_TYPEAHEAD = '\kartik\typeahead\Typeahead';
+    const INPUT_SWITCH = '\kartik\switchinput\SwitchInput';
+    const INPUT_SPIN = '\kartik\touchspin\TouchSpin';
+    const INPUT_RATING = '\kartik\widgets\StarRating';
+    const INPUT_RANGE = '\kartik\range\RangeInput';
+    const INPUT_COLOR = '\kartik\color\ColorInput';
+    const INPUT_FILEINPUT = '\kartik\file\FileInput';
+    const INPUT_DATE = '\kartik\date\DatePicker';
+    const INPUT_TIME = '\kartik\time\TimePicker';
+    const INPUT_DATETIME = '\kartik\datetime\DateTimePicker';
     const INPUT_DATE_RANGE = '\kartik\daterange\DateRangePicker';
     const INPUT_SORTABLE = '\kartik\sortinput\SortableInput';
-    const INPUT_RANGE = '\kartik\widgets\RangeInput';
-    const INPUT_COLOR = '\kartik\widgets\ColorInput';
-    const INPUT_RATING = '\kartik\widgets\StarRating';
-    const INPUT_FILEINPUT = '\kartik\widgets\FileInput';
     const INPUT_SLIDER = '\kartik\slider\Slider';
     const INPUT_MONEY = '\kartik\money\MaskMoney';
     const INPUT_CHECKBOX_X = '\kartik\checkbox\CheckboxX';
@@ -129,27 +129,6 @@ class DetailView extends \yii\widgets\DetailView
         self::INPUT_HTML5_INPUT => 'input',
         self::INPUT_FILE => 'fileInput',
         self::INPUT_WIDGET => 'widget',
-    ];
-
-    private static $_inputWidgets = [
-        self::INPUT_DEPDROP => '\kartik\widgets\DepDrop',
-        self::INPUT_SELECT2 => '\kartik\widgets\Select2',
-        self::INPUT_TYPEAHEAD => '\kartik\widgets\Typeahead',
-        self::INPUT_SWITCH => '\kartik\widgets\SwitchInput',
-        self::INPUT_SPIN => '\kartik\widgets\TouchSpin',
-        self::INPUT_STAR => '\kartik\widgets\StarRating',
-        self::INPUT_DATE => '\kartik\widgets\DatePicker',
-        self::INPUT_TIME => '\kartik\widgets\TimePicker',
-        self::INPUT_DATETIME => '\kartik\widgets\DateTimePicker',
-        self::INPUT_DATE_RANGE => '\kartik\widgets\DateRangePicker',
-        self::INPUT_SORTABLE => '\kartik\sortinput\SortableInput',
-        self::INPUT_RANGE => '\kartik\widgets\RangeInput',
-        self::INPUT_COLOR => '\kartik\widgets\ColorInput',
-        self::INPUT_RATING => '\kartik\widgets\StarRating',
-        self::INPUT_FILEINPUT => '\kartik\widgets\FileInput',
-        self::INPUT_SLIDER => '\kartik\slider\Slider',
-        self::INPUT_MONEY => '\kartik\money\MaskMoney',
-        self::INPUT_CHECKBOX_X => '\kartik\checkbox\CheckboxX',
     ];
 
     private static $_dropDownInputs = [
@@ -407,7 +386,7 @@ class DetailView extends \yii\widgets\DetailView
     protected function validateDisplay()
     {
         $none = 'display:none';
-        if ($this->mode === self::MODE_VIEW) {
+        if ($this->mode === self::MODE_EDIT) {
             Html::addCssStyle($this->editAttributeContainer, $none);
             Html::addCssStyle($this->editButtonsContainer, $none);
         } else {
@@ -540,7 +519,9 @@ class DetailView extends \yii\widgets\DetailView
             $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
             $fieldConfig['template'] = "<div style='width:{$inputWidth};'>{$template}</div>";
         }
-        if ($input !== self::INPUT_WIDGET && !in_array($input, self::$_inputsList) && !in_array($input, self::$_inputWidgets)) {
+        if (substr($input, 0, 8) == "\\kartik\\") {
+            Config::validateInputWidget($input, 'as an input widget for DetailView edit mode');
+        } elseif ($input !== self::INPUT_WIDGET && !in_array($input, self::$_inputsList)) {
             throw new InvalidConfigException("Invalid input type '{$input}' defined for the attribute '" . $config['attribute'] . "'.");
         }
         $options = ArrayHelper::getValue($config, 'options', []);
@@ -549,7 +530,7 @@ class DetailView extends \yii\widgets\DetailView
         if (!empty($config['options'])) {
             $widgetOptions['options'] = $config['options'];
         }
-        if (in_array($input, self::$_inputWidgets)) {
+        if (Config::isInputWidgetValid($input)) {
             $class = $input;
             return $this->_form->field($this->model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }
@@ -622,6 +603,7 @@ class DetailView extends \yii\widgets\DetailView
     protected function getDefaultButton($type, $label, $title, $options)
     {
         $btnStyle = empty($this->panel['type']) ? self::TYPE_DEFAULT : $this->panel['type'];
+        $isEmpty = empty($options);
         $label = ArrayHelper::remove($options, 'label', $label);
         if (empty($options['class'])) {
             $options['class'] = 'btn btn-xs btn-' . $btnStyle;
@@ -633,10 +615,12 @@ class DetailView extends \yii\widgets\DetailView
             return Html::button($label, $options);
         } elseif ($type === 'delete') {
             $url = ArrayHelper::remove($options, 'url', '#');
-            $options = ArrayHelper::merge([
-                'data-method' => 'post',
-                'data-confirm' => Yii::t('kvdetail', 'Are you sure you want to delete this item?')
-            ], $options);
+            if ($isEmpty) {
+                $options = ArrayHelper::merge([
+                    'data-method' => 'post',
+                    'data-confirm' => Yii::t('kvdetail', 'Are you sure you want to delete this item?')
+                ], $options);
+            }
             return Html::a($label, $url, $options);
         } else {
             return Html::submitButton($label, $options);

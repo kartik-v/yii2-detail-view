@@ -1,21 +1,32 @@
+version 1.3.0
+=============
+**Date:** 10-Nov-2014
+
+- PSR4 alias change
+- Set dependency on Krajee base components
+- Better validation of Krajee input widgets 
+- Set release to stable
+- Default view and edit mode enhancements
+- Delete button default option enhancements
+
 version 1.2.0
 =============
-**Date:** 2014-10-19
+**Date:** 19-Oct-2014
 
 - enh #13: Improve hide of elements and remove fade delay at initialization
 - enh #14: Add various container properties to configure HTML options
-- enh # 15: Refactor and optimize client code
+- enh #15: Refactor and optimize client code
 
 version 1.1.0
 =============
-**Date:** 2014-07-15
+**Date:** 15-Jul-2014
 
 - enh #10: Added animation to fade out between view and edit modes
 - PSR4 alias change
 
 version 1.0.0
 =============
-**Date:** 2014-05-15
+**Date:** 15-May-2014
 
 - Initial release
 - enh #1: Changed `static` variable references to `self` (kartik-v)

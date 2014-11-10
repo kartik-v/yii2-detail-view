@@ -7,16 +7,8 @@ includes easier methods to style your detail view widget cells, data, form input
 The widget by default can be styled within a Bootstrap 3 panel with a buttons toolbar to toggle modes and control your data.
 Refer [detailed documentation](http://demos.krajee.com/detail-view) and/or a [complete demo](http://demos.krajee.com/detail-view-demo).
 
-> NOTE: This extension depends on the [kartik-v/yii2-widgets](https://github.com/kartik-v/yii2-widgets) and 
-[kartik-v/yii2-helpers](https://github.com/kartik-v/yii2-helpers) extensions which in turn depends on the
-[yiisoft/yii2-bootstrap](https://github.com/yiisoft/yii2/tree/master/extensions/bootstrap) extension. Check the 
-[composer.json](https://github.com/kartik-v/yii2-detail-view/blob/master/composer.json) for this extension's requirements and dependencies. 
-Note: Yii 2 framework is still in active development, and until a fully stable Yii2 release, your core yii2-bootstrap packages (and its dependencies) 
-may be updated when you install or update this extension. You may need to lock your composer package versions for your specific app, and test 
-for extension break if you do not wish to auto update dependencies.
-
 ### Latest Release
-The latest version of the extension is release v1.2.0. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of various releases.
+The latest version of the extension is release v1.3.0. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of various releases.
 
 ### Demo
 You can see detailed [documentation](http://demos.krajee.com/detail-view) and [demonstration](http://demos.krajee.com/detail-view-demo) on usage of the extension.
@@ -25,7 +17,8 @@ You can see detailed [documentation](http://demos.krajee.com/detail-view) and [d
 
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
-> Note: You must set the `minimum-stability` to `dev` in the **composer.json** file in your application root folder before installation of this extension.
+> Note: Check the [composer.json](https://github.com/kartik-v/yii2-detail-view/blob/master/composer.json) for this extension's requirements and dependencies. 
+Read this [web tip /wiki](http://webtips.krajee.com/setting-composer-minimum-stability-application/) on setting the `minimum-stability` settings for your application's composer.json.
 
 Either run
 
