@@ -530,7 +530,7 @@ class DetailView extends \yii\widgets\DetailView
         if (!empty($config['options'])) {
             $widgetOptions['options'] = $config['options'];
         }
-        if (Config::isInputWidgetValid($input)) {
+        if (Config::isInputWidget($input)) {
             $class = $input;
             return $this->_form->field($this->model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }

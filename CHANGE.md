@@ -1,3 +1,9 @@
+version 1.4.0
+=============
+**Date:** 22-Nov-2014
+
+- bug #16: Correct method for validating input widget using `\kartik\base\Config`.
+
 version 1.3.0
 =============
 **Date:** 10-Nov-2014
