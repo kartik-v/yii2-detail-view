@@ -8,7 +8,7 @@ The widget by default can be styled within a Bootstrap 3 panel with a buttons to
 Refer [detailed documentation](http://demos.krajee.com/detail-view) and/or a [complete demo](http://demos.krajee.com/detail-view-demo).
 
 ### Latest Release
-The latest version of the extension is release v1.3.0. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of various releases.
+The latest version of the extension is release v1.4.0. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of various releases.
 
 ### Demo
 You can see detailed [documentation](http://demos.krajee.com/detail-view) and [demonstration](http://demos.krajee.com/detail-view-demo) on usage of the extension.
