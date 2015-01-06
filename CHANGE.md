@@ -1,3 +1,10 @@
+version 1.5.0
+=============
+**Date:** 07-Jan-2015
+
+- (bug #23): Fix HTML5 Input type initialization.
+- Code formatting standards.
+
 version 1.4.0
 =============
 **Date:** 06-Dec-2014

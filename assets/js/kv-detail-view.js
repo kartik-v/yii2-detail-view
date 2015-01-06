@@ -1,6 +1,6 @@
 /*!
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014
- * @version 1.4.0
+ * @version 1.5.0
  *
  * Client extension for the yii2-detail-view extension 
  * 
@@ -32,7 +32,7 @@
                 self.setMode('view');
             });
         },
-        initSwitches: function($switches, callback) {
+        initSwitches: function ($switches, callback) {
             if (!$switches.length) {
                 return;
             }
@@ -41,31 +41,31 @@
         setMode: function (mode) {
             var self = this, t = self.fadeDelay;
             var $switches = self.$formAttribs.find('input[data-krajee-bootstrapswitch]');
-            self.initSwitches($switches, function() {
-                $switches.each(function() {
-                     $(this).bootstrapSwitch('destroy');
+            self.initSwitches($switches, function () {
+                $switches.each(function () {
+                    $(this).bootstrapSwitch('destroy');
                 });
             });
             if (mode === 'edit') {
-                self.$attribs.fadeOut(t, function() {
-                    self.$formAttribs.fadeIn(t, function() {
-                        self.initSwitches($switches, function() {
-                             $switches.each(function() {
+                self.$attribs.fadeOut(t, function () {
+                    self.$formAttribs.fadeIn(t, function () {
+                        self.initSwitches($switches, function () {
+                            $switches.each(function () {
                                 var $el = $(this), data = window[$el.attr('data-krajee-bootstrapswitch')];
                                 $el.bootstrapSwitch(data);
                             });
                         });
                     });
                 });
-                self.$buttons1.fadeOut(t, function() {
+                self.$buttons1.fadeOut(t, function () {
                     self.$buttons2.fadeIn(t);
                 });
             }
             else {
-                self.$formAttribs.fadeOut(t, function() {
+                self.$formAttribs.fadeOut(t, function () {
                     self.$attribs.fadeIn(t);
                 });
-                self.$buttons2.fadeOut(t, function() {
+                self.$buttons2.fadeOut(t, function () {
                     self.$buttons1.fadeIn(t);
                 });
             }
@@ -81,7 +81,7 @@
             self.$buttons2 = self.$element.find('.kv-buttons-2');
         }
     };
-    
+
     //Detail View plugin definition
     $.fn.kvDetailView = function (option) {
         var args = Array.apply(null, arguments);
@@ -92,7 +92,8 @@
                 options = typeof option === 'object' && option;
 
             if (!data) {
-                $this.data('kvDetailView', (data = new KvDetailView(this, $.extend({}, $.fn.kvDetailView.defaults, options, $(this).data()))));
+                $this.data('kvDetailView',
+                    (data = new KvDetailView(this, $.extend({}, $.fn.kvDetailView.defaults, options, $(this).data()))));
             }
 
             if (typeof option === 'string') {

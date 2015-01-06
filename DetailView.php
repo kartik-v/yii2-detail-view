@@ -3,21 +3,19 @@
 /**
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014
  * @package yii2-detail-view
- * @version 1.4.0
+ * @version 1.5.0
  */
 
 namespace kartik\detail;
 
 use Yii;
-use yii\widgets\ActiveForm;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Url;
-use yii\web\JsExpression;
-use yii\helpers\Json;
-use kartik\helpers\Html;
 use yii\base\InvalidConfigException;
 use yii\bootstrap\ButtonDropdown;
-use kartik\base\Config;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Json;
+use yii\helpers\Url;
+use yii\web\JsExpression;
+use yii\widgets\ActiveForm;
 
 /**
  * Enhances the Yii DetailView widget with various options to include Bootstrap
@@ -59,36 +57,15 @@ class DetailView extends \yii\widgets\DetailView
     const ALIGN_MIDDLE = 'middle';
     const ALIGN_BOTTOM = 'bottom';
 
-    /**
-     * @var string the mode for the Detail View when its initialized
-     */
-    public $mode = self::MODE_VIEW;
-    
-    /**
-     * @var integer the fade animation delay in microseconds when 
-     * toggling between the view and edit modes.
-     */
-    public $fadeDelay = 800;
-    
-    /**
-     * @var string the horizontal alignment for the label column
-     */
-    public $hAlign = self::ALIGN_RIGHT;
-
-    /**
-     * @var string the vertical alignment for the label column
-     */
-    public $vAlign = self::ALIGN_MIDDLE;
-
-    /**
-     * Edit input types
-     */
-    // input types
     const INPUT_TEXT = 'textInput';
     const INPUT_PASSWORD = 'passwordInput';
     const INPUT_TEXTAREA = 'textArea';
     const INPUT_CHECKBOX = 'checkbox';
-    const INPUT_RADIO = 'radio';
+
+    /**
+     * Edit input types
+     */
+    // input types    const INPUT_RADIO = 'radio';
     const INPUT_LIST_BOX = 'listBox';
     const INPUT_DROPDOWN_LIST = 'dropDownList';
     const INPUT_CHECKBOX_LIST = 'checkboxList';
@@ -96,12 +73,12 @@ class DetailView extends \yii\widgets\DetailView
     const INPUT_FILE = 'fileInput';
     const INPUT_HTML5_INPUT = 'input';
     const INPUT_WIDGET = 'widget';
-
-    // input widget classes
     const INPUT_DEPDROP = '\kartik\depdrop\DepDrop';
     const INPUT_SELECT2 = '\kartik\select2\Select2';
     const INPUT_TYPEAHEAD = '\kartik\typeahead\Typeahead';
     const INPUT_SWITCH = '\kartik\switchinput\SwitchInput';
+
+    // input widget classes
     const INPUT_SPIN = '\kartik\touchspin\TouchSpin';
     const INPUT_RATING = '\kartik\widgets\StarRating';
     const INPUT_RANGE = '\kartik\range\RangeInput';
@@ -115,7 +92,6 @@ class DetailView extends \yii\widgets\DetailView
     const INPUT_SLIDER = '\kartik\slider\Slider';
     const INPUT_MONEY = '\kartik\money\MaskMoney';
     const INPUT_CHECKBOX_X = '\kartik\checkbox\CheckboxX';
-
     private static $_inputsList = [
         self::INPUT_TEXT => 'textInput',
         self::INPUT_PASSWORD => 'passwordInput',
@@ -130,14 +106,29 @@ class DetailView extends \yii\widgets\DetailView
         self::INPUT_FILE => 'fileInput',
         self::INPUT_WIDGET => 'widget',
     ];
-
     private static $_dropDownInputs = [
         self::INPUT_LIST_BOX => 'listBox',
         self::INPUT_DROPDOWN_LIST => 'dropDownList',
         self::INPUT_CHECKBOX_LIST => 'checkboxList',
         self::INPUT_RADIO_LIST => 'radioList',
     ];
-
+    /**
+     * @var string the mode for the Detail View when its initialized
+     */
+    public $mode = self::MODE_VIEW;
+    /**
+     * @var integer the fade animation delay in microseconds when
+     * toggling between the view and edit modes.
+     */
+    public $fadeDelay = 800;
+    /**
+     * @var string the horizontal alignment for the label column
+     */
+    public $hAlign = self::ALIGN_RIGHT;
+    /**
+     * @var string the vertical alignment for the label column
+     */
+    public $vAlign = self::ALIGN_MIDDLE;
     /**
      * @var array the HTML attributes for the label column
      */
@@ -194,39 +185,53 @@ class DetailView extends \yii\widgets\DetailView
     public $enableEditMode = true;
 
     /**
-     * @var array a list of attributes to be displayed in the detail view. Each array element
-     * represents the specification for displaying one particular attribute.
+     * @var array a list of attributes to be displayed in the detail view. Each
+     * array element represents the specification for displaying one particular
+     * attribute.
      *
-     * An attribute can be specified as a string in the format of "attribute", "attribute:format" or "attribute:format:label",
-     * where "attribute" refers to the attribute name, and "format" represents the format of the attribute. The "format"
-     * is passed to the [[Formatter::format()]] method to format an attribute value into a displayable text.
-     * Please refer to [[Formatter]] for the supported types. Both "format" and "label" are optional.
-     * They will take default values if absent.
+     * An attribute can be specified as a string in the format of "attribute",
+     * "attribute:format" or "attribute:format:label", where "attribute" refers
+     * to the attribute name, and "format" represents the format of the attribute.
+     * The "format" is passed to the [[Formatter::format()]] method to format an
+     * attribute value into a displayable text. Please refer to [[Formatter]] for
+     * the supported types. Both "format" and "label" are optional. They will take
+     * default values if absent.
      *
-     * An attribute can also be specified in terms of an array with the following elements:
+     * An attribute can also be specified in terms of an array with the following
+     * elements:
      *
-     * - attribute: the attribute name. This is required if either "label" or "value" is not specified.
-     * - label: the label associated with the attribute. If this is not specified, it will be generated from the attribute name.
-     * - value: the value to be displayed. If this is not specified, it will be retrieved from [[model]] using the attribute name
-     *   by calling [[ArrayHelper::getValue()]]. Note that this value will be formatted into a displayable text
-     *   according to the "format" option.
-     * - format: the type of the value that determines how the value would be formatted into a displayable text.
-     *   Please refer to [[Formatter]] for supported types.
-     * - visible: whether the attribute is visible. If set to `false`, the attribute will NOT be displayed.
+     * - attribute: the attribute name. This is required if either "label" or
+     *   "value" is not specified.
+     * - label: the label associated with the attribute. If this is not specified,
+     *   it will be generated from the attribute name.
+     * - value: the value to be displayed. If this is not specified, it will be
+     *   retrieved from [[model]] using the attribute name by calling
+     *   [[ArrayHelper::getValue()]]. Note that this value will be formatted into
+     *   a displayable text according to the "format" option.
+     * - format: the type of the value that determines how the value would be
+     *   formatted into a displayable text. Please refer to [[Formatter]] for
+     *   supported types.
+     * - visible: whether the attribute is visible. If set to `false`, the
+     *   attribute will NOT be displayed.
      *
      * Additional special settings (for edit mode) are:
-     * - type: string, the input type for rendering the attribute in edit mode. Must be one of the [[self::INPUT_]] constants.
-     * - displayOnly: boolean, if the input is to be set to as `display only` in edit mode.
-     * - widgetOptions: array, the widget options if you set `type` to [[self::INPUT_WIDGET]]. The following special options are
-     *   recognized:
+     * - type: string, the input type for rendering the attribute in edit mode.
+     *   Must be one of the [[self::INPUT_]] constants.
+     * - displayOnly: boolean, if the input is to be set to as `display only`
+     *   in edit mode.
+     * - widgetOptions: array, the widget options if you set `type` to
+     *   [[self::INPUT_WIDGET]]. The following special options are recognized:
      *   - `class`: string the fully namespaced widget class.
-     * - items: array, the list of data items  for dropDownList, listBox, checkboxList & radioList
-     * - inputType: string, the HTML 5 input type if `type` is set to [[self::INPUT_HTML 5]].
-     * - inputWidth: string, the width of the container holding the input, should be appended along with the width unit (`px` or `%`)
+     * - items: array, the list of data items  for dropDownList, listBox,
+     *   checkboxList & radioList
+     * - inputType: string, the HTML 5 input type if `type` is set to
+     *   [[self::INPUT_HTML 5]].
+     * - inputWidth: string, the width of the container holding the input,
+     *   should be appended along with the width unit (`px` or `%`)
      * - fieldConfig: array, optional, the Active field configuration.
      * - options: array, optional, the HTML attributes for the input.
-     * - updateAttr: string, optional, the name of the attribute to be updated, when in edit mode. This will default to the
-     *   the `attribute` setting.
+     * - updateAttr: string, optional, the name of the attribute to be updated,
+     *   when in edit mode. This will default to the the `attribute` setting.
      */
     public $attributes;
 
@@ -239,8 +244,8 @@ class DetailView extends \yii\widgets\DetailView
      * @var array the panel settings. If this is set, the grid widget
      * will be embedded in a bootstrap panel. Applicable only if `bootstrap`
      * is `true`. The following array keys are supported:
-     * - `heading`: string, the panel heading. If not set, will not be displayed. The buttons by default
-     *   will be displayed at the right top corner.
+     * - `heading`: string, the panel heading. If not set, will not be displayed.
+     *   The buttons by default will be displayed at the right top corner.
      * - `type`: string, the panel contextual type (one of the TYPE constants,
      *    if not set will default to `default` or `self::TYPE_DEFAULT`),
      * - `footer`: string, the panel footer. If not set, will not be displayed.
@@ -248,14 +253,17 @@ class DetailView extends \yii\widgets\DetailView
     public $panel = [];
 
     /**
-     * @var string the main template to render the detail view. The following tags will be replaced:
+     * @var string the main template to render the detail view. The following
+     * tags will be replaced:
      * - `{detail}`: will be replaced by the rendered detail view
-     * - `{buttons}`: the buttons to be displayed as set in `buttons1` and `buttons2`.
+     * - `{buttons}`: the buttons to be displayed as set in `buttons1` and
+     *    `buttons2`.
      */
     public $mainTemplate = "{detail}";
 
     /**
-     * @var string the buttons to show when in view mode. The following tags will be replaced:
+     * @var string the buttons to show when in view mode. The following
+     * tags will be replaced:
      * - `{view}`: the view button
      * - `{update}`: the update button
      * - `{delete}`: the delete button
@@ -265,7 +273,8 @@ class DetailView extends \yii\widgets\DetailView
     public $buttons1 = '{update} {delete}';
 
     /**
-     * @var string the buttons template to show when in edit mode. The following tags will be replaced:
+     * @var string the buttons template to show when in edit mode. The
+     * following tags will be replaced:
      * - `{view}`: the view button
      * - `{update}`: the update button
      * - `{delete}`: the delete button
@@ -275,7 +284,8 @@ class DetailView extends \yii\widgets\DetailView
     public $buttons2 = '{view} {save}';
 
     /**
-     * @var array the HTML attributes for the container displaying the VIEW mode attributes.
+     * @var array the HTML attributes for the container displaying the
+     * VIEW mode attributes.
      */
     public $viewAttributeContainer = [];
 
@@ -293,7 +303,7 @@ class DetailView extends \yii\widgets\DetailView
      * @var array the HTML attributes for the container displaying the EDIT mode buttons.
      */
     public $editButtonsContainer = [];
-    
+
     /**
      * @var array the HTML attributes for the view button. This will toggle the view from edit mode to view mode.
      * The following special options are recognized:
@@ -341,6 +351,33 @@ class DetailView extends \yii\widgets\DetailView
      */
     protected $_form;
 
+    /**
+     * Check if attribute name is valid
+     *
+     * @param mixed $attribute
+     * @throws \yii\base\InvalidConfigException
+     */
+    protected static function validateAttribute($attribute)
+    {
+        if (is_array($attribute) && !empty($attribute['updateAttr'])) {
+            $attrib = $attribute['updateAttr'];
+            if (ctype_alnum(str_replace('_', '', $attrib))) {
+                return;
+            } else {
+                throw new InvalidConfigException("The 'updateAttr' name '{$attrib}' is invalid.");
+            }
+        }
+        $attrib = is_string($attribute) ? $attribute :
+            (empty($attribute['attribute']) ? '' : $attribute['attribute']);
+        if (strpos($attrib, '.') > 0) {
+            throw new InvalidConfigException("The attribute '$attrib' is invalid." .
+                " You cannot directly pass relational attributes in string format " .
+                "within '\kartik\widgets\DetailView'. Instead use the array format" .
+                "with 'attribute' property set to base field, and the 'value' " .
+                "property returning the relational data.");
+        }
+    }
+
     public function init()
     {
         foreach ($this->attributes as $attribute) {
@@ -380,23 +417,9 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
-     * Validates the display of correct attributes and buttons
-     * at initialization based on mode
-     */
-    protected function validateDisplay()
-    {
-        $none = 'display:none';
-        if ($this->mode === self::MODE_EDIT) {
-            Html::addCssStyle($this->viewAttributeContainer, $none);
-            Html::addCssStyle($this->viewButtonsContainer, $none);
-        } else {
-            Html::addCssStyle($this->editAttributeContainer, $none);
-            Html::addCssStyle($this->editButtonsContainer, $none);
-        }
-    }
-    
-    /**
      * Initialization for i18n translations
+     *
+     * @return void
      */
     public function initI18N()
     {
@@ -410,14 +433,19 @@ class DetailView extends \yii\widgets\DetailView
         }
         Yii::$app->i18n->translations['kvdetail'] = $this->i18n;
     }
+
     /**
      * Renders the detail view.
      * This is the main entry of the whole detail view rendering.
+     *
+     * @return string
      */
     public function run()
     {
         $output = $this->renderDetailView();
-        if (is_array($this->panel) && !empty($this->panel) && $this->panel !== false) {
+        if (is_array($this->panel) && !empty($this->panel)
+            && $this->panel !== false
+        ) {
             $output = $this->renderPanel($output);
         }
         $output = strtr($this->mainTemplate, [
@@ -426,17 +454,37 @@ class DetailView extends \yii\widgets\DetailView
         Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
         Html::addCssClass($this->editButtonsContainer, 'kv-buttons-2');
         echo strtr($output, [
-            '{buttons}' => Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer) .
-                Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer)
+            '{buttons}' => Html::tag('span',
+                    $this->renderButtons(1), $this->viewButtonsContainer) .
+                Html::tag('span', $this->renderButtons(2),
+                    $this->editButtonsContainer)
         ]);
         ActiveForm::end();
     }
 
     /**
-     * Renders a single attribute.
+     * Validates the display of correct attributes and buttons
+     * at initialization based on mode
      *
+     * @return void
+     */
+    protected function validateDisplay()
+    {
+        $none = 'display:none';
+        if ($this->mode === self::MODE_EDIT) {
+            Html::addCssStyle($this->viewAttributeContainer, $none);
+            Html::addCssStyle($this->viewButtonsContainer, $none);
+        } else {
+            Html::addCssStyle($this->editAttributeContainer, $none);
+            Html::addCssStyle($this->editButtonsContainer, $none);
+        }
+    }
+
+    /**
+     * Renders a single attribute.
+
      * @param array $attribute the specification of the attribute to be rendered.
-     * @param integer $index the zero-based index of the attribute in the [[attributes]] array
+     * @param int $index the zero-based index of the attribute in the [[attributes]] array
      * @return string the rendering result
      */
     protected function renderAttribute($attribute, $index)
@@ -476,30 +524,6 @@ class DetailView extends \yii\widgets\DetailView
         return ($this->bootstrap && $this->responsive) ?
             '<div class="table-responsive">' . $output . '</div>' :
             $output;
-    }
-
-    /**
-     * Check if attribute name is valid
-     *
-     * @param mixed $attribute
-     * @throws \yii\base\InvalidConfigException
-     */
-    protected static function validateAttribute($attribute)
-    {
-        if (is_array($attribute) && !empty($attribute['updateAttr'])) {
-            $attrib = $attribute['updateAttr'];
-            if (ctype_alnum(str_replace('_', '', $attrib))) {
-                return;
-            } else {
-                throw new InvalidConfigException("The 'updateAttr' name '{$attrib}' is invalid.");
-            }
-        }
-        $attrib = is_string($attribute) ? $attribute : (empty($attribute['attribute']) ? '' : $attribute['attribute']);
-        if (strpos($attrib, '.') > 0) {
-            throw new InvalidConfigException("The attribute '{$attrib}' is invalid. You cannot directly pass relational " .
-                "attributes in string format within '\kartik\widgets\DetailView'. Instead use the array format with 'attribute' " .
-                "property set to base field, and the 'value' property returning the relational data.");
-        }
     }
 
     /**
@@ -544,12 +568,12 @@ class DetailView extends \yii\widgets\DetailView
             $items = ArrayHelper::getValue($config, 'items', []);
             return $this->_form->field($this->model, $attr, $fieldConfig)->$input($items, $options);
         }
-        
-    if($input == self::INPUT_HTML5_INPUT) {
-        $inputType = ArrayHelper::getValue($config, 'inputType', self::INPUT_TEXT);
-        return $this->_form->field($this->model, $attr, $fieldConfig)->$input($inputType, $options);
-    }
-        
+
+        if ($input == self::INPUT_HTML5_INPUT) {
+            $inputType = ArrayHelper::getValue($config, 'inputType', self::INPUT_TEXT);
+            return $this->_form->field($this->model, $attr, $fieldConfig)->$input($inputType, $options);
+        }
+
         return $this->_form->field($this->model, $attr, $fieldConfig)->$input($options);
     }
 
@@ -645,16 +669,20 @@ class DetailView extends \yii\widgets\DetailView
             return '';
         }
         if ($type === 'view') {
-            return $this->getDefaultButton('view', '<span class="glyphicon glyphicon-eye-open"></span>', 'View', $this->viewOptions);
+            return $this->getDefaultButton('view', '<span class="glyphicon glyphicon-eye-open"></span>', 'View',
+                $this->viewOptions);
         }
         if ($type === 'update') {
-            return $this->getDefaultButton('update', '<span class="glyphicon glyphicon-pencil"></span>', 'Update', $this->updateOptions);
+            return $this->getDefaultButton('update', '<span class="glyphicon glyphicon-pencil"></span>', 'Update',
+                $this->updateOptions);
         }
         if ($type === 'delete') {
-            return $this->getDefaultButton('delete', '<span class="glyphicon glyphicon-trash"></span>', 'Delete', $this->deleteOptions);
+            return $this->getDefaultButton('delete', '<span class="glyphicon glyphicon-trash"></span>', 'Delete',
+                $this->deleteOptions);
         }
         if ($type === 'save') {
-            return $this->getDefaultButton('save', '<span class="glyphicon glyphicon-floppy-disk"></span>', 'Save', $this->saveOptions);
+            return $this->getDefaultButton('save', '<span class="glyphicon glyphicon-floppy-disk"></span>', 'Save',
+                $this->saveOptions);
         }
     }
 }

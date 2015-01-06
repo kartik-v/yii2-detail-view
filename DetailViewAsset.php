@@ -3,7 +3,7 @@
 /**
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014
  * @package yii2-detail-view
- * @version 1.4.0
+ * @version 1.5.0
  */
 
 namespace kartik\detail;
@@ -16,12 +16,16 @@ namespace kartik\detail;
  */
 class DetailViewAsset extends \kartik\base\AssetBundle
 {
-	public function init()
-	{
-		$this->setSourcePath(__DIR__ . '/assets');
-		$this->setupAssets('js', ['js/kv-detail-view']);
-		$this->setupAssets('css', ['css/kv-detail-view']);
-		parent::init();
-	}
+    /**
+     * @inherit doc
+     * @return void
+     */
+    public function init()
+    {
+        $this->setSourcePath(__DIR__ . '/assets');
+        $this->setupAssets('js', ['js/kv-detail-view']);
+        $this->setupAssets('css', ['css/kv-detail-view']);
+        parent::init();
+    }
 
 }
