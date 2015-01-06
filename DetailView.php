@@ -544,6 +544,12 @@ class DetailView extends \yii\widgets\DetailView
             $items = ArrayHelper::getValue($config, 'items', []);
             return $this->_form->field($this->model, $attr, $fieldConfig)->$input($items, $options);
         }
+        
+    if($input == self::INPUT_HTML5_INPUT) {
+        $inputType = ArrayHelper::getValue($config, 'inputType', self::INPUT_TEXT);
+        return $this->_form->field($this->model, $attr, $fieldConfig)->$input($inputType, $options);
+    }
+        
         return $this->_form->field($this->model, $attr, $fieldConfig)->$input($options);
     }
 
