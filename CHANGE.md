@@ -4,6 +4,8 @@ version 1.5.0
 
 - (bug #23): Fix HTML5 Input type initialization.
 - Code formatting standards.
+- (bug #24): Fix undefined class constant 'self::INPUT_RADIO'.
+- (bug #25): Fix namespaces in use of Html and Config helpers.
 
 version 1.4.0
 =============
