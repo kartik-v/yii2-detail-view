@@ -16,6 +16,8 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
+use kartik\helpers\Html;
+use kartik\base\Config;
 
 /**
  * Enhances the Yii DetailView widget with various options to include Bootstrap
