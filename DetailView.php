@@ -16,6 +16,8 @@ use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
+use kartik\helpers\Html;
+use kartik\base\Config;
 
 /**
  * Enhances the Yii DetailView widget with various options to include Bootstrap
@@ -65,7 +67,8 @@ class DetailView extends \yii\widgets\DetailView
     /**
      * Edit input types
      */
-    // input types    const INPUT_RADIO = 'radio';
+    // input types    
+    const INPUT_RADIO = 'radio';
     const INPUT_LIST_BOX = 'listBox';
     const INPUT_DROPDOWN_LIST = 'dropDownList';
     const INPUT_CHECKBOX_LIST = 'checkboxList';
