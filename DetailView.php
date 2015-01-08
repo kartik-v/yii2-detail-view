@@ -546,7 +546,6 @@ class DetailView extends \yii\widgets\DetailView
      * Renders each form attribute
      *
      * @param array $config the attribute config
-     *
      * @return mixed
      * @throws \yii\base\InvalidConfigException
      */
@@ -600,7 +599,6 @@ class DetailView extends \yii\widgets\DetailView
      * Renders the buttons for a specific mode
      *
      * @param integer $mode
-     *
      * @return string the buttons content
      */
     protected function renderButtons($mode = 1)
