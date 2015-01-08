@@ -65,7 +65,8 @@ class DetailView extends \yii\widgets\DetailView
     /**
      * Edit input types
      */
-    // input types    const INPUT_RADIO = 'radio';
+    // input types    
+    const INPUT_RADIO = 'radio';
     const INPUT_LIST_BOX = 'listBox';
     const INPUT_DROPDOWN_LIST = 'dropDownList';
     const INPUT_CHECKBOX_LIST = 'checkboxList';
