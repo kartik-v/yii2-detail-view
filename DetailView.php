@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014
- * @version 1.5.0
+ * @version   1.5.0
  */
 
 namespace kartik\detail;
@@ -425,9 +425,7 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
-     * Initialization for i18n translations
-     *
-     * @return void
+     * @inheritdoc
      */
     public function initI18N()
     {
@@ -443,10 +441,7 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
-     * Renders the detail view.
-     * This is the main entry of the whole detail view rendering.
-     *
-     * @return string
+     * @inheritdoc
      */
     public function run()
     {
