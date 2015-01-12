@@ -1,6 +1,6 @@
 version 1.5.0
 =============
-**Date:** 07-Jan-2015
+**Date:** 12-Jan-2015
 
 - (bug #23): Fix HTML5 Input type initialization.
 - (bug #24): Fix undefined class constant 'self::INPUT_RADIO'.
