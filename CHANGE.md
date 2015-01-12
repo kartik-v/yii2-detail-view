@@ -3,9 +3,10 @@ version 1.5.0
 **Date:** 07-Jan-2015
 
 - (bug #23): Fix HTML5 Input type initialization.
-- Code formatting updates as per Yii2 standards.
 - (bug #24): Fix undefined class constant 'self::INPUT_RADIO'.
 - (bug #25): Fix namespaces in use of Html and Config helpers.
+- Code formatting updates as per Yii2 standards.
+- Revamp to use new Krajee base TranslationTrait.
 
 version 1.4.0
 =============

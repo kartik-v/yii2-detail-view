@@ -31,6 +31,8 @@ use kartik\helpers\Html;
  */
 class DetailView extends \yii\widgets\DetailView
 {
+    use \kartik\base\TranslationTrait;
+
     /**
      * Detail View Modes
      */
@@ -346,9 +348,14 @@ class DetailView extends \yii\widgets\DetailView
     public $container = [];
 
     /**
-     * @var array the the internalization configuration for this module
+     * @var array the the internalization configuration for this widget
      */
     public $i18n = [];
+
+    /**
+     * @var string translation message file category name for i18n
+     */
+    protected $_msgCat = 'kvdetail';
 
     /**
      * @var ActiveForm the form instance
@@ -356,33 +363,8 @@ class DetailView extends \yii\widgets\DetailView
     protected $_form;
 
     /**
-     * Check if attribute name is valid
-     *
-     * @param mixed $attribute the attribute name
-     * @throws \yii\base\InvalidConfigException
+     * @inheritdoc
      */
-    protected static function validateAttribute($attribute)
-    {
-        if (is_array($attribute) && !empty($attribute['updateAttr'])) {
-            $attrib = $attribute['updateAttr'];
-            if (ctype_alnum(str_replace('_', '', $attrib))) {
-                return;
-            } else {
-                throw new InvalidConfigException("The 'updateAttr' name '{$attrib}' is invalid.");
-            }
-        }
-        $attrib = is_string($attribute) ? $attribute :
-            (empty($attribute['attribute']) ? '' : $attribute['attribute']);
-        if (strpos($attrib, '.') > 0) {
-            throw new InvalidConfigException(
-                "The attribute '$attrib' is invalid. You cannot directly pass relational " .
-                "attributes in string format within '\kartik\widgets\DetailView'. Instead " .
-                "use the array format with 'attribute' property set to base field, and the " .
-                "'value' property returning the relational data."
-            );
-        }
-    }
-
     public function init()
     {
         foreach ($this->attributes as $attribute) {
@@ -425,19 +407,66 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
-     * @inheritdoc
+     * Check if attribute name is valid
+     *
+     * @param mixed $attribute the attribute name
+     *
+     * @throws \yii\base\InvalidConfigException
      */
-    public function initI18N()
+    protected static function validateAttribute($attribute)
     {
-        Yii::setAlias('@kvdetail', dirname(__FILE__));
-        if (empty($this->i18n)) {
-            $this->i18n = [
-                'class' => 'yii\i18n\PhpMessageSource',
-                'basePath' => '@kvdetail/messages',
-                'forceTranslation' => true
-            ];
+        if (is_array($attribute) && !empty($attribute['updateAttr'])) {
+            $attrib = $attribute['updateAttr'];
+            if (ctype_alnum(str_replace('_', '', $attrib))) {
+                return;
+            } else {
+                throw new InvalidConfigException("The 'updateAttr' name '{$attrib}' is invalid.");
+            }
         }
-        Yii::$app->i18n->translations['kvdetail'] = $this->i18n;
+        $attrib = is_string($attribute) ? $attribute :
+            (empty($attribute['attribute']) ? '' : $attribute['attribute']);
+        if (strpos($attrib, '.') > 0) {
+            throw new InvalidConfigException(
+                "The attribute '$attrib' is invalid. You cannot directly pass relational " .
+                "attributes in string format within '\kartik\widgets\DetailView'. Instead " .
+                "use the array format with 'attribute' property set to base field, and the " .
+                "'value' property returning the relational data."
+            );
+        }
+    }
+
+    /**
+     * Validates the display of correct attributes and buttons
+     * at initialization based on mode
+     *
+     * @return void
+     */
+    protected function validateDisplay()
+    {
+        $none = 'display:none';
+        if ($this->mode === self::MODE_EDIT) {
+            Html::addCssStyle($this->viewAttributeContainer, $none);
+            Html::addCssStyle($this->viewButtonsContainer, $none);
+        } else {
+            Html::addCssStyle($this->editAttributeContainer, $none);
+            Html::addCssStyle($this->editButtonsContainer, $none);
+        }
+    }
+
+    /**
+     * Register assets
+     */
+    protected function registerAssets()
+    {
+        $view = $this->getView();
+        DetailViewAsset::register($view);
+        $options = ['fadeDelay' => $this->fadeDelay];
+        if ($this->enableEditMode) {
+            $options['mode'] = $this->mode;
+            $view->registerJs(
+                'jQuery("#' . $this->container['id'] . '").kvDetailView(' . Json::encode($options) . ');'
+            );
+        }
     }
 
     /**
@@ -468,28 +497,29 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
-     * Validates the display of correct attributes and buttons
-     * at initialization based on mode
+     * Renders the main detail view widget
      *
-     * @return void
+     * @return string the detail view content
      */
-    protected function validateDisplay()
+    protected function renderDetailView()
     {
-        $none = 'display:none';
-        if ($this->mode === self::MODE_EDIT) {
-            Html::addCssStyle($this->viewAttributeContainer, $none);
-            Html::addCssStyle($this->viewButtonsContainer, $none);
-        } else {
-            Html::addCssStyle($this->editAttributeContainer, $none);
-            Html::addCssStyle($this->editButtonsContainer, $none);
+        $rows = [];
+        $i = 0;
+        foreach ($this->attributes as $attribute) {
+            $rows[] = $this->renderAttribute($attribute, $i++);
         }
+        $tag = ArrayHelper::remove($this->options, 'tag', 'table');
+        $output = Html::tag($tag, implode("\n", $rows), $this->options);
+        return ($this->bootstrap && $this->responsive) ?
+            '<div class="table-responsive">' . $output . '</div>' :
+            $output;
     }
 
     /**
      * Renders a single attribute.
      *
      * @param array $attribute the specification of the attribute to be rendered.
-     * @param int $index the zero-based index of the attribute in the [[attributes]] array
+     * @param int   $index the zero-based index of the attribute in the [[attributes]] array
      *
      * @return string the rendering result
      */
@@ -519,28 +549,10 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
-     * Renders the main detail view widget
-     *
-     * @return string the detail view content
-     */
-    protected function renderDetailView()
-    {
-        $rows = [];
-        $i = 0;
-        foreach ($this->attributes as $attribute) {
-            $rows[] = $this->renderAttribute($attribute, $i++);
-        }
-        $tag = ArrayHelper::remove($this->options, 'tag', 'table');
-        $output = Html::tag($tag, implode("\n", $rows), $this->options);
-        return ($this->bootstrap && $this->responsive) ?
-            '<div class="table-responsive">' . $output . '</div>' :
-            $output;
-    }
-
-    /**
      * Renders each form attribute
      *
      * @param array $config the attribute config
+     *
      * @return mixed
      * @throws \yii\base\InvalidConfigException
      */
@@ -591,26 +603,6 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
-     * Renders the buttons for a specific mode
-     *
-     * @param integer $mode
-     * @return string the buttons content
-     */
-    protected function renderButtons($mode = 1)
-    {
-        $buttons = "buttons{$mode}";
-        return strtr(
-            $this->$buttons,
-            [
-                '{view}' => $this->renderButton('view'),
-                '{update}' => $this->renderButton('update'),
-                '{delete}' => $this->renderButton('delete'),
-                '{save}' => $this->renderButton('save'),
-            ]
-        );
-    }
-
-    /**
      * Returns the bootstrap panel
      *
      * @param string $content
@@ -628,61 +620,31 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
-     * Register assets
-     */
-    protected function registerAssets()
-    {
-        $view = $this->getView();
-        DetailViewAsset::register($view);
-        $options = ['fadeDelay' => $this->fadeDelay];
-        if ($this->enableEditMode) {
-            $options['mode'] = $this->mode;
-            $view->registerJs(
-                'jQuery("#' . $this->container['id'] . '").kvDetailView(' . Json::encode($options) . ');'
-            );
-        }
-    }
-
-    /**
-     * Gets the default button
+     * Renders the buttons for a specific mode
      *
-     * @param string $type the button type
-     * @return string
+     * @param integer $mode
+     *
+     * @return string the buttons content
      */
-    protected function getDefaultButton($type, $label, $title, $options)
+    protected function renderButtons($mode = 1)
     {
-        $btnStyle = empty($this->panel['type']) ? self::TYPE_DEFAULT : $this->panel['type'];
-        $isEmpty = empty($options);
-        $label = ArrayHelper::remove($options, 'label', $label);
-        if (empty($options['class'])) {
-            $options['class'] = 'btn btn-xs btn-' . $btnStyle;
-        }
-        Html::addCssClass($options, 'kv-btn-' . $type);
-        $options = ArrayHelper::merge(['title' => Yii::t('kvdetail', $title)], $options);
-        if ($type !== 'delete' && $type !== 'save') {
-            $options['type'] = 'button';
-            return Html::button($label, $options);
-        } elseif ($type === 'delete') {
-            $url = ArrayHelper::remove($options, 'url', '#');
-            if ($isEmpty) {
-                $options = ArrayHelper::merge(
-                    [
-                        'data-method' => 'post',
-                        'data-confirm' => Yii::t('kvdetail', 'Are you sure you want to delete this item?')
-                    ],
-                    $options
-                );
-            }
-            return Html::a($label, $url, $options);
-        } else {
-            return Html::submitButton($label, $options);
-        }
+        $buttons = "buttons{$mode}";
+        return strtr(
+            $this->$buttons,
+            [
+                '{view}' => $this->renderButton('view'),
+                '{update}' => $this->renderButton('update'),
+                '{delete}' => $this->renderButton('delete'),
+                '{save}' => $this->renderButton('save'),
+            ]
+        );
     }
 
     /**
      * Renders a button
      *
      * @param string $type the button type
+     *
      * @return string
      */
     protected function renderButton($type)
@@ -721,6 +683,43 @@ class DetailView extends \yii\widgets\DetailView
                 'Save',
                 $this->saveOptions
             );
+        }
+    }
+
+    /**
+     * Gets the default button
+     *
+     * @param string $type the button type
+     *
+     * @return string
+     */
+    protected function getDefaultButton($type, $label, $title, $options)
+    {
+        $btnStyle = empty($this->panel['type']) ? self::TYPE_DEFAULT : $this->panel['type'];
+        $isEmpty = empty($options);
+        $label = ArrayHelper::remove($options, 'label', $label);
+        if (empty($options['class'])) {
+            $options['class'] = 'btn btn-xs btn-' . $btnStyle;
+        }
+        Html::addCssClass($options, 'kv-btn-' . $type);
+        $options = ArrayHelper::merge(['title' => Yii::t('kvdetail', $title)], $options);
+        if ($type !== 'delete' && $type !== 'save') {
+            $options['type'] = 'button';
+            return Html::button($label, $options);
+        } elseif ($type === 'delete') {
+            $url = ArrayHelper::remove($options, 'url', '#');
+            if ($isEmpty) {
+                $options = ArrayHelper::merge(
+                    [
+                        'data-method' => 'post',
+                        'data-confirm' => Yii::t('kvdetail', 'Are you sure you want to delete this item?')
+                    ],
+                    $options
+                );
+            }
+            return Html::a($label, $url, $options);
+        } else {
+            return Html::submitButton($label, $options);
         }
     }
 }
