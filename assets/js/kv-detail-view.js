@@ -2,7 +2,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014
- * @version   1.5.0
+ * @version   1.6.0
  *
  * Client extension for the yii2-detail-view extension 
  * 
@@ -34,30 +34,11 @@
                 self.setMode('view');
             });
         },
-        initSwitches: function ($switches, callback) {
-            if (!$switches.length) {
-                return;
-            }
-            callback();
-        },
         setMode: function (mode) {
             var self = this, t = self.fadeDelay;
-            var $switches = self.$formAttribs.find('input[data-krajee-bootstrapswitch]');
-            self.initSwitches($switches, function () {
-                $switches.each(function () {
-                    $(this).bootstrapSwitch('destroy');
-                });
-            });
             if (mode === 'edit') {
                 self.$attribs.fadeOut(t, function () {
-                    self.$formAttribs.fadeIn(t, function () {
-                        self.initSwitches($switches, function () {
-                            $switches.each(function () {
-                                var $el = $(this), data = window[$el.attr('data-krajee-bootstrapswitch')];
-                                $el.bootstrapSwitch(data);
-                            });
-                        });
-                    });
+                    self.$formAttribs.fadeIn(t);
                 });
                 self.$buttons1.fadeOut(t, function () {
                     self.$buttons2.fadeIn(t);

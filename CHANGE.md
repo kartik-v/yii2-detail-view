@@ -1,3 +1,9 @@
+version 1.6.0
+=============
+**Date:** 14-Jan-2015
+
+- (bug #28): Revert #20 Undo fix for switch inputs addressed now by plugin upgrade.
+
 version 1.5.0
 =============
 **Date:** 12-Jan-2015
