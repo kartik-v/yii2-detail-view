@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Message translations.
  *
@@ -18,9 +17,10 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'View' => 'Megtekintés',
-    'Update' => 'Módosítás',
+    'Cancel Changes' => '',
+    'Are you sure you want to delete this item?' => 'Biztosan törölni szeretné ezt az elemet?',
     'Delete' => 'Törlés',
     'Save' => 'Mentés',
-    'Are you sure you want to delete this item?' => 'Biztosan törölni szeretné ezt az elemet?',
+    'Update' => 'Módosítás',
+    'View' => 'Megtekintés',
 ];

@@ -1,16 +1,26 @@
 /*!
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014
- * @version   1.6.0
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2015
+ * @version   1.7.0
  *
  * Styles for yii2-detail-view extension 
  * 
  * Author: Kartik Visweswaran
- * Copyright: 2014, Kartik Visweswaran, Krajee.com
+ * Copyright: 2015, Kartik Visweswaran, Krajee.com
  * For more JQuery plugins visit http://plugins.krajee.com
  * For more Yii related demos visit http://demos.krajee.com
  */
 .kv-form-attribute .help-block {
     margin-bottom: -15px;
+}
+
+.kv-edit-mode .kv-edit-hidden,
+.kv-view-mode .kv-view-hidden {
+    display: none;
+}
+
+.kv-edit-mode .kv-view-hidden,
+.kv-view-mode .kv-edit-hidden {
+    display: table-row;
 }

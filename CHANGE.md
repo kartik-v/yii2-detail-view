@@ -1,3 +1,19 @@
+version 1.7.0
+=============
+**Date:** 17-Feb-2015
+
+- (enh #17): Ability to hide rows with empty elements.
+- (enh #18): Ability to group attributes.
+- (enh #32): Added new reset button for use in edit mode.
+- (enh #33): Added ability to configure rowOptions.
+- (enh #34): Ability to configure rowOptions, labelColOptions, and valueColOptions at attribute level.
+- (enh #35): Add support for HIDDEN INPUT.
+- (enh #36): Ability to selectively hide rows in Edit mode or View mode.
+- (enh #37): Add bootstrap tooltips support for button titles.
+- Set copyright year to current.
+
+> NOTE: The extension includes a BC Breaking change with v1.7.0. With this release, the `template` property of the yii core DetailView is not anymore supported. One can use `rowOptions`, `labelColOptions`, `valueColOptions` at the widget level or widget `attributes` level to configure advanced layout functions.
+
 version 1.6.0
 =============
 **Date:** 28-Jan-2015

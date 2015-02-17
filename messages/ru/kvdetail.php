@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Message translations.
  *
@@ -18,9 +17,10 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'View' => 'Просмотреть',
-    'Update' => 'Редактировать',
+    'Cancel Changes' => '',
+    'Are you sure you want to delete this item?' => 'Вы уверены, что хотите удалить этот элемент?',
     'Delete' => 'Удалить',
     'Save' => 'Сохранить',
-    'Are you sure you want to delete this item?' => 'Вы уверены, что хотите удалить этот элемент?',
+    'Update' => 'Редактировать',
+    'View' => 'Просмотреть',
 ];
