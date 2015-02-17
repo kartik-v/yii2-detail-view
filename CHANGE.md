@@ -11,6 +11,7 @@ version 1.7.0
 - (enh #36): Ability to selectively hide rows in Edit mode or View mode.
 - (enh #37): Add bootstrap tooltips support for button titles.
 - Set copyright year to current.
+- (enh #38): German translations updated.
 
 > NOTE: The extension includes a BC Breaking change with v1.7.0. With this release, the `template` property of the yii core DetailView is not anymore supported. One can use `rowOptions`, `labelColOptions`, `valueColOptions` at the widget level or widget `attributes` level to configure advanced layout functions.
 
