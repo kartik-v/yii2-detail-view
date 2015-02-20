@@ -276,11 +276,28 @@ class DetailView extends \yii\widgets\DetailView
      * @var array the panel settings. If this is set, the grid widget
      * will be embedded in a bootstrap panel. Applicable only if `bootstrap`
      * is `true`. The following array keys are supported:
-     * - `heading`: string, the panel heading. If not set, will not be displayed.
-     *   The buttons by default will be displayed at the right top corner.
+     * - `heading`: string | boolean, the panel heading title value. If set to false, 
+     *   the entire heading will be not displayed. Note that the `{title}` tag in the 
+     *   `headingOptions['template']` will be replaced with this value.
+     * - `headingOptions`: array, the HTML attributes for the panel heading. Defaults
+     *   to `['class'=>'panel-title']`. The following additional options are available:
+     *   - `tag`: string, the tag to render the heading. Defaults to `h3`.
+     *   - `template`: string, the template to render the heading. Defaults to `{buttons}{title}`,
+     *      where: 
+     *      - `{title}` will be replaced with the `heading` value, and 
+     *      -`{buttons}` will be replaced by the rendered buttons.
      * - `type`: string, the panel contextual type (one of the TYPE constants,
      *    if not set will default to `default` or `self::TYPE_DEFAULT`),
-     * - `footer`: string, the panel footer. If not set, will not be displayed.
+     * - `footer`: string | boolean, the panel footer title value. Defaults to `false`. If set to false, 
+     *   the entire footer will be not displayed. Note that the `{title}` tag in the 
+     *   `footerOptions['template']` will be replaced with this value.
+     * - `footerOptions`: array, the HTML attributes for the panel footer. Defaults
+     *   to `['class'=>'panel-title']`. The following additional options are available:
+     *   - `tag`: string, the tag to render the footer. Defaults to `h4`.
+     *   - `template`: string, the template to render the footer. Defaults to `{title}`,
+     *      where: 
+     *      - `{title}` will be replaced with the `footer`, and 
+     *      -`{buttons}` will be replaced by the rendered buttons.
      */
     public $panel = [];
 
@@ -292,6 +309,11 @@ class DetailView extends \yii\widgets\DetailView
      *    `buttons2`.
      */
     public $mainTemplate = "{detail}";
+    
+    /**
+     * @var array the options for the button toolbar container
+     */
+    public $buttonContainer = ['class'=>'pull-right'];
 
     /**
      * @var string the buttons to show when in view mode. The following
@@ -514,9 +536,7 @@ class DetailView extends \yii\widgets\DetailView
     public function run()
     {
         $output = $this->renderDetailView();
-        if (is_array($this->panel) && !empty($this->panel)
-            && $this->panel !== false
-        ) {
+        if (is_array($this->panel) && !empty($this->panel) && $this->panel !== false) {
             $output = $this->renderPanel($output);
         }
         $output = strtr(
@@ -525,13 +545,9 @@ class DetailView extends \yii\widgets\DetailView
         );
         Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
         Html::addCssClass($this->editButtonsContainer, 'kv-buttons-2');
-        echo strtr(
-            $output,
-            [
-                '{buttons}' => Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer) .
-                    Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer)
-            ]
-        );
+        $buttons = Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer) .
+                    Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer);
+        echo str_replace('{buttons}', Html::tag('div', $buttons, $this->buttonContainer), $output);
         ActiveForm::end();
     }
 
@@ -664,10 +680,34 @@ class DetailView extends \yii\widgets\DetailView
     {
         $panel = $this->panel;
         $type = ArrayHelper::remove($panel, 'type', self::TYPE_DEFAULT);
-        $panel['heading'] = '<div class="pull-right">{buttons}</div>' .
-            ArrayHelper::getValue($panel, 'heading', '');
+        if (($heading = $this->renderPanelTitleBar('heading')) !== false) {
+            $panel['heading'] = $heading;
+        }
+        if (($footer = $this->renderPanelTitleBar('footer')) !== false) {
+            $panel['footer'] = $footer;
+        }
         $panel['preBody'] = $content;
         return Html::panel($panel, $type);
+    }
+
+    /**
+     * Renders the panel title bar
+     *
+     * @param string $type whether 'heading' or 'footer'
+     * @return string | boolean
+     */
+    protected function renderPanelTitleBar($type)
+    {
+        $title = ArrayHelper::getValue($this->panel, $type, ($type === 'heading' ? '' : false));
+        if ($title === false) {
+            return false;
+        }
+        $tag = ArrayHelper::remove($options, 'tag', ($type === 'heading' ? 'h3' : 'h4'));
+        $template = ArrayHelper::remove($options, 'template', ($type === 'heading' ? '{buttons}{title}' : '{title}'));
+        $options = ArrayHelper::getValue($this->panel, $type . 'Options', []);
+        Html::addCssClass($options, 'panel-title');
+        $title = Html::tag($tag, $title, $options);
+        return str_replace('{title}', $title, $template);
     }
 
     /**
