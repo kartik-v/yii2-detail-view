@@ -501,6 +501,10 @@ class DetailView extends \yii\widgets\DetailView
     protected function validateDisplay()
     {
         $none = 'display:none';
+        if(sizeof($this->model->getErrors())>0)
+        {
+        	$this->mode = self::MODE_EDIT;
+        }
         if ($this->mode === self::MODE_EDIT) {
             Html::addCssClass($this->container, 'kv-edit-mode');
             Html::addCssStyle($this->viewAttributeContainer, $none);
