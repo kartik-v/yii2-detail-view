@@ -1,6 +1,6 @@
 version 1.7.0
 =============
-**Date:** 17-Feb-2015
+**Date:** 02-Mar-2015
 
 - (enh #17): Ability to hide rows with empty elements.
 - (enh #18): Ability to group attributes.
@@ -24,6 +24,9 @@ version 1.7.0
     - New property `{buttonContainer}` at widget level to set button toolbar options.
 
 > NOTE: The extension includes a BC Breaking change with v1.7.0. With this release, the `template` property of the yii core DetailView is not anymore supported. One can use `rowOptions`, `labelColOptions`, `valueColOptions` at the widget level or widget `attributes` level to configure advanced layout functions.
+
+- (enh #41): Auto set to edit mode when model has validation errors.
+- (enh #42): Improve validation to retrieve the right translation messages folder.
 
 version 1.6.0
 =============

@@ -447,7 +447,7 @@ class DetailView extends \yii\widgets\DetailView
         if (empty($this->container['id'])) {
             $this->container['id'] = $this->getId();
         }
-        $this->initI18N();
+        $this->initI18N(__DIR__);
         $this->template = Html::beginTag('tr', $this->rowOptions) . "\n" .
             Html::beginTag('th', $this->labelColOptions) . "\n{label}</th>\n" .
             Html::beginTag('td', $this->valueColOptions) . "\n{label}</td>\n" .
@@ -501,6 +501,9 @@ class DetailView extends \yii\widgets\DetailView
     protected function validateDisplay()
     {
         $none = 'display:none';
+        if (count($this->model->getErrors()) > 0) {
+            $this->mode = self::MODE_EDIT;
+        }
         if ($this->mode === self::MODE_EDIT) {
             Html::addCssClass($this->container, 'kv-edit-mode');
             Html::addCssStyle($this->viewAttributeContainer, $none);
