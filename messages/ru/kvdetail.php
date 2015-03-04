@@ -17,8 +17,8 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Cancel Changes' => '',
     'Are you sure you want to delete this item?' => 'Вы уверены, что хотите удалить этот элемент?',
+    'Cancel Changes' => 'Отменить изменения',
     'Delete' => 'Удалить',
     'Save' => 'Сохранить',
     'Update' => 'Редактировать',
