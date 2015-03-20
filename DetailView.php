@@ -4,13 +4,14 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2015
- * @version   1.7.0
+ * @version   1.7.1
  */
 
 namespace kartik\detail;
 
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\bootstrap\Alert;
 use yii\bootstrap\ButtonDropdown;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
@@ -31,6 +32,7 @@ use kartik\helpers\Html;
  */
 class DetailView extends \yii\widgets\DetailView
 {
+    use \kartik\base\WidgetTrait;
     use \kartik\base\TranslationTrait;
 
     /**
@@ -152,6 +154,44 @@ class DetailView extends \yii\widgets\DetailView
      * @var array the HTML attributes for the value column
      */
     public $valueColOptions = [];
+
+    /**
+     * @var array the HTML attributes for the alert block container which will display 
+     * any alert messages received on update or delete of record. 
+     * This will not be displayed if there are no alert messages.
+     */
+    public $alertContainerOptions = [];
+    
+    /**
+     * @var array the widget settings for each bootstrap alert displayed in the alert container block.
+     * The CSS class in `options` within this will be auto derived and appended.
+     * - For `update` error messages will be displayed if you have set messages using
+     *   Yii::$app->session->setFlash. The CSS class for the error block will be 
+     *   auto-derived based on flash message type using `alertMessageSettings`.
+     * - For `delete` this will be displayed based on the ajax response. The ajax response
+     *   should be an object that contain the following:
+     *   - success: `boolean`, whether the ajax delete is successful.
+     *   - messages: `array|object`,the list of messages to display as key value pairs.
+     *     The key must be one of the message keys in the `alertMessageSettings`, and the 
+     *     value must be the message content to be displayed.
+     */
+    public $alertWidgetOptions = [];
+    
+    /**
+     * @var array the flash message settings which will be set as $key => $value, where
+     * - `$key`: flash message key e.g. `error`, `success`. 
+     * - `$value`: CSS class for the flash message e.g. `alert alert-danger`, `alert alert-success`.
+     * This defaults to the following setting:
+     * ```
+     *  [
+     *      'kv-detail-error' => 'alert alert-danger',
+     *      'kv-detail-success' => 'alert alert-success',
+     *      'kv-detail-info' => 'alert alert-info',
+     *      'kv-detail-warning' => 'alert alert-warning'
+     *  ]
+     * ```
+     */
+    public $alertMessageSettings = [];
 
     /**
      * @var array the HTML attributes for the detail view table
@@ -388,6 +428,13 @@ class DetailView extends \yii\widgets\DetailView
      * - `label`: the delete button label. This will not be HTML encoded.
      *    Defaults to '<span class="glyphicon glyphicon-trash"></span>'.
      * - `url`: the delete button url. If not set will default to `#`.
+     * - `params`: array, the parameters to be passed via ajax which you must set as key value pairs. This 
+     *    will be automatically json encoded, so you can set JsExpression or callback
+     * - `ajaxSettings`: array, the ajax settings if you choose to override the delete ajax settings.
+     *   @see http://api.jquery.com/jquery.ajax/
+     * - `confirm': string, the confirmation message before triggering delete. Defaults to 
+     *    Yii::t('kvdetail', 'Are you sure you want to delete this item?')
+     * - `showErrorStack`: boolean, whether to show the complete error stack.
      */
     public $deleteOptions = [];
 
@@ -408,11 +455,36 @@ class DetailView extends \yii\widgets\DetailView
      * @var array the the internalization configuration for this widget
      */
     public $i18n = [];
+    
+    /**
+     * @var array the `kvDetailView` plugin options
+     */
+    public $pluginOptions = [];
 
     /**
      * @var string translation message file category name for i18n
      */
     protected $_msgCat = 'kvdetail';
+
+    /**
+     * @var string the name of the jQuery plugin
+     */
+    protected $_pluginName = 'kvDetailView';
+
+    /**
+     * @var string the hashed global variable name storing the pluginOptions
+     */
+    protected $_hashVar;
+
+    /**
+     * @var string the element's HTML5 data variable name storing the pluginOptions
+     */
+    protected $_dataVar;
+
+    /**
+     * @var string the Json encoded options
+     */
+    protected $_encOptions = '';
 
     /**
      * @var ActiveForm the form instance
@@ -452,12 +524,42 @@ class DetailView extends \yii\widgets\DetailView
             Html::beginTag('th', $this->labelColOptions) . "\n{label}</th>\n" .
             Html::beginTag('td', $this->valueColOptions) . "\n{label}</td>\n" .
             "</tr>";
-        Html::addCssClass($this->formOptions, 'kv-detail-view-form');
         $this->formOptions['fieldConfig']['template'] = "{input}\n{hint}\n{error}";
         $this->_form = ActiveForm::begin($this->formOptions);
+        Html::addCssClass($this->alertContainerOptions, 'panel-body kv-alert-container');
+        $this->alertMessageSettings += [
+            'kv-detail-error' => 'alert alert-danger',
+            'kv-detail-success' => 'alert alert-success',
+            'kv-detail-info' => 'alert alert-info',
+            'kv-detail-warning' => 'alert alert-warning'
+        ];
         $this->registerAssets();
     }
 
+    /**
+     * Initializes and renders alert container block
+     */
+    protected function renderAlertBlock() 
+    {
+        $session = Yii::$app->session;
+        $flashes = $session->getAllFlashes();
+        if (count($flashes) === 0) {
+            Html::addCssStyle($this->alertContainerOptions, 'display:none;');
+        } 
+        $out = Html::beginTag('div', $this->alertContainerOptions);
+        foreach ($flashes as $type => $message) {
+            $class = ArrayHelper::getValue($this->alertMessageSettings, $type, 'alert alert-' . $type);
+            $options = ArrayHelper::getValue($this->alertWidgetOptions, 'options', []);
+            Html::addCssClass($options, $class);
+            $this->alertWidgetOptions['body'] = $message;
+            $this->alertWidgetOptions['options'] = $options;
+            $out .= "\n" . Alert::widget($this->alertWidgetOptions);
+            $session->removeFlash($type);
+        }
+        $out .= "\n</div>";
+        return $out;
+    }
+    
     /**
      * Validate and parse attributes
      *
@@ -522,12 +624,37 @@ class DetailView extends \yii\widgets\DetailView
     {
         $view = $this->getView();
         DetailViewAsset::register($view);
-        $options = ['fadeDelay' => $this->fadeDelay];
+        if (empty($this->alertWidgetOptions['closeButton'])) {
+            $button = '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+        } else {
+            $opts = $this->alertWidgetOptions['closeButton'];
+            $tag = ArrayHelper::remove($opts, 'tag', 'button');
+            $label = ArrayHelper::remove($opts, 'label', '&times;');
+            if ($tag === 'button' && !isset($opts['type'])) {
+                $opts['type'] = 'button';
+            }
+            $button = Html::tag($tag, $label, $opts);
+        }
+        $opts = ArrayHelper::getValue($this->alertWidgetOptions, 'options', []);
+        if (!empty($opts['class'])) {
+            $opts['class'] .= ' {class} fade in';
+        } else {
+            $opts['class'] = '{class} fade in';
+        }
+        $this->pluginOptions = [
+            'fadeDelay' => $this->fadeDelay,
+            'alertTemplate' => Html::tag('div', $button . '{content}', $opts),
+            'alertMessageSettings' => $this->alertMessageSettings,
+            'deleteParams' => ArrayHelper::getValue($this->deleteOptions, 'params', []),
+            'deleteAjaxSettings' => ArrayHelper::getValue($this->deleteOptions, 'ajaxSettings', []),
+            'deleteConfirm' => ArrayHelper::remove($this->deleteOptions, 'confirm', Yii::t('kvdetail', 'Are you sure you want to delete this item?')),
+            'showErrorStack' => ArrayHelper::remove($this->deleteOptions, 'showErrorStack', false)
+        ];
         $id = 'jQuery("#' . $this->container['id'] . '")';
         if ($this->enableEditMode) {
             $options['mode'] = $this->mode;
-            $view->registerJs($id . '.kvDetailView(' . Json::encode($options) . ');');
         }
+        $this->registerPlugin($this->_pluginName, $id);
         if ($this->tooltips) {
             $view->registerJs($id . '.find("[data-toggle=tooltip]").tooltip();');
         }
@@ -569,8 +696,8 @@ class DetailView extends \yii\widgets\DetailView
         $tag = ArrayHelper::remove($this->options, 'tag', 'table');
         $output = Html::tag($tag, implode("\n", $rows), $this->options);
         return ($this->bootstrap && $this->responsive) ?
-            '<div class="table-responsive">' . $output . '</div>' :
-            $output;
+            '<div class="table-responsive kv-detail-view">' . $output . '</div>' :
+            '<div class="kv-detail-view">' . $output . '</div>';
     }
 
     /**
@@ -689,7 +816,7 @@ class DetailView extends \yii\widgets\DetailView
         if (($footer = $this->renderPanelTitleBar('footer')) !== false) {
             $panel['footer'] = $footer;
         }
-        $panel['preBody'] = $content;
+        $panel['preBody'] = $this->renderAlertBlock() . "\n" . $content;
         return Html::panel($panel, $type);
     }
 
@@ -777,7 +904,6 @@ class DetailView extends \yii\widgets\DetailView
         $buttonOptions = $type . 'Options';
         $options = $this->$buttonOptions;
         $btnStyle = empty($this->panel['type']) ? self::TYPE_DEFAULT : $this->panel['type'];
-        $isEmpty = empty($options);
         $label = ArrayHelper::remove($options, 'label', "<i class='glyphicon glyphicon-{$icon}'></i>");
         if (empty($options['class'])) {
             $options['class'] = 'btn btn-xs btn-' . $btnStyle;
@@ -793,15 +919,6 @@ class DetailView extends \yii\widgets\DetailView
             return Html::submitButton($label, $options);
         } elseif ($type === 'delete') {
             $url = ArrayHelper::remove($options, 'url', '#');
-            if ($isEmpty) {
-                $options = ArrayHelper::merge(
-                    [
-                        'data-method' => 'post',
-                        'data-confirm' => Yii::t('kvdetail', 'Are you sure you want to delete this item?')
-                    ],
-                    $options
-                );
-            }
             return Html::a($label, $url, $options);
         } else {
             $options['type'] = 'button';

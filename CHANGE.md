@@ -1,3 +1,39 @@
+version 1.7.1
+=============
+**Date:** 20-Mar-2015
+
+- Use `\kartik\base\WidgetTrait` to initialize krajee plugin.
+- (enh #43): Russian translations updated.
+- (enh #47): Delete functionality enhancements.
+    - Ability to trigger ajax based delete by default
+    - The `deleteOptions` property takes in the following properties
+        - `url`
+        - `label`
+        - `params`: the parameters to pass to ajax based response as key value pairs
+        - `confirm`: confirmation alert message
+        - `ajaxSettings`: the complete ajax configuration to override or append to if needed
+- (enh #48): New enhanced alert embedding functionality.
+    - New alert container that will be automatically displayed in a `panel-body` above the DetailView.
+    - One can use this to show alerts after update (via Yii session flashes) or after delete via ajax response.New properties:
+        - `alertContainerOptions`: _array_, the HTML attributes for the alert block container which will display any alert messages received on update or delete of record.  This will not be displayed if there are no alert messages.
+        - `alertWidgetOptions`: _array_, the widget settings for each bootstrap alert displayed in the alert container block. The CSS class in `options` within this will be auto derived and appended.
+            - For `update` error messages will be displayed if you have set messages using Yii::$app->session->setFlash. The CSS class for the error block will be auto-derived based on flash message type using `alertMessageSettings`.
+            - For `delete` this will be displayed based on the ajax response. The ajax response
+          should be an object that contain the following:
+              - success: _boolean_, whether the ajax delete is successful.
+              - messages: _array_, the list of messages to display as key value pairs. The key must be one of the message keys in the `alertMessageSettings`, and the value must be the message content to be displayed.
+        - `alertMessageSettings`: The session flash or alert message type and its corresponding CSS class. Defaults to:
+```php
+[
+    'kv-detail-error' => 'alert alert-danger',
+    'kv-detail-success' => 'alert alert-success',
+    'kv-detail-info' => 'alert alert-info',
+    'kv-detail-warning' => 'alert alert-warning'
+]
+```    
+- (enh #49):  New loading indicator styling enhancements.
+
+
 version 1.7.0
 =============
 **Date:** 02-Mar-2015
