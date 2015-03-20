@@ -57,6 +57,7 @@
             var self = this, $alert = self.$element.find('.kv-alert-container'), 
                 $detail = self.$element.find('.kv-detail-view');
             self.$btnSave.on('click', function () {
+                $alert.hide();
                 $detail.removeClass('kv-detail-loading').addClass('kv-detail-loading');
             });
             self.$btnUpdate.on('click', function () {
@@ -78,10 +79,11 @@
                     data: params,
                     url: $el.attr('href'),
                     beforeSend: function() {
-                        self.$element.removeClass('kv-detail-loading').addClass('kv-detail-loading');
+                        $alert.html('').hide();
+                        $detail.removeClass('kv-detail-loading').addClass('kv-detail-loading');
                     },
                     success: function (data) {
-                        self.$element.removeClass('kv-detail-loading');
+                        $detail.removeClass('kv-detail-loading');
                         if (data.success) {
                             $detail.hide();
                             self.$btnDelete.attr('disabled', 'disabled');
@@ -102,7 +104,7 @@
                             msg = msg.length ? '<pre>' +  msg + '</pre>' : '';
                         }
                         msg = self.alert('kv-detail-error', err + msg);
-                        self.$element.removeClass('kv-detail-loading');
+                        $detail.removeClass('kv-detail-loading');
                         $alert.html(msg).hide().fadeIn('slow');
                         self.initAlert();
                     }

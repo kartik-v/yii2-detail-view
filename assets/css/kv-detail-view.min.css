@@ -10,4 +10,4 @@
  * Copyright: 2014 - 2015, Kartik Visweswaran, Krajee.com
  * For more JQuery plugins visit http://plugins.krajee.com
  * For more Yii related demos visit http://demos.krajee.com
- */.kv-form-attribute .help-block{margin-bottom:-15px}.kv-edit-mode .kv-edit-hidden,.kv-view-mode .kv-view-hidden{display:none}.kv-edit-mode .kv-view-hidden,.kv-view-mode .kv-edit-hidden{display:table-row}.kv-detail-loading{opacity:.3;background:#fff url(../img/loading.gif) top 55px right 20px no-repeat}.kv-detail-loading *{background:transparent!important}.kv-detail-loading td{border-color:#efefef!important}.kv-edit-mode .kv-detail-view{overflow-y:hidden}
+ */.kv-form-attribute .help-block{margin-bottom:-15px}.kv-edit-mode .kv-edit-hidden,.kv-view-mode .kv-view-hidden{display:none}.kv-edit-mode .kv-view-hidden,.kv-view-mode .kv-edit-hidden{display:table-row}.kv-detail-loading{opacity:.3;background:#fff url(../img/loading.gif) top 15px right 15px no-repeat}.kv-detail-loading *{background:transparent!important}.kv-detail-loading td{border-color:#efefef!important}.kv-edit-mode .kv-detail-view{overflow-y:hidden}

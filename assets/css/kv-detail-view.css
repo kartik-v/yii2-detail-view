@@ -27,7 +27,7 @@
 
 .kv-detail-loading {
     opacity: 0.3;
-    background: #ffffff url('../img/loading.gif') top 55px right 20px no-repeat;
+    background: #ffffff url('../img/loading.gif') top 15px right 15px no-repeat;
 }
 
 .kv-detail-loading  * {
