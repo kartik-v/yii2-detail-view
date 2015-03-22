@@ -67,8 +67,8 @@
                 self.setMode('view');
             });
             self.$btnDelete.on('click', function (ev) {
-                var $el = $(this), params = self.deleteParams, settings = self.deleteAjaxSettings,
-                    confirmMsg = self.deleteConfirm;
+            var $el = $(this), params = self.deleteParams, confirmMsg = self.deleteConfirm,
+                settings = self.deleteAjaxSettings || {};
                 ev.preventDefault();
                 if  (confirmMsg && !confirm(confirmMsg)) {
                     return;
@@ -83,7 +83,6 @@
                         $detail.removeClass('kv-detail-loading').addClass('kv-detail-loading');
                     },
                     success: function (data) {
-                        $detail.removeClass('kv-detail-loading');
                         if (data.success) {
                             $detail.hide();
                             self.$btnDelete.attr('disabled', 'disabled');
@@ -94,8 +93,10 @@
                         $.each(data.messages, function(key, msg) {
                             $alert.append(self.alert(key, msg));
                         });
-                        $alert.hide().fadeIn('slow');
-                        self.initAlert();
+                        $alert.hide().fadeIn('slow', function() {
+                            $detail.removeClass('kv-detail-loading'); 
+                            self.initAlert();                           
+                        });
                     },
                     error: function(xhr, txt, err) {
                         var msg = '';

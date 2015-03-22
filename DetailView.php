@@ -101,6 +101,8 @@ class DetailView extends \yii\widgets\DetailView
     const INPUT_SLIDER = '\kartik\slider\Slider';
     const INPUT_MONEY = '\kartik\money\MaskMoney';
     const INPUT_CHECKBOX_X = '\kartik\checkbox\CheckboxX';
+
+    // inputs list
     private static $_inputsList = [
         self::INPUT_HIDDEN => 'hiddenInput',
         self::INPUT_TEXT => 'textInput',
@@ -116,25 +118,31 @@ class DetailView extends \yii\widgets\DetailView
         self::INPUT_FILE => 'fileInput',
         self::INPUT_WIDGET => 'widget',
     ];
+    
+    // dropdown inputs
     private static $_dropDownInputs = [
         self::INPUT_LIST_BOX => 'listBox',
         self::INPUT_DROPDOWN_LIST => 'dropDownList',
         self::INPUT_CHECKBOX_LIST => 'checkboxList',
         self::INPUT_RADIO_LIST => 'radioList',
     ];
+
     /**
      * @var string the mode for the Detail View when its initialized
      */
     public $mode = self::MODE_VIEW;
+
     /**
      * @var integer the fade animation delay in microseconds when
      * toggling between the view and edit modes.
      */
     public $fadeDelay = 800;
+
     /**
      * @var string the horizontal alignment for the label column
      */
     public $hAlign = self::ALIGN_RIGHT;
+
     /**
      * @var string the vertical alignment for the label column
      */
@@ -520,10 +528,6 @@ class DetailView extends \yii\widgets\DetailView
             $this->container['id'] = $this->getId();
         }
         $this->initI18N(__DIR__);
-        $this->template = Html::beginTag('tr', $this->rowOptions) . "\n" .
-            Html::beginTag('th', $this->labelColOptions) . "\n{label}</th>\n" .
-            Html::beginTag('td', $this->valueColOptions) . "\n{label}</td>\n" .
-            "</tr>";
         $this->formOptions['fieldConfig']['template'] = "{input}\n{hint}\n{error}";
         $this->_form = ActiveForm::begin($this->formOptions);
         Html::addCssClass($this->alertContainerOptions, 'panel-body kv-alert-container');
