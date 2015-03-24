@@ -33,6 +33,7 @@ version 1.7.1
 ```    
 - (enh #49): New loading indicator styling enhancements.
 - (enh #51): Add `inputContainer` to control HTML options and ability to use bootstrap grid column classes.
+- (enh #52): Enhance form loading and record delete CSS progress states.
 
 version 1.7.0
 =============
