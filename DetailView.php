@@ -306,8 +306,9 @@ class DetailView extends \yii\widgets\DetailView
      *   checkboxList & radioList
      * - inputType: string, the HTML 5 input type if `type` is set to
      *   [[DetailView::::INPUT_HTML 5]].
-     * - inputWidth: string, the width of the container holding the input,
-     *   should be appended along with the width unit (`px` or `%`)
+     * - inputContainer: array, HTML attributes for the input container
+     * - inputWidth: string, the width of the container holding the input, should be appended
+     *   along with the width unit (`px` or `%`) - this property is deprecated since v1.7.1
      * - fieldConfig: array, optional, the Active field configuration.
      * - options: array, optional, the HTML attributes for the input.
      * - updateAttr: string, optional, the name of the attribute to be updated,
@@ -541,6 +542,27 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
+     * @inheritdoc
+     */
+    public function run()
+    {
+        $output = $this->renderDetailView();
+        if (is_array($this->panel) && !empty($this->panel) && $this->panel !== false) {
+            $output = $this->renderPanel($output);
+        }
+        $output = strtr(
+            $this->mainTemplate,
+            ['{detail}' => Html::tag('div', $output, $this->container)]
+        );
+        Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
+        Html::addCssClass($this->editButtonsContainer, 'kv-buttons-2');
+        $buttons = Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer) .
+                    Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer);
+        echo str_replace('{buttons}', Html::tag('div', $buttons, $this->buttonContainer), $output);
+        ActiveForm::end();
+    }
+
+    /**
      * Initializes and renders alert container block
      */
     protected function renderAlertBlock() 
@@ -622,70 +644,6 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
-     * Register assets
-     */
-    protected function registerAssets()
-    {
-        $view = $this->getView();
-        DetailViewAsset::register($view);
-        if (empty($this->alertWidgetOptions['closeButton'])) {
-            $button = '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-        } else {
-            $opts = $this->alertWidgetOptions['closeButton'];
-            $tag = ArrayHelper::remove($opts, 'tag', 'button');
-            $label = ArrayHelper::remove($opts, 'label', '&times;');
-            if ($tag === 'button' && !isset($opts['type'])) {
-                $opts['type'] = 'button';
-            }
-            $button = Html::tag($tag, $label, $opts);
-        }
-        $opts = ArrayHelper::getValue($this->alertWidgetOptions, 'options', []);
-        if (!empty($opts['class'])) {
-            $opts['class'] .= ' {class} fade in';
-        } else {
-            $opts['class'] = '{class} fade in';
-        }
-        $this->pluginOptions = [
-            'fadeDelay' => $this->fadeDelay,
-            'alertTemplate' => Html::tag('div', $button . '{content}', $opts),
-            'alertMessageSettings' => $this->alertMessageSettings,
-            'deleteParams' => ArrayHelper::getValue($this->deleteOptions, 'params', []),
-            'deleteAjaxSettings' => ArrayHelper::getValue($this->deleteOptions, 'ajaxSettings', []),
-            'deleteConfirm' => ArrayHelper::remove($this->deleteOptions, 'confirm', Yii::t('kvdetail', 'Are you sure you want to delete this item?')),
-            'showErrorStack' => ArrayHelper::remove($this->deleteOptions, 'showErrorStack', false)
-        ];
-        $id = 'jQuery("#' . $this->container['id'] . '")';
-        if ($this->enableEditMode) {
-            $options['mode'] = $this->mode;
-        }
-        $this->registerPlugin($this->_pluginName, $id);
-        if ($this->tooltips) {
-            $view->registerJs($id . '.find("[data-toggle=tooltip]").tooltip();');
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function run()
-    {
-        $output = $this->renderDetailView();
-        if (is_array($this->panel) && !empty($this->panel) && $this->panel !== false) {
-            $output = $this->renderPanel($output);
-        }
-        $output = strtr(
-            $this->mainTemplate,
-            ['{detail}' => Html::tag('div', $output, $this->container)]
-        );
-        Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
-        Html::addCssClass($this->editButtonsContainer, 'kv-buttons-2');
-        $buttons = Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer) .
-                    Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer);
-        echo str_replace('{buttons}', Html::tag('div', $buttons, $this->buttonContainer), $output);
-        ActiveForm::end();
-    }
-
-    /**
      * Renders the main detail view widget
      *
      * @return string the detail view content
@@ -747,6 +705,29 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
+     * Checks if a bootstrap grid column class has been added to the container
+     *
+     * @param array $container
+     * @return boolean
+     */
+    protected static function hasGridCol($container = [])
+    {
+        $css =  ArrayHelper::getValue($container, 'class', '');
+        if (empty(trim($css))) {
+            return false;
+        }
+        $classes = explode(' ', $css);
+        if (!empty($classes)) {
+            foreach ($classes as $class) {
+                if (substr(trim($class), 0, 4) === 'col-') {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Renders each form attribute
      *
      * @param array $config the attribute config
@@ -763,10 +744,16 @@ class DetailView extends \yii\widgets\DetailView
         $input = ArrayHelper::getValue($config, 'type', self::INPUT_TEXT);
         $fieldConfig = ArrayHelper::getValue($config, 'fieldConfig', []);
         $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
+        $container = ArrayHelper::getValue($config, 'inputContainer', []);
         if ($inputWidth != '') {
-            $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
-            $fieldConfig['template'] = "<div style='width:{$inputWidth};'>{$template}</div>";
+            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.1
         }
+        $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
+        $row = Html::tag('div', $template, $container);
+        if (static::hasGridCol($container)) {
+            $row = '<div class="row">' . $row . '</div>';
+        }
+        $fieldConfig['template'] = $row;
         if (substr($input, 0, 8) == "\\kartik\\") {
             Config::validateInputWidget($input, 'as an input widget for DetailView edit mode');
         } elseif ($input !== self::INPUT_WIDGET && !in_array($input, self::$_inputsList)) {
@@ -928,5 +915,48 @@ class DetailView extends \yii\widgets\DetailView
             $options['type'] = 'button';
             return Html::button($label, $options);
         } 
+    }
+
+    /**
+     * Register assets
+     */
+    protected function registerAssets()
+    {
+        $view = $this->getView();
+        DetailViewAsset::register($view);
+        if (empty($this->alertWidgetOptions['closeButton'])) {
+            $button = '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+        } else {
+            $opts = $this->alertWidgetOptions['closeButton'];
+            $tag = ArrayHelper::remove($opts, 'tag', 'button');
+            $label = ArrayHelper::remove($opts, 'label', '&times;');
+            if ($tag === 'button' && !isset($opts['type'])) {
+                $opts['type'] = 'button';
+            }
+            $button = Html::tag($tag, $label, $opts);
+        }
+        $opts = ArrayHelper::getValue($this->alertWidgetOptions, 'options', []);
+        if (!empty($opts['class'])) {
+            $opts['class'] .= ' {class} fade in';
+        } else {
+            $opts['class'] = '{class} fade in';
+        }
+        $this->pluginOptions = [
+            'fadeDelay' => $this->fadeDelay,
+            'alertTemplate' => Html::tag('div', $button . '{content}', $opts),
+            'alertMessageSettings' => $this->alertMessageSettings,
+            'deleteParams' => ArrayHelper::getValue($this->deleteOptions, 'params', []),
+            'deleteAjaxSettings' => ArrayHelper::getValue($this->deleteOptions, 'ajaxSettings', []),
+            'deleteConfirm' => ArrayHelper::remove($this->deleteOptions, 'confirm', Yii::t('kvdetail', 'Are you sure you want to delete this item?')),
+            'showErrorStack' => ArrayHelper::remove($this->deleteOptions, 'showErrorStack', false)
+        ];
+        $id = 'jQuery("#' . $this->container['id'] . '")';
+        if ($this->enableEditMode) {
+            $options['mode'] = $this->mode;
+        }
+        $this->registerPlugin($this->_pluginName, $id);
+        if ($this->tooltips) {
+            $view->registerJs($id . '.find("[data-toggle=tooltip]").tooltip();');
+        }
     }
 }

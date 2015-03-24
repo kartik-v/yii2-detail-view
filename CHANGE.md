@@ -31,8 +31,8 @@ version 1.7.1
     'kv-detail-warning' => 'alert alert-warning'
 ]
 ```    
-- (enh #49):  New loading indicator styling enhancements.
-
+- (enh #49): New loading indicator styling enhancements.
+- (enh #51): Add `inputContainer` to control HTML options and ability to use bootstrap grid column classes.
 
 version 1.7.0
 =============
