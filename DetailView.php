@@ -712,8 +712,10 @@ class DetailView extends \yii\widgets\DetailView
      */
     protected static function hasGridCol($container = [])
     {
-        $css =  ArrayHelper::getValue($container, 'class', '');
-        if (empty(trim($css))) {
+        $css = ArrayHelper::getValue($container, 'class', '');
+        $css = trim($css);
+        $css = preg_replace('/\s+/', ' ', $css);
+        if (empty($css)) {
             return false;
         }
         $classes = explode(' ', $css);

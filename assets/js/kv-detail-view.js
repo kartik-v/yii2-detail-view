@@ -56,6 +56,11 @@
         listen: function () {
             var self = this, $alert = self.$element.find('.kv-alert-container'), 
                 $detail = self.$element.find('.kv-detail-view');
+            $detail.closest('form').on('afterValidate', function (event, messages) {
+                if (messages !== undefined) {
+                    $detail.removeClass('kv-detail-loading');
+                }
+            });
             self.$btnSave.on('click', function () {
                 $alert.hide();
                 $detail.removeClass('kv-detail-loading').addClass('kv-detail-loading');
