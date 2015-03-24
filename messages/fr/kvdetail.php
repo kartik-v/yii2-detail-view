@@ -17,10 +17,10 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Are you sure you want to delete this item?' => '',
-    'Cancel Changes' => '',
-    'Delete' => '',
-    'Save' => '',
-    'Update' => '',
-    'View' => '',
+    'Are you sure you want to delete this item?' => 'Etes-vous certain de vouloir supprimer cet élément?',
+    'Cancel Changes' => 'Annuler',
+    'Delete' => 'Supprimer',
+    'Save' => 'Enregistrer',
+    'Update' => 'Editer',
+    'View' => 'Voir',
 ];
