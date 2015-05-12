@@ -905,6 +905,7 @@ class DetailView extends \yii\widgets\DetailView
         $options = ArrayHelper::merge(['title' => $title], $options);
         if ($this->tooltips) {
             $options['data-toggle'] = 'tooltip';
+            $options['data-container'] = 'body';
         }
         if ($type === 'reset') {
             return Html::resetButton($label, $options);
