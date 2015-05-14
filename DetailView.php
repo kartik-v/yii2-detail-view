@@ -825,9 +825,9 @@ class DetailView extends \yii\widgets\DetailView
         if ($title === false) {
             return false;
         }
+        $options = ArrayHelper::getValue($this->panel, $type . 'Options', []);
         $tag = ArrayHelper::remove($options, 'tag', ($type === 'heading' ? 'h3' : 'h4'));
         $template = ArrayHelper::remove($options, 'template', ($type === 'heading' ? '{buttons}{title}' : '{title}'));
-        $options = ArrayHelper::getValue($this->panel, $type . 'Options', []);
         Html::addCssClass($options, 'panel-title');
         $title = Html::tag($tag, $title, $options);
         return str_replace('{title}', $title, $template);

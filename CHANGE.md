@@ -1,6 +1,6 @@
 version 1.7.1
 =============
-**Date:** 20-Mar-2015
+**Date:** 14-May-2015
 
 - Use `\kartik\base\WidgetTrait` to initialize krajee plugin.
 - (enh #43): Russian translations updated.
@@ -35,6 +35,7 @@ version 1.7.1
 - (enh #51): Add `inputContainer` to control HTML options and ability to use bootstrap grid column classes.
 - (enh #52): Enhance form loading and record delete CSS progress states.
 - (enh #53): Added French Translations.
+- (bug #59): Fix parsing of panel headingOptions and footerOptions.
 
 version 1.7.0
 =============
