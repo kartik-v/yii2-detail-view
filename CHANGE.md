@@ -1,6 +1,6 @@
 version 1.7.1
 =============
-**Date:** 14-May-2015
+**Date:** 22-May-2015
 
 - Use `\kartik\base\WidgetTrait` to initialize krajee plugin.
 - (enh #43): Russian translations updated.
@@ -18,8 +18,7 @@ version 1.7.1
         - `alertContainerOptions`: _array_, the HTML attributes for the alert block container which will display any alert messages received on update or delete of record.  This will not be displayed if there are no alert messages.
         - `alertWidgetOptions`: _array_, the widget settings for each bootstrap alert displayed in the alert container block. The CSS class in `options` within this will be auto derived and appended.
             - For `update` error messages will be displayed if you have set messages using Yii::$app->session->setFlash. The CSS class for the error block will be auto-derived based on flash message type using `alertMessageSettings`.
-            - For `delete` this will be displayed based on the ajax response. The ajax response
-          should be an object that contain the following:
+            - For `delete` this will be displayed based on the ajax response. The ajax response should be an object that contain the following:
               - success: _boolean_, whether the ajax delete is successful.
               - messages: _array_, the list of messages to display as key value pairs. The key must be one of the message keys in the `alertMessageSettings`, and the value must be the message content to be displayed.
         - `alertMessageSettings`: The session flash or alert message type and its corresponding CSS class. Defaults to:
