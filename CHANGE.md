@@ -1,3 +1,9 @@
+version 1.7.2
+=============
+**Date:** 06-Jun-2015
+
+- (enh #60): Add Czech translations.
+
 version 1.7.1
 =============
 **Date:** 22-May-2015
