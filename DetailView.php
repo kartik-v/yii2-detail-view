@@ -742,6 +742,7 @@ class DetailView extends \yii\widgets\DetailView
         if (empty($config['attribute'])) {
             return '';
         }
+        $model = ArrayHelper::getValue($config, 'model',$this->model);
         $attr = ArrayHelper::getValue($config, 'updateAttr', $config['attribute']);
         $input = ArrayHelper::getValue($config, 'type', self::INPUT_TEXT);
         $fieldConfig = ArrayHelper::getValue($config, 'fieldConfig', []);
@@ -771,25 +772,25 @@ class DetailView extends \yii\widgets\DetailView
         }
         if (Config::isInputWidget($input)) {
             $class = $input;
-            return $this->_form->field($this->model, $attr, $fieldConfig)->widget($class, $widgetOptions);
+            return $this->_form->field($model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }
         if ($input === self::INPUT_WIDGET) {
             if ($class == '') {
                 throw new InvalidConfigException("Widget class not defined in 'widgetOptions' for {$input}'.");
             }
-            return $this->_form->field($this->model, $attr, $fieldConfig)->widget($class, $widgetOptions);
+            return $this->_form->field($model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }
         if (in_array($input, self::$_dropDownInputs)) {
             $items = ArrayHelper::getValue($config, 'items', []);
-            return $this->_form->field($this->model, $attr, $fieldConfig)->$input($items, $options);
+            return $this->_form->field($model, $attr, $fieldConfig)->$input($items, $options);
         }
 
         if ($input == self::INPUT_HTML5_INPUT) {
             $inputType = ArrayHelper::getValue($config, 'inputType', self::INPUT_TEXT);
-            return $this->_form->field($this->model, $attr, $fieldConfig)->$input($inputType, $options);
+            return $this->_form->field($model, $attr, $fieldConfig)->$input($inputType, $options);
         }
 
-        return $this->_form->field($this->model, $attr, $fieldConfig)->$input($options);
+        return $this->_form->field($model, $attr, $fieldConfig)->$input($options);
     }
 
     /**
