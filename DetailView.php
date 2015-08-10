@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2015
- * @version   1.7.1
+ * @version   1.7.2
  */
 
 namespace kartik\detail;
@@ -12,14 +12,13 @@ namespace kartik\detail;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\bootstrap\Alert;
-use yii\bootstrap\ButtonDropdown;
+use yii\base\Model;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
-use yii\helpers\Url;
-use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
 use kartik\base\Config;
 use kartik\helpers\Html;
+use kartik\base\WidgetTrait;
+use kartik\base\TranslationTrait;
 
 /**
  * Enhances the Yii DetailView widget with various options to include Bootstrap
@@ -32,8 +31,8 @@ use kartik\helpers\Html;
  */
 class DetailView extends \yii\widgets\DetailView
 {
-    use \kartik\base\WidgetTrait;
-    use \kartik\base\TranslationTrait;
+    use WidgetTrait;
+    use TranslationTrait;
 
     /**
      * Detail View Modes
@@ -64,15 +63,14 @@ class DetailView extends \yii\widgets\DetailView
     const ALIGN_MIDDLE = 'middle';
     const ALIGN_BOTTOM = 'bottom';
 
-    const INPUT_TEXT = 'textInput';
-    const INPUT_PASSWORD = 'passwordInput';
-    const INPUT_TEXTAREA = 'textArea';
-    const INPUT_CHECKBOX = 'checkbox';
-
     /**
      * Edit input types
      */
     // input types
+    const INPUT_TEXT = 'textInput';
+    const INPUT_PASSWORD = 'passwordInput';
+    const INPUT_TEXTAREA = 'textArea';
+    const INPUT_CHECKBOX = 'checkbox';
     const INPUT_HIDDEN = 'hiddenInput';
     const INPUT_RADIO = 'radio';
     const INPUT_LIST_BOX = 'listBox';
@@ -118,7 +116,7 @@ class DetailView extends \yii\widgets\DetailView
         self::INPUT_FILE => 'fileInput',
         self::INPUT_WIDGET => 'widget',
     ];
-    
+
     // dropdown inputs
     private static $_dropDownInputs = [
         self::INPUT_LIST_BOX => 'listBox',
@@ -164,30 +162,35 @@ class DetailView extends \yii\widgets\DetailView
     public $valueColOptions = [];
 
     /**
-     * @var array the HTML attributes for the alert block container which will display 
-     * any alert messages received on update or delete of record. 
+     * @var bool whether to hide all alerts. Defaults to `false`.
+     */
+    public $hideAlerts = false;
+
+    /**
+     * @var array the HTML attributes for the alert block container which will display
+     * any alert messages received on update or delete of record.
      * This will not be displayed if there are no alert messages.
      */
     public $alertContainerOptions = [];
-    
+
     /**
      * @var array the widget settings for each bootstrap alert displayed in the alert container block.
      * The CSS class in `options` within this will be auto derived and appended.
      * - For `update` error messages will be displayed if you have set messages using
-     *   Yii::$app->session->setFlash. The CSS class for the error block will be 
+     *   Yii::$app->session->setFlash. The CSS class for the error block will be
      *   auto-derived based on flash message type using `alertMessageSettings`.
      * - For `delete` this will be displayed based on the ajax response. The ajax response
      *   should be an object that contain the following:
      *   - success: `boolean`, whether the ajax delete is successful.
      *   - messages: `array|object`,the list of messages to display as key value pairs.
-     *     The key must be one of the message keys in the `alertMessageSettings`, and the 
+     *     The key must be one of the message keys in the `alertMessageSettings`, and the
      *     value must be the message content to be displayed.
      */
     public $alertWidgetOptions = [];
-    
+
     /**
      * @var array the flash message settings which will be set as $key => $value, where
-     * - `$key`: flash message key e.g. `error`, `success`. 
+     * - `$key`: flash message key e.g. `error`, `success`.
      * - `$value`: CSS class for the flash message e.g. `alert alert-danger`, `alert alert-success`.
      * This defaults to the following setting:
      * ```
@@ -240,7 +243,7 @@ class DetailView extends \yii\widgets\DetailView
      * Applicable only if `bootstrap` is `true`. Defaults to `false`.
      */
     public $hover = false;
-    
+
     /**
      * @var bool whether to enable edit mode for the detail view. Defaults to `true`.
      */
@@ -287,12 +290,16 @@ class DetailView extends \yii\widgets\DetailView
      *   attribute will NOT be displayed.
      *
      * Additional special settings are:
-     * - rowOptions: array, HTML attributes for the row (if not set, will default
-     *   to the `rowOptions` set at the widget level)
-     * - labelColOptions: array, HTML attributes for the label column (if not set, will default
-     *   to the `labelColOptions` set at the widget level)
-     * - valueColOptions: array, HTML attributes for the value column (if not set, will default
-     *   to the `valueColOptions` set at the widget level)
+     * - viewModel: Model, the model to be used for this attribute in VIEW mode. This will override
+     *   the `model` setting at the widget level. If not set, the widget `model` setting will be used.
+     * - editModel: Model, the model to be used for this attribute in EDIT mode. This will override
+     *   the `model` setting at the widget level. If not set, the widget `model` setting will be used.
+     * - rowOptions: array, HTML attributes for the row (if not set, this will be defaulted to the
+     *   `rowOptions` set at the widget level)
+     * - labelColOptions: array, HTML attributes for the label column (if not set, this will be
+     *   defaulted to the `labelColOptions` set at the widget level)
+     * - valueColOptions: array, HTML attributes for the value column (if not set, this will be
+     *   defaulted to `valueColOptions` set at the widget level)
      * - group: bool, whether to group the selection by merging the label and value into a single column.
      * - groupOptions: array, HTML attributes for the grouped/merged column when `group` is set to `true`.
      * - type: string, the input type for rendering the attribute in edit mode.
@@ -308,7 +315,7 @@ class DetailView extends \yii\widgets\DetailView
      *   [[DetailView::::INPUT_HTML 5]].
      * - inputContainer: array, HTML attributes for the input container
      * - inputWidth: string, the width of the container holding the input, should be appended
-     *   along with the width unit (`px` or `%`) - this property is deprecated since v1.7.1
+     *   along with the width unit (`px` or `%`) - this property is deprecated since v1.7.2
      * - fieldConfig: array, optional, the Active field configuration.
      * - options: array, optional, the HTML attributes for the input.
      * - updateAttr: string, optional, the name of the attribute to be updated,
@@ -325,27 +332,27 @@ class DetailView extends \yii\widgets\DetailView
      * @var array the panel settings. If this is set, the grid widget
      * will be embedded in a bootstrap panel. Applicable only if `bootstrap`
      * is `true`. The following array keys are supported:
-     * - `heading`: string | boolean, the panel heading title value. If set to false, 
-     *   the entire heading will be not displayed. Note that the `{title}` tag in the 
+     * - `heading`: string | boolean, the panel heading title value. If set to false,
+     *   the entire heading will be not displayed. Note that the `{title}` tag in the
      *   `headingOptions['template']` will be replaced with this value.
      * - `headingOptions`: array, the HTML attributes for the panel heading. Defaults
      *   to `['class'=>'panel-title']`. The following additional options are available:
      *   - `tag`: string, the tag to render the heading. Defaults to `h3`.
      *   - `template`: string, the template to render the heading. Defaults to `{buttons}{title}`,
-     *      where: 
-     *      - `{title}` will be replaced with the `heading` value, and 
+     *      where:
+     *      - `{title}` will be replaced with the `heading` value, and
      *      -`{buttons}` will be replaced by the rendered buttons.
      * - `type`: string, the panel contextual type (one of the TYPE constants,
      *    if not set will default to `default` or `self::TYPE_DEFAULT`),
-     * - `footer`: string | boolean, the panel footer title value. Defaults to `false`. If set to false, 
-     *   the entire footer will be not displayed. Note that the `{title}` tag in the 
+     * - `footer`: string | boolean, the panel footer title value. Defaults to `false`. If set to false,
+     *   the entire footer will be not displayed. Note that the `{title}` tag in the
      *   `footerOptions['template']` will be replaced with this value.
      * - `footerOptions`: array, the HTML attributes for the panel footer. Defaults
      *   to `['class'=>'panel-title']`. The following additional options are available:
      *   - `tag`: string, the tag to render the footer. Defaults to `h4`.
      *   - `template`: string, the template to render the footer. Defaults to `{title}`,
-     *      where: 
-     *      - `{title}` will be replaced with the `footer`, and 
+     *      where:
+     *      - `{title}` will be replaced with the `footer`, and
      *      -`{buttons}` will be replaced by the rendered buttons.
      */
     public $panel = [];
@@ -358,11 +365,11 @@ class DetailView extends \yii\widgets\DetailView
      *    `buttons2`.
      */
     public $mainTemplate = "{detail}";
-    
+
     /**
      * @var array the options for the button toolbar container
      */
-    public $buttonContainer = ['class'=>'pull-right'];
+    public $buttonContainer = ['class' => 'pull-right'];
 
     /**
      * @var string the buttons to show when in view mode. The following
@@ -437,11 +444,11 @@ class DetailView extends \yii\widgets\DetailView
      * - `label`: the delete button label. This will not be HTML encoded.
      *    Defaults to '<span class="glyphicon glyphicon-trash"></span>'.
      * - `url`: the delete button url. If not set will default to `#`.
-     * - `params`: array, the parameters to be passed via ajax which you must set as key value pairs. This 
+     * - `params`: array, the parameters to be passed via ajax which you must set as key value pairs. This
      *    will be automatically json encoded, so you can set JsExpression or callback
      * - `ajaxSettings`: array, the ajax settings if you choose to override the delete ajax settings.
-     *   @see http://api.jquery.com/jquery.ajax/
-     * - `confirm': string, the confirmation message before triggering delete. Defaults to 
+     * @see http://api.jquery.com/jquery.ajax/
+     * - `confirm': string, the confirmation message before triggering delete. Defaults to
      *    Yii::t('kvdetail', 'Are you sure you want to delete this item?')
      * - `showErrorStack`: boolean, whether to show the complete error stack.
      */
@@ -464,7 +471,7 @@ class DetailView extends \yii\widgets\DetailView
      * @var array the the internalization configuration for this widget
      */
     public $i18n = [];
-    
+
     /**
      * @var array the `kvDetailView` plugin options
      */
@@ -557,7 +564,7 @@ class DetailView extends \yii\widgets\DetailView
         Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
         Html::addCssClass($this->editButtonsContainer, 'kv-buttons-2');
         $buttons = Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer) .
-                    Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer);
+            Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer);
         echo str_replace('{buttons}', Html::tag('div', $buttons, $this->buttonContainer), $output);
         ActiveForm::end();
     }
@@ -565,13 +572,13 @@ class DetailView extends \yii\widgets\DetailView
     /**
      * Initializes and renders alert container block
      */
-    protected function renderAlertBlock() 
+    protected function renderAlertBlock()
     {
         $session = Yii::$app->session;
         $flashes = $session->getAllFlashes();
         if (count($flashes) === 0) {
             Html::addCssStyle($this->alertContainerOptions, 'display:none;');
-        } 
+        }
         $out = Html::beginTag('div', $this->alertContainerOptions);
         foreach ($flashes as $type => $message) {
             $class = ArrayHelper::getValue($this->alertMessageSettings, $type, 'alert alert-' . $type);
@@ -585,11 +592,9 @@ class DetailView extends \yii\widgets\DetailView
         $out .= "\n</div>";
         return $out;
     }
-    
+
     /**
      * Validate and parse attributes
-     *
-     * @param mixed $attribute the attribute name
      *
      * @throws \yii\base\InvalidConfigException
      */
@@ -599,6 +604,11 @@ class DetailView extends \yii\widgets\DetailView
             if (is_array($attribute) && ArrayHelper::getValue($attribute, 'group', false) === true) {
                 $this->attributes[$key]['value'] = '';
             }
+            if (!empty($attribute['viewModel']) && $attribute['viewModel'] instanceof Model &&
+                !empty($attribute['attribute']) && !array_key_exists('value', $attribute)
+            ) {
+                $attribute['value'] = ArrayHelper::getValue($attribute['viewModel'], $attribute['attribute']);
+            }
             if (is_array($attribute) && !empty($attribute['updateAttr'])) {
                 $attrib = $attribute['updateAttr'];
                 if (ctype_alnum(str_replace('_', '', $attrib))) {
@@ -607,17 +617,42 @@ class DetailView extends \yii\widgets\DetailView
                     throw new InvalidConfigException("The 'updateAttr' name '{$attrib}' is invalid.");
                 }
             }
-            $attrib = is_string($attribute) ? $attribute :
-                (empty($attribute['attribute']) ? '' : $attribute['attribute']);
-            if (strpos($attrib, '.') > 0) {
+            $attrib = is_string($attribute) ? $attribute : ArrayHelper::getValue($attribute, 'attribute', '');
+            if ($attrib && strpos($attrib, '.') !== false) {
                 throw new InvalidConfigException(
-                    "The attribute '$attrib' is invalid. You cannot directly pass relational " .
+                    "The attribute '{$attrib}' is invalid. You cannot directly pass relational " .
                     "attributes in string format within '\kartik\widgets\DetailView'. Instead " .
                     "use the array format with 'attribute' property set to base field, and the " .
-                    "'value' property returning the relational data."
+                    "'value' property returning the relational data. You can also override the " .
+                    "widget 'model' settings by setting the 'viewModel' and / or 'editModel' at ".
+                    "the attribute array level."
                 );
             }
         }
+    }
+
+    /**
+     * Check if model has editing errors
+     *
+     * @return boolean
+     */
+    protected function hasEditErrors()
+    {
+        if (count($this->model->getErrors()) > 0) {
+            return true;
+        }
+        foreach ($this->attributes as $attribute) {
+            /**
+             * @var Model $attribute ['editModel']
+             */
+            if (empty($attribute['editModel']) || !$attribute['editModel'] instanceof Model) {
+                continue;
+            }
+            if ($attribute['editModel']->getErrors() > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -629,7 +664,7 @@ class DetailView extends \yii\widgets\DetailView
     protected function validateDisplay()
     {
         $none = 'display:none';
-        if (count($this->model->getErrors()) > 0) {
+        if ($this->hasEditErrors()) {
             $this->mode = self::MODE_EDIT;
         }
         if ($this->mode === self::MODE_EDIT) {
@@ -694,20 +729,21 @@ class DetailView extends \yii\widgets\DetailView
         Html::addCssClass($this->editAttributeContainer, 'kv-form-attribute');
         $output = Html::tag('div', $dispAttr, $this->viewAttributeContainer) . "\n";
         if ($this->enableEditMode) {
-            $editInput = !empty($attribute['displayOnly']) && $attribute['displayOnly'] ? 
-                $dispAttr : 
+            $editInput = !empty($attribute['displayOnly']) && $attribute['displayOnly'] ?
+                $dispAttr :
                 $this->renderFormAttribute($attribute);
             $output .= Html::tag('div', $editInput, $this->editAttributeContainer);
         }
         return Html::beginTag('tr', $rowOptions) . "\n" .
-            Html::beginTag('th', $labelColOptions) . $attribute['label'] . "</th>\n" .
-            Html::beginTag('td', $valueColOptions) . $output . "</td>\n</tr>";
+        Html::beginTag('th', $labelColOptions) . $attribute['label'] . "</th>\n" .
+        Html::beginTag('td', $valueColOptions) . $output . "</td>\n</tr>";
     }
 
     /**
      * Checks if a bootstrap grid column class has been added to the container
      *
      * @param array $container
+     *
      * @return boolean
      */
     protected static function hasGridCol($container = [])
@@ -742,14 +778,17 @@ class DetailView extends \yii\widgets\DetailView
         if (empty($config['attribute'])) {
             return '';
         }
-        $model = ArrayHelper::getValue($config, 'model',$this->model);
+        $model = ArrayHelper::getValue($config, 'editModel', $this->model);
+        if (!$model instanceof Model) {
+            $model = $this->model;
+        }
         $attr = ArrayHelper::getValue($config, 'updateAttr', $config['attribute']);
         $input = ArrayHelper::getValue($config, 'type', self::INPUT_TEXT);
         $fieldConfig = ArrayHelper::getValue($config, 'fieldConfig', []);
         $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
         $container = ArrayHelper::getValue($config, 'inputContainer', []);
         if ($inputWidth != '') {
-            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.1
+            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.2
         }
         $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
         $row = Html::tag('div', $template, $container);
@@ -810,7 +849,8 @@ class DetailView extends \yii\widgets\DetailView
         if (($footer = $this->renderPanelTitleBar('footer')) !== false) {
             $panel['footer'] = $footer;
         }
-        $panel['preBody'] = $this->renderAlertBlock() . "\n" . $content;
+        $alertBlock = $this->hideAlerts ? '' : $this->renderAlertBlock() . "\n";
+        $panel['preBody'] = $alertBlock . $content;
         return Html::panel($panel, $type);
     }
 
@@ -818,6 +858,7 @@ class DetailView extends \yii\widgets\DetailView
      * Renders the panel title bar
      *
      * @param string $type whether 'heading' or 'footer'
+     *
      * @return string | boolean
      */
     protected function renderPanelTitleBar($type)
@@ -918,7 +959,7 @@ class DetailView extends \yii\widgets\DetailView
         } else {
             $options['type'] = 'button';
             return Html::button($label, $options);
-        } 
+        }
     }
 
     /**
@@ -945,13 +986,14 @@ class DetailView extends \yii\widgets\DetailView
         } else {
             $opts['class'] = '{class} fade in';
         }
+        $deleteConfirmMsg = Yii::t('kvdetail', 'Are you sure you want to delete this item?');
         $this->pluginOptions = [
             'fadeDelay' => $this->fadeDelay,
             'alertTemplate' => Html::tag('div', $button . '{content}', $opts),
             'alertMessageSettings' => $this->alertMessageSettings,
             'deleteParams' => ArrayHelper::getValue($this->deleteOptions, 'params', []),
             'deleteAjaxSettings' => ArrayHelper::getValue($this->deleteOptions, 'ajaxSettings', []),
-            'deleteConfirm' => ArrayHelper::remove($this->deleteOptions, 'confirm', Yii::t('kvdetail', 'Are you sure you want to delete this item?')),
+            'deleteConfirm' => ArrayHelper::remove($this->deleteOptions, 'confirm', $deleteConfirmMsg),
             'showErrorStack' => ArrayHelper::remove($this->deleteOptions, 'showErrorStack', false)
         ];
         $id = 'jQuery("#' . $this->container['id'] . '")';

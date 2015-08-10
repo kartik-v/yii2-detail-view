@@ -14,7 +14,7 @@ The widget by default can be styled within a Bootstrap 3 panel with a buttons to
 Refer [detailed documentation](http://demos.krajee.com/detail-view) and/or a [complete demo](http://demos.krajee.com/detail-view-demo).
 
 ### Latest Release
-The latest version of the extension is release v1.7.1. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of various releases.
+The latest version of the extension is release v1.7.2. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of various releases.
 
 > NOTE: The extension includes a BC Breaking change with v1.7.0. With this release, the `template` property of the yii core DetailView is not anymore supported. One can use `rowOptions`, `labelColOptions`, `valueColOptions` at the widget level or widget `attributes` level to configure advanced layout functions.
 
@@ -31,13 +31,13 @@ Read this [web tip /wiki](http://webtips.krajee.com/setting-composer-minimum-sta
 Either run
 
 ```
-$ php composer.phar require kartik-v/yii2-detail-view "dev-master"
+$ php composer.phar require kartik-v/yii2-detail-view "@dev"
 ```
 
 or add
 
 ```
-"kartik-v/yii2-detail-view": "dev-master"
+"kartik-v/yii2-detail-view": "@dev"
 ```
 
 to the ```require``` section of your `composer.json` file.
