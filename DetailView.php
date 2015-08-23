@@ -506,14 +506,17 @@ class DetailView extends \yii\widgets\DetailView
      * @var ActiveForm the form instance
      */
     protected $_form;
+    
+    /**
+     * @var array HTML attributes for child tables
+     */
+    protected $_childTableOptions = [];
 
     /**
      * @inheritdoc
      */
     public function init()
     {
-        $this->validateAttributes();
-        Html::addCssClass($this->options, 'detail-view');
         $this->validateDisplay();
         if ($this->bootstrap) {
             Html::addCssClass($this->options, 'table');
@@ -523,13 +526,16 @@ class DetailView extends \yii\widgets\DetailView
             if ($this->bordered) {
                 Html::addCssClass($this->options, 'table-bordered');
             }
-            if ($this->striped) {
-                Html::addCssClass($this->options, 'table-striped');
-            }
             if ($this->condensed) {
                 Html::addCssClass($this->options, 'table-condensed');
             }
+            $this->_childTableOptions = $this->options;
+            if ($this->striped) {
+                Html::addCssClass($this->options, 'table-striped');
+            }
         }
+        Html::addCssClass($this->_childTableOptions, 'kv-child-table');
+        Html::addCssClass($this->options, 'detail-view');
         Html::addCssStyle($this->labelColOptions, "text-align:{$this->hAlign};vertical-align:{$this->vAlign};");
         parent:: init();
         if (empty($this->container['id'])) {
@@ -594,44 +600,6 @@ class DetailView extends \yii\widgets\DetailView
     }
 
     /**
-     * Validate and parse attributes
-     *
-     * @throws \yii\base\InvalidConfigException
-     */
-    protected function validateAttributes()
-    {
-        foreach ($this->attributes as $key => $attribute) {
-            if (is_array($attribute) && ArrayHelper::getValue($attribute, 'group', false) === true) {
-                $this->attributes[$key]['value'] = '';
-            }
-            if (!empty($attribute['viewModel']) && $attribute['viewModel'] instanceof Model &&
-                !empty($attribute['attribute']) && !array_key_exists('value', $attribute)
-            ) {
-                $attribute['value'] = ArrayHelper::getValue($attribute['viewModel'], $attribute['attribute']);
-            }
-            if (is_array($attribute) && !empty($attribute['updateAttr'])) {
-                $attrib = $attribute['updateAttr'];
-                if (ctype_alnum(str_replace('_', '', $attrib))) {
-                    return;
-                } else {
-                    throw new InvalidConfigException("The 'updateAttr' name '{$attrib}' is invalid.");
-                }
-            }
-            $attrib = is_string($attribute) ? $attribute : ArrayHelper::getValue($attribute, 'attribute', '');
-            if ($attrib && strpos($attrib, '.') !== false) {
-                throw new InvalidConfigException(
-                    "The attribute '{$attrib}' is invalid. You cannot directly pass relational " .
-                    "attributes in string format within '\kartik\widgets\DetailView'. Instead " .
-                    "use the array format with 'attribute' property set to base field, and the " .
-                    "'value' property returning the relational data. You can also override the " .
-                    "widget 'model' settings by setting the 'viewModel' and / or 'editModel' at ".
-                    "the attribute array level."
-                );
-            }
-        }
-    }
-
-    /**
      * Check if model has editing errors
      *
      * @return boolean
@@ -688,7 +656,7 @@ class DetailView extends \yii\widgets\DetailView
         $rows = [];
         $i = 0;
         foreach ($this->attributes as $attribute) {
-            $rows[] = $this->renderAttribute($attribute, $i++);
+            $rows[] = $this->renderAttributeRow($attribute);
         }
         $tag = ArrayHelper::remove($this->options, 'tag', 'table');
         $output = Html::tag($tag, implode("\n", $rows), $this->options);
@@ -701,22 +669,55 @@ class DetailView extends \yii\widgets\DetailView
      * Renders a single attribute.
      *
      * @param array $attribute the specification of the attribute to be rendered.
-     * @param int   $index the zero-based index of the attribute in the [[attributes]] array
      *
      * @return string the rendering result
      */
-    protected function renderAttribute($attribute, $index)
+    protected function renderAttributeRow($attribute)
     {
+        $content = '';
         $rowOptions = ArrayHelper::getValue($attribute, 'rowOptions', $this->rowOptions);
+        if (isset($attribute['columns'])) {
+            Html::addCssClass($rowOptions, 'kv-child-table-row');
+            $content = '<td class="kv-child-table-cell" colspan=2><table class="kv-child-table"><tr>';
+            if (!empty($child['attribute'])) {
+                $childName = $child['attribute'];
+                if (!isset($child['label'])) {
+                    $child['label'] = $this->model instanceof Model ? 
+                        $this->model->getAttributeLabel($childName) : 
+                        Inflector::camel2words($childName, true);
+                }
+                if (!array_key_exists('value', $child)) {
+                    $child['value'] = ArrayHelper::getValue($this->model, $childName);
+                }
+            }
+            foreach ($attribute['columns'] as $child) {
+                $content .= $this->renderAttributeItem($child);
+            }
+            $content .= '</tr></table></td>';
+        } else {
+            $content = $this->renderAttributeItem($attribute);
+        }
+        return Html::tag('tr', $content, $rowOptions);
+    }
+
+    /**
+     * Renders a single attribute item combination.
+     *
+     * @param array $attribute the specification of the attribute to be rendered.
+     *
+     * @return string the rendering result
+     */    
+    protected function renderAttributeItem($attribute)
+    {
         $labelColOptions = ArrayHelper::getValue($attribute, 'labelColOptions', $this->labelColOptions);
         $valueColOptions = ArrayHelper::getValue($attribute, 'valueColOptions', $this->valueColOptions);
-        if (ArrayHelper::getValue($attribute, 'group', false) === true) {
+        if (ArrayHelper::getValue($attribute, 'group', false)) {
             $groupOptions = ArrayHelper::getValue($attribute, 'groupOptions', []);
             $label = ArrayHelper::getValue($attribute, 'label', '');
             if (empty($groupOptions['colspan'])) {
                 $groupOptions['colspan'] = 2;
             }
-            return Html::tag('tr', Html::tag('th', $label, $groupOptions), $rowOptions);
+            return Html::tag('th', $label, $groupOptions);
         }
         if ($this->hideIfEmpty === true && empty($attribute['value'])) {
             Html::addCssClass($rowOptions, 'kv-view-hidden');
@@ -734,9 +735,7 @@ class DetailView extends \yii\widgets\DetailView
                 $this->renderFormAttribute($attribute);
             $output .= Html::tag('div', $editInput, $this->editAttributeContainer);
         }
-        return Html::beginTag('tr', $rowOptions) . "\n" .
-        Html::beginTag('th', $labelColOptions) . $attribute['label'] . "</th>\n" .
-        Html::beginTag('td', $valueColOptions) . $output . "</td>\n</tr>";
+        return Html::tag('th', $attribute['label'], $labelColOptions) . "\n" . Html::tag('td', $output, $valueColOptions);
     }
 
     /**
@@ -1004,5 +1003,98 @@ class DetailView extends \yii\widgets\DetailView
         if ($this->tooltips) {
             $view->registerJs($id . '.find("[data-toggle=tooltip]").tooltip();');
         }
+    }
+    
+    /**
+     * Normalizes the attribute specifications.
+     * @throws InvalidConfigException
+     */
+    protected function normalizeAttributes()
+    {
+        if ($this->attributes === null) {
+            if ($this->model instanceof Model) {
+                $this->attributes = $this->model->attributes();
+            } elseif (is_object($this->model)) {
+                $this->attributes = $this->model instanceof Arrayable ? $this->model->toArray() : array_keys(get_object_vars($this->model));
+            } elseif (is_array($this->model)) {
+                $this->attributes = array_keys($this->model);
+            } else {
+                throw new InvalidConfigException('The "model" property must be either an array or an object.');
+            }
+            sort($this->attributes);
+        }
+        foreach ($this->attributes as $i => $attribute) {
+            $this->attributes[$i] = $this->parseAttributeItem($attribute);
+        }
+        // die('<pre>'.print_r($this->attributes, true) . '</pre>');
+    }
+    
+    /**
+     * Parses and returns the attribute
+     */
+    protected function parseAttributeItem($attribute)
+    {
+        if (is_string($attribute)) {
+            if (!preg_match('/^([\w\.]+)(:(\w*))?(:(.*))?$/', $attribute, $matches)) {
+                throw new InvalidConfigException('The attribute must be specified in the format of "attribute", "attribute:format" or "attribute:format:label"');
+            }
+            $attribute = [
+                'attribute' => $matches[1],
+                'format' => isset($matches[3]) ? $matches[3] : 'text',
+                'label' => isset($matches[5]) ? $matches[5] : null,
+            ];
+        }
+        if (!is_array($attribute)) {
+            throw new InvalidConfigException('The attribute configuration must be an array.');
+        }
+        if (isset($attribute['columns'])) {
+            foreach ($attribute['columns'] as $j => $child) {
+                $attribute['columns'][$j] = $this->parseAttributeItem($child);
+            }
+            return $attribute;
+        }
+        if (!empty($attribute['updateAttr'])) {
+            $attrib = $attribute['updateAttr'];
+            if (ctype_alnum(str_replace('_', '', $attrib))) {
+                return;
+            } else {
+                throw new InvalidConfigException("The 'updateAttr' name '{$attrib}' is invalid.");
+            }
+        }
+        $attrib = ArrayHelper::getValue($attribute, 'attribute', '');
+        if ($attrib && strpos($attrib, '.') !== false) {
+            throw new InvalidConfigException(
+                "The attribute '{$attrib}' is invalid. You cannot directly pass relational " .
+                "attributes in string format within '\kartik\widgets\DetailView'. Instead " .
+                "use the array format with 'attribute' property set to base field, and the " .
+                "'value' property returning the relational data. You can also override the " .
+                "widget 'model' settings by setting the 'viewModel' and / or 'editModel' at ".
+                "the attribute array level."
+            );
+        }
+        if (isset($attribute['visible']) && !$attribute['visible']) {
+            unset($this->attributes[$i]);
+            continue;
+        }
+        if (!isset($attribute['format'])) {
+            $attribute['format'] = 'text';
+        }
+        if (isset($attribute['attribute'])) {
+            $attributeName = $attribute['attribute'];
+            $model = !empty($attribute['viewModel']) && $attribute['viewModel'] instanceof Model ? $attribute['viewModel'] : $this->model;
+            if (!isset($attribute['label'])) {
+                $attribute['label'] = $model instanceof Model ? $model->getAttributeLabel($attributeName) : Inflector::camel2words($attributeName, true);
+            }
+            if (!array_key_exists('value', $attribute)) {
+                $attribute['value'] = ArrayHelper::getValue($model, $attributeName);
+            }
+        } elseif (!isset($attribute['label']) || !array_key_exists('value', $attribute)) {
+            if (ArrayHelper::getValue($attribute, 'group', false) || isset($attribute['columns'])) {
+                $attribute['value'] = '';
+                return $attribute;
+            }
+            throw new InvalidConfigException('The attribute configuration requires the "attribute" element to determine the value and display label.');
+        }
+        return $attribute;
     }
 }

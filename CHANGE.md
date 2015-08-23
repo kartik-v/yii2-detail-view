@@ -13,6 +13,7 @@ Change Log: `yii2-detail-view`
     - new `viewModel` and `editModel` properties at attributes level for each attribute
       which will override the `model` property at the widget level.
 - (enh #70): Add `hideAlerts` property to control display of alerts.
+- (enh #72): Enhancement to support children attributes and multi columnar layouts.
 
 ## Version 1.7.1
 
