@@ -3,7 +3,7 @@ Change Log: `yii2-detail-view`
 
 ## Version 1.7.2
 
-**Date:** 10-Aug-2015
+**Date:** 23-Aug-2015
 
 - (enh #60): Add Czech translations.
 - (enh #62): Add Spanish translations.

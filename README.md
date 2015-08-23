@@ -7,7 +7,7 @@ yii2-detail-view
 [![Monthly Downloads](https://poser.pugx.org/kartik-v/yii2-detail-view/d/monthly)](https://packagist.org/packages/kartik-v/yii2-detail-view)
 [![Daily Downloads](https://poser.pugx.org/kartik-v/yii2-detail-view/d/daily)](https://packagist.org/packages/kartik-v/yii2-detail-view)
 
-An extended Yii2 DetailView with many additional features. Extends the Yii DetailView to work in both VIEW and 
+An extended Yii2 DetailView with many additional features. Extends the Yii DetailView to support multi columnar rows and work in both VIEW and 
 EDIT modes. Accelerates your development by using a single configuration of attributes for both VIEW and EDIT. The extension also 
 includes easier methods to style your detail view widget cells, data, form inputs, widgets, and columns (more specifically for Bootstrap 3). 
 The widget by default can be styled within a Bootstrap 3 panel with a buttons toolbar to toggle modes and control your data.
