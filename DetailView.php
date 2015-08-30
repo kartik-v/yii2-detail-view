@@ -1032,9 +1032,10 @@ class DetailView extends \yii\widgets\DetailView
      * Parses and returns the attribute
      * @param string|array $attribute the attribute item configuration
      * @param int $i the zero-based index
+     * @param bool $child whether this is a child attribute
      * @return array the parsed attribute item configuration
      */
-    protected function parseAttributeItem($attribute, $i)
+    protected function parseAttributeItem($attribute, $i, $child = false)
     {
         if (is_string($attribute)) {
             if (!preg_match('/^([\w\.]+)(:(\w*))?(:(.*))?$/', $attribute, $matches)) {
@@ -1051,7 +1052,12 @@ class DetailView extends \yii\widgets\DetailView
         }
         if (isset($attribute['columns'])) {
             foreach ($attribute['columns'] as $j => $child) {
-                $attribute['columns'][$j] = $this->parseAttributeItem($child);
+                $attr = $this->parseAttributeItem($child, $j, true);
+                if (isset($attr['visible']) && !$attr['visible']) {
+                    unset($attribute['columns'][$j]);
+                    continue;
+                }
+                $attribute['columns'][$j] = $attr;
             }
             return $attribute;
         }
@@ -1074,7 +1080,7 @@ class DetailView extends \yii\widgets\DetailView
                 "the attribute array level."
             );
         }
-        if (isset($attribute['visible']) && !$attribute['visible']) {
+        if (isset($attribute['visible']) && !$attribute['visible'] && !$child) {
             unset($this->attributes[$i]);
             continue;
         }
