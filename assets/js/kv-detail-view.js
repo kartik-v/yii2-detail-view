@@ -2,7 +2,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2015
- * @version   1.7.2
+ * @version   1.7.3
  *
  * Client extension for the yii2-detail-view extension 
  * 
@@ -106,8 +106,8 @@
                     error: function(xhr, txt, err) {
                         var msg = '';
                         if (self.showErrorStack) {
-                            msg = $.trim($(xhr.responseText).text()).replace(/\n\s*\n/g, '\n').replace(/\</g, '&lt;');
-                            msg = msg.length ? '<pre>' +  msg + '</pre>' : '';
+                            msg = xhr.responseText ? $(xhr.responseText).text() : '';
+                            msg = msg && msg.length ? '<pre>' + $.trim(msg).replace(/\n\s*\n/g, '\n').replace(/\</g, '&lt;') + '</pre>' : '';
                         }
                         msg = self.alert('kv-detail-error', err + msg);
                         $detail.removeClass('kv-detail-loading');

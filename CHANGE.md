@@ -1,6 +1,14 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.7.3
+
+**Date:** 30-Aug-2015
+
+- (bug #73): Parse `visible` attribute setting.
+- (enh #76): Better parsing of xhr.responsetext.
+- (enh #77): Enhance default styling of toolbar buttons.
+
 ## Version 1.7.2
 
 **Date:** 23-Aug-2015

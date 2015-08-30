@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2015
- * @version   1.7.2
+ * @version   1.7.3
  */
 
 namespace kartik\detail;
@@ -315,7 +315,7 @@ class DetailView extends \yii\widgets\DetailView
      *   [[DetailView::::INPUT_HTML 5]].
      * - inputContainer: array, HTML attributes for the input container
      * - inputWidth: string, the width of the container holding the input, should be appended
-     *   along with the width unit (`px` or `%`) - this property is deprecated since v1.7.2
+     *   along with the width unit (`px` or `%`) - this property is deprecated since v1.7.3
      * - fieldConfig: array, optional, the Active field configuration.
      * - options: array, optional, the HTML attributes for the input.
      * - updateAttr: string, optional, the name of the attribute to be updated,
@@ -787,7 +787,7 @@ class DetailView extends \yii\widgets\DetailView
         $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
         $container = ArrayHelper::getValue($config, 'inputContainer', []);
         if ($inputWidth != '') {
-            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.2
+            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.3
         }
         $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
         $row = Html::tag('div', $template, $container);
@@ -937,10 +937,9 @@ class DetailView extends \yii\widgets\DetailView
     {
         $buttonOptions = $type . 'Options';
         $options = $this->$buttonOptions;
-        $btnStyle = empty($this->panel['type']) ? self::TYPE_DEFAULT : $this->panel['type'];
         $label = ArrayHelper::remove($options, 'label', "<i class='glyphicon glyphicon-{$icon}'></i>");
         if (empty($options['class'])) {
-            $options['class'] = 'btn btn-xs btn-' . $btnStyle;
+            $options['class'] = 'kv-action-btn';
         }
         Html::addCssClass($options, 'kv-btn-' . $type);
         $options = ArrayHelper::merge(['title' => $title], $options);
@@ -1024,15 +1023,18 @@ class DetailView extends \yii\widgets\DetailView
             sort($this->attributes);
         }
         foreach ($this->attributes as $i => $attribute) {
-            $this->attributes[$i] = $this->parseAttributeItem($attribute);
+            $this->attributes[$i] = $this->parseAttributeItem($attribute, $i);
         }
         // die('<pre>'.print_r($this->attributes, true) . '</pre>');
     }
     
     /**
      * Parses and returns the attribute
+     * @param string|array $attribute the attribute item configuration
+     * @param int $i the zero-based index
+     * @return array the parsed attribute item configuration
      */
-    protected function parseAttributeItem($attribute)
+    protected function parseAttributeItem($attribute, $i)
     {
         if (is_string($attribute)) {
             if (!preg_match('/^([\w\.]+)(:(\w*))?(:(.*))?$/', $attribute, $matches)) {

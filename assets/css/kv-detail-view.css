@@ -2,7 +2,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2015
- * @version   1.7.2
+ * @version   1.7.3
  *
  * Styles for yii2-detail-view extension 
  * 
@@ -75,4 +75,56 @@
 .kv-child-table-row th {
     border-left: 1px #ddd solid;
     border-right: 1px #ddd solid;
+}
+
+.kv-action-btn {
+    margin:0 2px;
+    padding:0 5px;
+    background:none;
+    border:none;
+    font-size: 16px;
+}
+
+.kv-action-btn:focus {
+    outline: 0;
+}
+
+.panel-primary .kv-action-btn {
+    color:#d9edf7;
+}
+
+.panel-primary .kv-action-btn:hover {
+    color:#c4e3f3;
+}
+
+.panel-info .kv-action-btn {
+    color:#31708f;
+}
+
+.panel-info .kv-action-btn:hover {
+    color:#245269;
+}
+
+.panel-warning .kv-action-btn {
+    color:#8a6d3b;
+}
+
+.panel-warning .kv-action-btn:hover {
+    color:#66512c;
+}
+
+.panel-danger .kv-action-btn {
+    color:#a94442;
+}
+
+.panel-danger .kv-action-btn:hover {
+    color:#843534;
+}
+
+.panel-success .kv-action-btn {
+    color:#3c763d;
+}
+
+.panel-success .kv-action-btn:hover {
+    color:#2b542c;
 }
