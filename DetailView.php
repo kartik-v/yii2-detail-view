@@ -955,6 +955,7 @@ class DetailView extends \yii\widgets\DetailView
         Html::addCssClass($options, 'kv-btn-' . $type);
         $options = ArrayHelper::merge(['title' => $title], $options);
         if ($this->tooltips) {
+            $view->registerAssetBundle('yii\bootstrap\BootstrapPluginAsset');
             $options['data-toggle'] = 'tooltip';
             $options['data-container'] = 'body';
         }
@@ -1093,7 +1094,6 @@ class DetailView extends \yii\widgets\DetailView
         }
         if (isset($attribute['visible']) && !$attribute['visible'] && !$child) {
             unset($this->attributes[$i]);
-            continue;
         }
         if (!isset($attribute['format'])) {
             $attribute['format'] = 'text';

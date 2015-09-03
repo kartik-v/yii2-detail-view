@@ -8,6 +8,7 @@ Change Log: `yii2-detail-view`
 - (bug #73): Parse `visible` attribute setting.
 - (enh #76): Better parsing of xhr.responsetext.
 - (enh #77): Enhance default styling of toolbar buttons.
+- (enh #78): Fix missing asset dependencies for tooltips.
 - (enh #80): Allow configuration of ActiveForm class.
 
 ## Version 1.7.2
