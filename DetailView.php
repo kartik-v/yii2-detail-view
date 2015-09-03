@@ -327,6 +327,11 @@ class DetailView extends \yii\widgets\DetailView
      * @var array the options for the ActiveForm that will be generated in edit mode.
      */
     public $formOptions = [];
+    
+    /**
+     * @var string the ActiveForm widget class
+     */
+    public $formClass = 'yii\widgets\ActiveForm';
 
     /**
      * @var array the panel settings. If this is set, the grid widget
@@ -517,6 +522,11 @@ class DetailView extends \yii\widgets\DetailView
      */
     public function init()
     {
+        $formClass = $this->formClass;
+        $activeForm = ActiveForm::classname();
+        if (!is_subclass_of($formClass, $activeForm) && $formClass !== $activeForm) {
+            throw new InvalidConfigException("Form class '{$formClass}' must exist and extend from '{$activeForm}'.");
+        }
         $this->validateDisplay();
         if ($this->bootstrap) {
             Html::addCssClass($this->options, 'table');
@@ -543,7 +553,7 @@ class DetailView extends \yii\widgets\DetailView
         }
         $this->initI18N(__DIR__);
         $this->formOptions['fieldConfig']['template'] = "{input}\n{hint}\n{error}";
-        $this->_form = ActiveForm::begin($this->formOptions);
+        $this->_form = $formClass::begin($this->formOptions);
         Html::addCssClass($this->alertContainerOptions, 'panel-body kv-alert-container');
         $this->alertMessageSettings += [
             'kv-detail-error' => 'alert alert-danger',
@@ -572,7 +582,8 @@ class DetailView extends \yii\widgets\DetailView
         $buttons = Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer) .
             Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer);
         echo str_replace('{buttons}', Html::tag('div', $buttons, $this->buttonContainer), $output);
-        ActiveForm::end();
+        $formClass = $this->formClass;
+        $formClass::end();
     }
 
     /**
