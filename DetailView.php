@@ -1011,6 +1011,7 @@ class DetailView extends \yii\widgets\DetailView
         }
         $this->registerPlugin($this->_pluginName, $id);
         if ($this->tooltips) {
+            $view->registerAssetBundle('yii\bootstrap\BootstrapPluginAsset');
             $view->registerJs($id . '.find("[data-toggle=tooltip]").tooltip();');
         }
     }
@@ -1093,7 +1094,6 @@ class DetailView extends \yii\widgets\DetailView
         }
         if (isset($attribute['visible']) && !$attribute['visible'] && !$child) {
             unset($this->attributes[$i]);
-            continue;
         }
         if (!isset($attribute['format'])) {
             $attribute['format'] = 'text';
