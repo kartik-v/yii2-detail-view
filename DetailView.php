@@ -17,7 +17,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\JsExpression;
-use yii\widgets\ActiveForm;
+use kartik\form\ActiveForm;
 use kartik\base\Config;
 use kartik\helpers\Html;
 
