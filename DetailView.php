@@ -516,6 +516,11 @@ class DetailView extends \yii\widgets\DetailView
      * @var array HTML attributes for child tables
      */
     protected $_childTableOptions = [];
+    
+    /**
+     * @var array HTML attributes for table row
+     */
+    protected $_rowOptions = [];
 
     /**
      * @inheritdoc
@@ -686,9 +691,9 @@ class DetailView extends \yii\widgets\DetailView
     protected function renderAttributeRow($attribute)
     {
         $content = '';
-        $rowOptions = ArrayHelper::getValue($attribute, 'rowOptions', $this->rowOptions);
+        $this->_rowOptions = ArrayHelper::getValue($attribute, 'rowOptions', $this->rowOptions);
         if (isset($attribute['columns'])) {
-            Html::addCssClass($rowOptions, 'kv-child-table-row');
+            Html::addCssClass($this->_rowOptions, 'kv-child-table-row');
             $content = '<td class="kv-child-table-cell" colspan=2><table class="kv-child-table"><tr>';
             if (!empty($child['attribute'])) {
                 $childName = $child['attribute'];
@@ -708,7 +713,7 @@ class DetailView extends \yii\widgets\DetailView
         } else {
             $content = $this->renderAttributeItem($attribute);
         }
-        return Html::tag('tr', $content, $rowOptions);
+        return Html::tag('tr', $content, $this->_rowOptions);
     }
 
     /**
@@ -731,10 +736,10 @@ class DetailView extends \yii\widgets\DetailView
             return Html::tag('th', $label, $groupOptions);
         }
         if ($this->hideIfEmpty === true && empty($attribute['value'])) {
-            Html::addCssClass($rowOptions, 'kv-view-hidden');
+            Html::addCssClass($this->_rowOptions, 'kv-view-hidden');
         }
         if (ArrayHelper::getValue($attribute, 'type', 'text') === self::INPUT_HIDDEN) {
-            Html::addCssClass($rowOptions, 'kv-edit-hidden');
+            Html::addCssClass($this->_rowOptions, 'kv-edit-hidden');
         }
         $dispAttr = $this->formatter->format($attribute['value'], $attribute['format']);
         Html::addCssClass($this->viewAttributeContainer, 'kv-attribute');
