@@ -527,12 +527,14 @@ class DetailView extends \yii\widgets\DetailView
      */
     public function init()
     {
-        $formClass = $this->formClass;
-        $activeForm = ActiveForm::classname();
-        if (!is_subclass_of($formClass, $activeForm) && $formClass !== $activeForm) {
-            throw new InvalidConfigException("Form class '{$formClass}' must exist and extend from '{$activeForm}'.");
+        if ($this->enableEditMode) {
+            $formClass = $this->formClass;
+            $activeForm = ActiveForm::classname();
+            if (!is_subclass_of($formClass, $activeForm) && $formClass !== $activeForm) {
+                throw new InvalidConfigException("Form class '{$formClass}' must exist and extend from '{$activeForm}'.");
+            }
+            $this->validateDisplay();
         }
-        $this->validateDisplay();
         if ($this->bootstrap) {
             Html::addCssClass($this->options, 'table');
             if ($this->hover) {
@@ -557,8 +559,10 @@ class DetailView extends \yii\widgets\DetailView
             $this->container['id'] = $this->getId();
         }
         $this->initI18N(__DIR__);
-        $this->formOptions['fieldConfig']['template'] = "{input}\n{hint}\n{error}";
-        $this->_form = $formClass::begin($this->formOptions);
+        if ($this->enableEditMode) {
+            $this->formOptions['fieldConfig']['template'] = "{input}\n{hint}\n{error}";
+            $this->_form = $formClass::begin($this->formOptions);
+        }
         Html::addCssClass($this->alertContainerOptions, 'panel-body kv-alert-container');
         $this->alertMessageSettings += [
             'kv-detail-error' => 'alert alert-danger',
@@ -583,12 +587,16 @@ class DetailView extends \yii\widgets\DetailView
             ['{detail}' => Html::tag('div', $output, $this->container)]
         );
         Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
-        Html::addCssClass($this->editButtonsContainer, 'kv-buttons-2');
-        $buttons = Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer) .
-            Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer);
+        $buttons = Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer);
+        if ($this->enableEditMode) {
+            Html::addCssClass($this->editButtonsContainer, 'kv-buttons-2');
+            $buttons .= Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer);
+        }   
         echo str_replace('{buttons}', Html::tag('div', $buttons, $this->buttonContainer), $output);
-        $formClass = $this->formClass;
-        $formClass::end();
+        if ($this->enableEditMode) {
+            $formClass = $this->formClass;
+            $formClass::end();
+        }
     }
 
     /**

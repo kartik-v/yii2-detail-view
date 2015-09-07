@@ -3,13 +3,16 @@ Change Log: `yii2-detail-view`
 
 ## Version 1.7.3
 
-**Date:** 03-Sep-2015
+**Date:** 07-Sep-2015
 
 - (bug #73): Parse `visible` attribute setting.
 - (enh #76): Better parsing of xhr.responsetext.
 - (enh #77): Enhance default styling of toolbar buttons.
 - (enh #78): Fix missing asset dependencies for tooltips.
 - (enh #80): Allow configuration of ActiveForm class.
+- (bug #81): Correct tooltip asset registration.
+- (bug #82, #83): Enhance `rowOptions` and `hideIfEmpty`.
+- (enh #84): Allow DetailView to be readonly without form for `enableEditMode = false`
 
 ## Version 1.7.2
 
