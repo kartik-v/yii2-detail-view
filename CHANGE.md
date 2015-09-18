@@ -1,6 +1,13 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.7.4
+
+**Date:** 18-Sep-2015
+
+- (bug #86): Fix Inflector class dependency.
+- (enh #87): Add ability to show values as not set when empty.
+
 ## Version 1.7.3
 
 **Date:** 13-Sep-2015

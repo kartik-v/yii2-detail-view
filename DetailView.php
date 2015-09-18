@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2015
- * @version   1.7.3
+ * @version   1.7.4
  */
 
 namespace kartik\detail;
@@ -14,6 +14,7 @@ use yii\base\InvalidConfigException;
 use yii\bootstrap\Alert;
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 use yii\widgets\ActiveForm;
 use kartik\base\Config;
 use kartik\helpers\Html;
@@ -167,6 +168,11 @@ class DetailView extends \yii\widgets\DetailView
     public $hideAlerts = false;
 
     /**
+     * @var bool whether to show values as not set if empty string
+     */
+    public $notSetIfEmpty = false;
+
+    /**
      * @var array the HTML attributes for the alert block container which will display
      * any alert messages received on update or delete of record.
      * This will not be displayed if there are no alert messages.
@@ -315,7 +321,7 @@ class DetailView extends \yii\widgets\DetailView
      *   [[DetailView::::INPUT_HTML 5]].
      * - inputContainer: array, HTML attributes for the input container
      * - inputWidth: string, the width of the container holding the input, should be appended
-     *   along with the width unit (`px` or `%`) - this property is deprecated since v1.7.3
+     *   along with the width unit (`px` or `%`) - this property is deprecated since v1.7.4
      * - fieldConfig: array, optional, the Active field configuration.
      * - options: array, optional, the HTML attributes for the input.
      * - updateAttr: string, optional, the name of the attribute to be updated,
@@ -749,8 +755,11 @@ class DetailView extends \yii\widgets\DetailView
         if (ArrayHelper::getValue($attribute, 'type', 'text') === self::INPUT_HIDDEN) {
             Html::addCssClass($this->_rowOptions, 'kv-edit-hidden');
         }
-        $dispAttr = $this->formatter->format($attribute['value'], $attribute['format']);
-        Html::addCssClass($this->viewAttributeContainer, 'kv-attribute');
+        $value = $attribute['value'];
+        if ($this->notSetIfEmpty && ($value === '' || $value === null)) {
+            $value = null;
+        }
+        $dispAttr = $this->formatter->format($value, $attribute['format']);        Html::addCssClass($this->viewAttributeContainer, 'kv-attribute');
         Html::addCssClass($this->editAttributeContainer, 'kv-form-attribute');
         $output = Html::tag('div', $dispAttr, $this->viewAttributeContainer) . "\n";
         if ($this->enableEditMode) {
@@ -811,7 +820,7 @@ class DetailView extends \yii\widgets\DetailView
         $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
         $container = ArrayHelper::getValue($config, 'inputContainer', []);
         if ($inputWidth != '') {
-            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.3
+            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.4
         }
         $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
         $row = Html::tag('div', $template, $container);
