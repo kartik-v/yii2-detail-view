@@ -52,7 +52,7 @@ echo DetailView::widget([
     'mode'=>DetailView::MODE_VIEW,
     'panel'=>[
         'heading'=>'Book # ' . $model->id,
-        'type'=>DetailView::PANEL_INFO,
+        'type'=>DetailView::TYPE_INFO,
     ],
     'attributes'=>[
         'code',
