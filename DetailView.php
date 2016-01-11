@@ -1058,6 +1058,9 @@ class DetailView extends \yii\widgets\DetailView
         }
         foreach ($this->attributes as $i => $attribute) {
             $this->attributes[$i] = $this->parseAttributeItem($attribute, $i);
+            if (isset($attribute['visible']) && !$attribute['visible']) {
+                unset($this->attributes[$i]);
+            }
         }
         // die('<pre>'.print_r($this->attributes, true) . '</pre>');
     }
@@ -1113,9 +1116,6 @@ class DetailView extends \yii\widgets\DetailView
                 "widget 'model' settings by setting the 'viewModel' and / or 'editModel' at ".
                 "the attribute array level."
             );
-        }
-        if (isset($attribute['visible']) && !$attribute['visible'] && !$child) {
-            unset($this->attributes[$i]);
         }
         if (!isset($attribute['format'])) {
             $attribute['format'] = 'text';
