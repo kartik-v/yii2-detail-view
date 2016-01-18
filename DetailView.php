@@ -88,7 +88,7 @@ class DetailView extends \yii\widgets\DetailView
 
     // input widget classes
     const INPUT_SPIN = '\kartik\touchspin\TouchSpin';
-    const INPUT_RATING = '\kartik\widgets\StarRating';
+    const INPUT_RATING = '\kartik\rating\StarRating';
     const INPUT_RANGE = '\kartik\range\RangeInput';
     const INPUT_COLOR = '\kartik\color\ColorInput';
     const INPUT_FILEINPUT = '\kartik\file\FileInput';
