@@ -643,7 +643,7 @@ class DetailView extends \yii\widgets\DetailView
      */
     protected function hasEditErrors()
     {
-        if (count($this->model->getErrors()) > 0) {
+        if ($this->model->hasErrors()) {
             return true;
         }
         foreach ($this->attributes as $attribute) {
@@ -653,7 +653,7 @@ class DetailView extends \yii\widgets\DetailView
             if (empty($attribute['editModel']) || !$attribute['editModel'] instanceof Model) {
                 continue;
             }
-            if ($attribute['editModel']->getErrors() > 0) {
+            if ($attribute['editModel']->hasErrors()) {
                 return true;
             }
         }
