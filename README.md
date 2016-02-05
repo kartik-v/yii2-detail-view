@@ -1,7 +1,8 @@
 yii2-detail-view
 ================
 
-[![Latest Stable Version](https://poser.pugx.org/kartik-v/yii2-detail-view/v/stable)](https://packagist.org/packages/kartik-v/yii2-detail-view)
+[![Stable Version](https://poser.pugx.org/kartik-v/yii2-detail-view/v/stable)](https://packagist.org/packages/kartik-v/yii2-detail-view)
+[![Unstable Version](https://poser.pugx.org/kartik-v/yii2-detail-view/v/unstable)](https://packagist.org/packages/kartik-v/yii2-detail-view)
 [![License](https://poser.pugx.org/kartik-v/yii2-detail-view/license)](https://packagist.org/packages/kartik-v/yii2-detail-view)
 [![Total Downloads](https://poser.pugx.org/kartik-v/yii2-detail-view/downloads)](https://packagist.org/packages/kartik-v/yii2-detail-view)
 [![Monthly Downloads](https://poser.pugx.org/kartik-v/yii2-detail-view/d/monthly)](https://packagist.org/packages/kartik-v/yii2-detail-view)
@@ -14,7 +15,7 @@ The widget by default can be styled within a Bootstrap 3 panel with a buttons to
 Refer [detailed documentation](http://demos.krajee.com/detail-view) and/or a [complete demo](http://demos.krajee.com/detail-view-demo).
 
 ### Latest Release
-The latest version of the extension is release v1.7.4. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of various releases.
+The latest version of the extension is release v1.7.5. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of various releases.
 
 > NOTE: The extension includes a BC Breaking change with v1.7.0. With this release, the `template` property of the yii core DetailView is not anymore supported. One can use `rowOptions`, `labelColOptions`, `valueColOptions` at the widget level or widget `attributes` level to configure advanced layout functions.
 
