@@ -714,17 +714,6 @@ class DetailView extends \yii\widgets\DetailView
         if (isset($attribute['columns'])) {
             Html::addCssClass($this->_rowOptions, 'kv-child-table-row');
             $content = '<td class="kv-child-table-cell" colspan=2><table class="kv-child-table"><tr>';
-            if (!empty($child['attribute'])) {
-                $childName = $child['attribute'];
-                if (!isset($child['label'])) {
-                    $child['label'] = $this->model instanceof Model ?
-                        $this->model->getAttributeLabel($childName) :
-                        Inflector::camel2words($childName, true);
-                }
-                if (!array_key_exists('value', $child)) {
-                    $child['value'] = ArrayHelper::getValue($this->model, $childName);
-                }
-            }
             foreach ($attribute['columns'] as $child) {
                 $content .= $this->renderAttributeItem($child);
             }
