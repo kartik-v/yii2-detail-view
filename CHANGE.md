@@ -5,6 +5,7 @@ Change Log: `yii2-detail-view`
 
 **Date:** 23-Apr-2016
 
+- (enh #88): Implement Krajee Dialog for prettier and better alerts and confirmation dialog.
 - (enh #104): Use more correct `StarRating` repo.
 - (enh #106): Enhance model `hasErrors` check.
 - (enh #107): Remove redundant code.

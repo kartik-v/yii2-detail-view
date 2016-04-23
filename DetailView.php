@@ -9,18 +9,19 @@
 
 namespace kartik\detail;
 
+use kartik\base\Config;
+use kartik\base\TranslationTrait;
+use kartik\base\WidgetTrait;
+use kartik\dialog\Dialog;
+use kartik\helpers\Html;
 use Yii;
 use yii\base\Arrayable;
 use yii\base\InvalidConfigException;
-use yii\bootstrap\Alert;
 use yii\base\Model;
+use yii\bootstrap\Alert;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use yii\widgets\ActiveForm;
-use kartik\base\Config;
-use kartik\helpers\Html;
-use kartik\base\WidgetTrait;
-use kartik\base\TranslationTrait;
 
 /**
  * Enhances the Yii DetailView widget with various options to include Bootstrap specific styling enhancements. Also
@@ -260,6 +261,13 @@ class DetailView extends \yii\widgets\DetailView
      * @var bool whether to display bootstrap style tooltips for titles on hover of buttons
      */
     public $tooltips = true;
+
+    /**
+     * @var array configuration settings for the Krajee dialog widget that will be used to render alerts and
+     *     confirmation dialog prompts
+     * @see http://demos.krajee.com/dialog
+     */
+    public $krajeeDialogSettings = [];
 
     /**
      * @var array a list of attributes to be displayed in the detail view. Each array element represents the
@@ -992,6 +1000,7 @@ class DetailView extends \yii\widgets\DetailView
     {
         $view = $this->getView();
         DetailViewAsset::register($view);
+        Dialog::widget($this->krajeeDialogSettings);
         if (empty($this->alertWidgetOptions['closeButton'])) {
             $button = '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
         } else {
@@ -1017,7 +1026,8 @@ class DetailView extends \yii\widgets\DetailView
             'deleteParams' => ArrayHelper::getValue($this->deleteOptions, 'params', []),
             'deleteAjaxSettings' => ArrayHelper::getValue($this->deleteOptions, 'ajaxSettings', []),
             'deleteConfirm' => ArrayHelper::remove($this->deleteOptions, 'confirm', $deleteConfirmMsg),
-            'showErrorStack' => ArrayHelper::remove($this->deleteOptions, 'showErrorStack', false)
+            'showErrorStack' => ArrayHelper::remove($this->deleteOptions, 'showErrorStack', false),
+            'dialogLib' => ArrayHelper::getValue($this->krajeeDialogSettings, 'libName', 'krajeeDialog')
         ];
         $id = 'jQuery("#' . $this->container['id'] . '")';
         if ($this->enableEditMode) {
