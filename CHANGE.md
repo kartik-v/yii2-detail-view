@@ -1,14 +1,16 @@
 Change Log: `yii2-detail-view`
 ==============================
 
-## Version 1.7.5 (under development)
+## Version 1.7.5
 
-**Date:** 05-Feb-2016
+**Date:** 23-Apr-2016
 
 - (enh #104): Use more correct `StarRating` repo.
 - (enh #106): Enhance model `hasErrors` check.
 - (enh #107): Remove redundant code.
 - Add composer branch alias to allow getting latest `dev-master` updates.
+- (enh #112): Adjust required version of yii2-helpers to 1.3.5.
+- (enh #113): Add Thai translations.
 
 ## Version 1.7.4
 
