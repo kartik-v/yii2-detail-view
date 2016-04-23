@@ -8,6 +8,7 @@ Change Log: `yii2-detail-view`
 - (enh #104): Use more correct `StarRating` repo.
 - (enh #106): Enhance model `hasErrors` check.
 - (enh #107): Remove redundant code.
+- (enh #108): Update extension documentation for new properties.
 - Add composer branch alias to allow getting latest `dev-master` updates.
 - (enh #112): Adjust required version of yii2-helpers to 1.3.5.
 - (enh #113): Add Thai translations.
