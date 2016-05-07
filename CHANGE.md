@@ -13,6 +13,7 @@ Change Log: `yii2-detail-view`
 - Add composer branch alias to allow getting latest `dev-master` updates.
 - (enh #112): Adjust required version of yii2-helpers to 1.3.5.
 - (enh #113): Add Thai translations.
+- (enh #116): Ability to use `form` instance and custom markup in edit mode.
 
 ## Version 1.7.4
 
