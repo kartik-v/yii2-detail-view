@@ -40,9 +40,8 @@
         alert: function (type, msg) {
             var self = this, css;
             css = self.alertMessageSettings[type];
-            if (msg) {
-                css = css || 'alert alert-' + type;
-                return self.alertTemplate.replace('{content}', msg).replace('{class}', css);
+            if (msg && css) {
+                return self.alertTemplate.replace('{content}', msg).replace('{class}', 'alert alert-' + css);
             }
             return '';
         },

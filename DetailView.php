@@ -644,9 +644,11 @@ class DetailView extends \yii\widgets\DetailView
         }
         $out = Html::beginTag('div', $this->alertContainerOptions);
         foreach ($flashes as $type => $message) {
-            $class = ArrayHelper::getValue($this->alertMessageSettings, $type, 'alert alert-' . $type);
+            if (!isset($this->alertMessageSettings[$type])) {
+                continue;
+            }
             $options = ArrayHelper::getValue($this->alertWidgetOptions, 'options', []);
-            Html::addCssClass($options, $class);
+            Html::addCssClass($options, ['alert', 'alert-' . $this->alertMessageSettings[$type]]);
             $this->alertWidgetOptions['body'] = $message;
             $this->alertWidgetOptions['options'] = $options;
             $out .= "\n" . Alert::widget($this->alertWidgetOptions);
