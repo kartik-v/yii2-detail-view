@@ -565,6 +565,8 @@ class DetailView extends \yii\widgets\DetailView
                 throw new InvalidConfigException("Form class '{$formClass}' must exist and extend from '{$activeForm}'.");
             }
             $this->validateDisplay();
+            $this->formOptions['fieldConfig']['template'] = "{input}\n{hint}\n{error}";
+            $this->_form = $formClass::begin($this->formOptions);
         }
         if ($this->bootstrap) {
             Html::addCssClass($this->options, 'table');
@@ -600,10 +602,6 @@ class DetailView extends \yii\widgets\DetailView
             $this->container['id'] = $this->getId();
         }
         $this->initI18N(__DIR__);
-        if ($this->enableEditMode) {
-            $this->formOptions['fieldConfig']['template'] = "{input}\n{hint}\n{error}";
-            $this->_form = $formClass::begin($this->formOptions);
-        }
         Html::addCssClass($this->alertContainerOptions, 'panel-body kv-alert-container');
         $this->alertMessageSettings += [
             'kv-detail-error' => 'alert alert-danger',
@@ -630,6 +628,7 @@ class DetailView extends \yii\widgets\DetailView
         if ($this->enableEditMode) {
             $formClass::end();
         }
+        
     }
 
     /**
