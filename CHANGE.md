@@ -15,6 +15,7 @@ Change Log: `yii2-detail-view`
 - (enh #112): Adjust required version of yii2-helpers to 1.3.5.
 - (enh #113): Add Thai translations.
 - (enh #116): Ability to use `form` instance and custom markup in edit mode.
+- (enh #117): Change private properties to protected and better instantiation of formOptions`['fieldConfig']['template']`.
 
 ## Version 1.7.4
 
