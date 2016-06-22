@@ -17,7 +17,7 @@ Refer [detailed documentation](http://demos.krajee.com/detail-view) and/or a [co
 ### Latest Release
 The latest version of the extension is release v1.7.5. Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of various releases.
 
-> NOTE: The extension includes a BC Breaking change with v1.7.0. With this release, the `template` property of the yii core DetailView is not anymore supported. One can use `rowOptions`, `labelColOptions`, `valueColOptions` at the widget level or widget `attributes` level to configure advanced layout functions.
+> NOTE: The extension includes a BC Breaking change with v1.7.0. With this release, the `template` property of the yii core DetailView is not anymore supported. One can use `rowOptions`, `labelColOptions`, `valueColOptions` at the widget level or widget `attributes` level to configure advanced layout functionality.
 
 ### Demo
 You can see detailed [documentation](http://demos.krajee.com/detail-view) and [demonstration](http://demos.krajee.com/detail-view-demo) on usage of the extension.
