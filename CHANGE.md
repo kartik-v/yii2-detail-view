@@ -3,7 +3,7 @@ Change Log: `yii2-detail-view`
 
 ## Version 1.7.5
 
-**Date:** 23-Apr-2016
+**Date:** 22-Jun-2016
 
 - (enh #88): Implement Krajee Dialog for prettier and better alerts and confirmation dialog.
 - (enh #95): Enhance alert messaging session keys to be specific to each detail view.
@@ -16,6 +16,9 @@ Change Log: `yii2-detail-view`
 - (enh #113): Add Thai translations.
 - (enh #116): Ability to use `form` instance and custom markup in edit mode.
 - (enh #117): Change private properties to protected and better instantiation of formOptions`['fieldConfig']['template']`.
+- (enh #118): Add Estonian translations.
+- (bug #120): Move form instantiation to init.
+- (enh #121): Add Ukranian translations.
 
 ## Version 1.7.4
 
