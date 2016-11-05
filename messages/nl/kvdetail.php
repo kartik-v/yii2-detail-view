@@ -21,6 +21,6 @@ return [
     'Cancel Changes' => 'Annuleer veranderingen',
     'Delete' => 'Verwijder',
     'Save' => 'Opslaan',
-    'Update' => 'Bewerkern',
+    'Update' => 'Bewerken',
     'View' => 'Bekijk',
 ];
