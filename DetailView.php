@@ -767,8 +767,8 @@ class DetailView extends YiiDetailView
             $output = $this->renderPanel($output);
         }
         $output = strtr(
-            $this->mainTemplate,
-            ['{detail}' => Html::tag('div', $output, $this->container)]
+            Html::tag('div', $this->mainTemplate, $this->container),
+            ['{detail}' => $output]
         );
         Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
         $buttons = Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer);
