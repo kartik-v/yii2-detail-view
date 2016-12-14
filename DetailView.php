@@ -149,7 +149,7 @@ class DetailView extends YiiDetailView
     /**
      * Dropdown list allowing single select
      */
-    const INPUT_DROPDOWN_LIST = 'dropdownList';
+    const INPUT_DROPDOWN_LIST = 'dropDownList';
     /**
      * List box allowing multiple select
      */

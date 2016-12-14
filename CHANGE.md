@@ -3,12 +3,13 @@ Change Log: `yii2-detail-view`
 
 ## Version 1.7.6
 
-**Date:** 30-Oct-2016
+**Date:** 14-Dec-2016
 
 - (enh #131): Add Dutch translations.
 - Enhance PHP Documentation for all classes and methods in the extension.
 - Update message config to include all default standard translation files.
 - Add github contribution and issue/PR logging templates.
+- (bug #138): Correct `INPUT_DROPDOWN_LIST` constant definition.
 
 ## Version 1.7.5
 
