@@ -278,6 +278,8 @@ class DetailView extends YiiDetailView
         self::INPUT_HTML5 => 'input',
         self::INPUT_FILE => 'fileInput',
         self::INPUT_WIDGET => 'widget',
+        self::INPUT_CHECKBOX_BUTTON_GROUP => 'checkboxButtonGroup',
+        self::INPUT_RADIO_BUTTON_GROUP => 'radioButtonGroup',
     ];
 
     // dropdown inputs
@@ -286,6 +288,8 @@ class DetailView extends YiiDetailView
         self::INPUT_DROPDOWN_LIST => 'dropDownList',
         self::INPUT_CHECKBOX_LIST => 'checkboxList',
         self::INPUT_RADIO_LIST => 'radioList',
+        self::INPUT_CHECKBOX_BUTTON_GROUP => 'checkboxButtonGroup',
+        self::INPUT_RADIO_BUTTON_GROUP => 'radioButtonGroup',
     ];
 
     /**
@@ -501,7 +505,7 @@ class DetailView extends YiiDetailView
     /**
      * @var string the ActiveForm widget class
      */
-    public $formClass = 'yii\widgets\ActiveForm';
+    public $formClass = '\kartik\form\ActiveForm';
 
     /**
      * @var array the panel settings. If this is set, the grid widget
