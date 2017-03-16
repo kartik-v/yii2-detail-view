@@ -327,6 +327,11 @@ class DetailView extends YiiDetailView
      * @var boolean whether to hide all alerts. Defaults to `false`.
      */
     public $hideAlerts = false;
+    
+  	/**
+	 * @var bool whether to show form error summery as an error alert. Defaults to `false`.
+	 */
+	public $showErrorSummary = false;
 
     /**
      * @var boolean whether to show values as not set if empty string
@@ -794,6 +799,14 @@ class DetailView extends YiiDetailView
     {
         $session = Yii::$app->session;
         $flashes = $session->getAllFlashes();
+        
+	    if ($this->showErrorSummary) {
+            // Show form error summary in error flash
+		    if ($this->model->getErrors()) {
+			    $flashes['kv-detail-error'] = $this->_form->errorSummary($this->model);
+		    }
+	    }
+        
         if (count($flashes) === 0) {
             Html::addCssStyle($this->alertContainerOptions, 'display:none;');
         }
