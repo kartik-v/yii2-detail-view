@@ -1,6 +1,9 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.7.7
+**Date:** 
+- Add support for unicode characters in attribute names (sammousa)
 ## Version 1.7.6
 
 **Date:** 14-Dec-2016
