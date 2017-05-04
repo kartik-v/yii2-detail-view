@@ -3,7 +3,7 @@
 /**
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2016
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2017
  * @version   1.7.6
  */
 
@@ -15,6 +15,7 @@ use kartik\base\TranslationTrait;
 use kartik\base\WidgetTrait;
 use kartik\dialog\Dialog;
 use kartik\helpers\Html;
+use kartik\form\ActiveForm;
 use Yii;
 use yii\base\Arrayable;
 use yii\base\InvalidConfigException;
@@ -22,7 +23,7 @@ use yii\base\Model;
 use yii\bootstrap\Alert;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
-use yii\widgets\ActiveForm;
+use yii\web\View;
 use yii\widgets\DetailView as YiiDetailView;
 
 /**
@@ -278,6 +279,8 @@ class DetailView extends YiiDetailView
         self::INPUT_HTML5 => 'input',
         self::INPUT_FILE => 'fileInput',
         self::INPUT_WIDGET => 'widget',
+        self::INPUT_CHECKBOX_BUTTON_GROUP => 'checkboxButtonGroup',
+        self::INPUT_RADIO_BUTTON_GROUP => 'radioButtonGroup',
     ];
 
     // dropdown inputs
@@ -286,6 +289,8 @@ class DetailView extends YiiDetailView
         self::INPUT_DROPDOWN_LIST => 'dropDownList',
         self::INPUT_CHECKBOX_LIST => 'checkboxList',
         self::INPUT_RADIO_LIST => 'radioList',
+        self::INPUT_CHECKBOX_BUTTON_GROUP => 'checkboxButtonGroup',
+        self::INPUT_RADIO_BUTTON_GROUP => 'radioButtonGroup',
     ];
 
     /**
@@ -501,7 +506,7 @@ class DetailView extends YiiDetailView
     /**
      * @var string the ActiveForm widget class
      */
-    public $formClass = 'yii\widgets\ActiveForm';
+    public $formClass = 'kartik\form\ActiveForm';
 
     /**
      * @var array the panel settings. If this is set, the grid widget
@@ -654,6 +659,13 @@ class DetailView extends YiiDetailView
      * @var string the Detail View plugin destroy JS
      */
     public $pluginDestroyJs;
+    
+    /**
+     * @var integer the position where the client JS hash variables for the DetailView widget will be loaded. 
+     * Defaults to `View::POS_HEAD`. This can be set to `View::POS_READY` for specific scenarios like when
+     * rendering the widget via `renderAjax`.
+     */
+    public $hashVarLoadPosition = View::POS_HEAD;
 
     /**
      * @var string translation message file category name for i18n
