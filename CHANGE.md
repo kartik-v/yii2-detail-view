@@ -18,6 +18,7 @@ Change Log: `yii2-detail-view`
 - (enh #134): Update Dutch translations.
 - (enh #132, enh #135): Ensure correct parsing of `{buttons}` token in `mainTemplate`.
 - (enh #131): Add Dutch translations.
+- (enh #124): New properties `panelOptions` and `panelCssPrefix` to custom style the bootstrap panel.
 
 ## Version 1.7.5
 

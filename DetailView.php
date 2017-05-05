@@ -512,6 +512,8 @@ class DetailView extends YiiDetailView
      * @var array the panel settings. If this is set, the grid widget
      * will be embedded in a bootstrap panel. Applicable only if `bootstrap`
      * is `true`. The following array keys are supported:
+     * - `type`: _string_, the panel contextual type (one of the TYPE constants, if not set will default to `default` or
+     *   `self::TYPE_DEFAULT`)
      * - `heading`: string | boolean, the panel heading title value. If set to false, the entire heading will be not
      *   displayed. Note that the `{title}` tag in the `headingOptions['template']` will be replaced with this value.
      * - `headingOptions`: _array_, the HTML attributes for the panel heading. Defaults to `['class'=>'panel-title']`.
@@ -520,8 +522,6 @@ class DetailView extends YiiDetailView
      *   - `template`: _string_, the template to render the heading. Defaults to `{buttons}{title}`, where:
      *      - `{title}` will be replaced with the `heading` value, and
      *      -`{buttons}` will be replaced by the rendered buttons.
-     * - `type`: _string_, the panel contextual type (one of the TYPE constants, if not set will default to `default` or
-     *   `self::TYPE_DEFAULT`)
      * - `footer`: string | boolean, the panel footer title value. Defaults to `false`. If set to false, the entire
      *   footer will be not displayed. Note that the `{title}` tag in the `footerOptions['template']` will be
      *   replaced with this value.
@@ -534,6 +534,18 @@ class DetailView extends YiiDetailView
      */
     public $panel = [];
 
+    /**
+     * @var array the HTML attributes for the bootstrap panel container (applicable if [[panel]
+     * has been configured).
+     */
+    public $panelOptions = [];
+    
+    /**
+     * @var string the CSS class prefix to apply to the bootstrap panel container (applicable if 
+     * [[panel] has been configured)
+     */
+    public $panelCssPrefix = 'panel panel-';
+    
     /**
      * @var string the main template to render the detail view. The following tags will be replaced:
      * - `{detail}`: will be replaced by the rendered detail view
@@ -1078,7 +1090,7 @@ class DetailView extends YiiDetailView
         }
         $alertBlock = $this->hideAlerts ? '' : $this->renderAlertBlock() . "\n";
         $panel['preBody'] = $alertBlock . $content;
-        return Html::panel($panel, $type);
+        return Html::panel($panel, $type, $this->panelOptions, $this->panelCssPrefix);
     }
 
     /**
