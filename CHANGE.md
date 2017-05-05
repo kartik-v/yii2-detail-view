@@ -16,6 +16,7 @@ Change Log: `yii2-detail-view`
 - Update message config to include all default standard translation files.
 - Enhance PHP Documentation for all classes and methods in the extension.
 - (enh #134): Update Dutch translations.
+- (enh #132, enh #135): Ensure correct parsing of `{buttons}` token in `mainTemplate`.
 - (enh #131): Add Dutch translations.
 
 ## Version 1.7.5

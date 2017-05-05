@@ -15,7 +15,6 @@ use kartik\base\TranslationTrait;
 use kartik\base\WidgetTrait;
 use kartik\dialog\Dialog;
 use kartik\helpers\Html;
-use kartik\form\ActiveForm;
 use Yii;
 use yii\base\Arrayable;
 use yii\base\InvalidConfigException;
@@ -24,6 +23,7 @@ use yii\bootstrap\Alert;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
 use yii\web\View;
+use yii\widgets\ActiveForm;
 use yii\widgets\DetailView as YiiDetailView;
 
 /**
@@ -783,10 +783,7 @@ class DetailView extends YiiDetailView
         if (is_array($this->panel) && !empty($this->panel) && $this->panel !== false) {
             $output = $this->renderPanel($output);
         }
-        $output = strtr(
-            $this->mainTemplate,
-            ['{detail}' => Html::tag('div', $output, $this->container)]
-        );
+        $output = strtr(Html::tag('div', $this->mainTemplate, $this->container), ['{detail}' => $output]);
         Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
         $buttons = Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer);
         if ($this->enableEditMode) {
