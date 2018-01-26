@@ -17,7 +17,7 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Cancel Changes' => '',
+    'Cancel Changes' => 'Annulla Modifiche',
     'Are you sure you want to delete this item?' => 'Sei sicuro di volere eliminare questo elemento?',
     'Delete' => 'Elimina',
     'Save' => 'Salva',
