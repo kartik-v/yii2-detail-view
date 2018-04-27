@@ -333,10 +333,10 @@ class DetailView extends YiiDetailView
      */
     public $hideAlerts = false;
     
-  	/**
-	 * @var bool whether to show form error summery as an error alert. Defaults to `false`.
-	 */
-	public $showErrorSummary = false;
+    /**
+     * @var bool whether to show form error summery as an error alert. Defaults to `false`.
+     */
+    public $showErrorSummary = false;
 
     /**
      * @var boolean whether to show values as not set if empty string
@@ -821,12 +821,12 @@ class DetailView extends YiiDetailView
         $session = Yii::$app->session;
         $flashes = $session->getAllFlashes();
         
-	    if ($this->showErrorSummary) {
+        if ($this->showErrorSummary) {
             // Show form error summary in error flash
-		    if ($this->model->getErrors()) {
-			    $flashes['kv-detail-error'] = $this->_form->errorSummary($this->model);
-		    }
-	    }
+            if ($this->model->getErrors()) {
+                $flashes['kv-detail-error'] = $this->_form->errorSummary($this->model);
+            }
+        }
         
         if (count($flashes) === 0) {
             Html::addCssStyle($this->alertContainerOptions, 'display:none;');
@@ -960,7 +960,9 @@ class DetailView extends YiiDetailView
         if (ArrayHelper::getValue($attribute, 'type', 'text') === self::INPUT_HIDDEN) {
             Html::addCssClass($this->_rowOptions, 'kv-edit-hidden');
         }
-        $value = $attribute['value'];
+        /** issue #158 **/
+        $value = is_array($attribute['value']) ? print_r($attribute['value'], true) : $attribute['value'];
+
         if ($this->notSetIfEmpty && ($value === '' || $value === null)) {
             $value = null;
         }
