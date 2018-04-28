@@ -20,11 +20,6 @@
     display: none;
 }
 
-.kv-edit-mode .kv-view-hidden,
-.kv-view-mode .kv-edit-hidden {
-    display: table-row;
-}
-
 .kv-detail-loading {
     opacity: 0.3;
     background: #ffffff url('../img/loading.gif') top 15px right 15px no-repeat;
