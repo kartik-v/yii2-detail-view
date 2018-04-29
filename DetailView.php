@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2017
- * @version   1.7.6
+ * @version   1.7.7
  */
 
 namespace kartik\detail;
@@ -482,7 +482,7 @@ class DetailView extends YiiDetailView
      * - inputType: string|Closure, the HTML 5 input type if `type` is set to [[DetailView::::INPUT_HTML 5]].
      * - inputContainer: array|Closure, HTML attributes for the input container
      * - inputWidth: string|Closure, the width of the container holding the input, should be appended along with the
-     *   width unit (`px` or `%`) - this property is deprecated since v1.7.6
+     *   width unit (`px` or `%`) - this property is deprecated since v1.7.7
      * - fieldConfig: array|Closure, optional, the Active field configuration.
      * - options: array|Closure, optional, the HTML attributes for the input.
      * - updateAttr: string|Closure, optional, the name of the attribute to be updated, when in edit mode. This will
@@ -1031,7 +1031,7 @@ class DetailView extends YiiDetailView
         $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
         $container = ArrayHelper::getValue($config, 'inputContainer', []);
         if ($inputWidth != '') {
-            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.6
+            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.7
         }
         $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
         $row = Html::tag('div', $template, $container);
