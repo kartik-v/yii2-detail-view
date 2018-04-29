@@ -1,6 +1,14 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.7.7
+
+**Date:** _Work in process_
+
+- (bug #160, #161): Correct hidden row style when both view and edit modes are hidden.
+- (enh #158, #159): Correct multi select display.
+- (enh #155): Update Italian translations.
+
 ## Version 1.7.6
 
 **Date:** 04-May-2017
