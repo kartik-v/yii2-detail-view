@@ -123,6 +123,18 @@ class DetailView extends YiiDetailView
      * Vertical **bottom** alignment for grid cells
      */
     const ALIGN_BOTTOM = 'bottom';
+    /** 
+     * Input Label position LEFT
+     */
+    const LABEL_POS_LEFT = 'left';
+    /** 
+     * Input Label position TOP
+     */
+    const LABEL_POS_TOP = 'top';
+    /** 
+     * Input Label position BOTTOM
+     */
+    const LABEL_POS_BOTTOM = 'BOTTOM';
     /**
      * Static input (styled using bootstrap style)
      */
@@ -327,6 +339,11 @@ class DetailView extends YiiDetailView
      * @var array the HTML attributes for the value column
      */
     public $valueColOptions = [];
+
+    /**
+     * @var string the label position
+     */
+    public $labelPos = self::LABEL_POS_LEFT;
 
     /**
      * @var boolean whether to hide all alerts. Defaults to `false`.
@@ -946,6 +963,7 @@ class DetailView extends YiiDetailView
     {
         $labelColOpts = ArrayHelper::getValue($attribute, 'labelColOptions', $this->labelColOptions);
         $valueColOpts = ArrayHelper::getValue($attribute, 'valueColOptions', $this->valueColOptions);
+        $labelPos = ArrayHelper::getValue($attribute, 'labelPos', $this->labelPos);
         if (ArrayHelper::getValue($attribute, 'group', false)) {
             $groupOptions = ArrayHelper::getValue($attribute, 'groupOptions', []);
             $label = ArrayHelper::getValue($attribute, 'label', '');
@@ -969,13 +987,42 @@ class DetailView extends YiiDetailView
         $dispAttr = $this->formatter->format($value, $attribute['format']);
         Html::addCssClass($this->viewAttributeContainer, 'kv-attribute');
         Html::addCssClass($this->editAttributeContainer, 'kv-form-attribute');
+
+        if(ArrayHelper::getValue($attribute, 'forceRenderEdit',false)) {
+            Html::removeCssStyle($this->editAttributeContainer,['display']);
+            Html::addCssStyle($this->viewAttributeContainer,'display: none');
+        };
+
         $output = Html::tag('div', $dispAttr, $this->viewAttributeContainer) . "\n";
-        if ($this->enableEditMode) {
+
+        if ($this->enableEditMode || ArrayHelper::getValue($attribute, 'forceRenderEdit',false)) {
+
             $editInput = ArrayHelper::getValue($attribute, 'displayOnly', false) ? $dispAttr :
                 $this->renderFormAttribute($attribute);
             $output .= Html::tag('div', $editInput, $this->editAttributeContainer);
         }
-        return Html::tag('th', $attribute['label'], $labelColOpts) . "\n" . Html::tag('td', $output, $valueColOpts);
+
+        switch($labelPos) {
+
+            case self::LABEL_POS_TOP:
+                if (empty($valueColOpts['colspan'])) {
+                    $valueColOpts['colspan'] = 2;
+                }
+                $label = Html::tag('label',$attribute['label']);
+                return Html::tag('td',  $label . "\n" .$output, $valueColOpts);
+                break;
+            case self::LABEL_POS_BOTTOM:
+                if (empty($valueColOpts['colspan'])) {
+                    $valueColOpts['colspan'] = 2;
+                }
+                $label = Html::tag('label',$attribute['label']);
+                return Html::tag('td', $output . "\n" . $label, $valueColOpts);
+                break;
+            default:
+                return Html::tag('th', $attribute['label'], $labelColOpts) . "\n" . Html::tag('td', $output, $valueColOpts);
+
+        }
+
     }
 
     /**
@@ -1060,6 +1107,7 @@ class DetailView extends YiiDetailView
             if ($class == '') {
                 throw new InvalidConfigException("Widget class not defined in 'widgetOptions' for {$input}'.");
             }
+
             return $this->_form->field($model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }
         if (in_array($input, self::$_dropDownInputs)) {
