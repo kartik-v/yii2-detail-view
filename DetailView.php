@@ -697,6 +697,21 @@ class DetailView extends YiiDetailView
     public $hashVarLoadPosition = View::POS_HEAD;
 
     /**
+     * @var callable the configuration of tab class. 
+     * e.g.:
+     *
+     * ```php
+     * DetailView::widget([
+     * ...
+     *  'tabConfig' => function($tabItems) {
+     *      return \yii\bootstrap\Tabs::widget(['items' => $tabItems]);
+     *  },
+     * ...
+     * ]);
+     */
+    public $tabConfig = null;
+
+    /**
      * @var string translation message file category name for i18n
      */
     protected $_msgCat = 'kvdetail';
@@ -730,6 +745,11 @@ class DetailView extends YiiDetailView
      * @var array HTML attributes for table row
      */
     protected $_rowOptions = [];
+
+    /**
+     * @var array tabs and content
+     */
+    protected $_tabs = [];
 
     /**
      * @inheritdoc
@@ -796,6 +816,7 @@ class DetailView extends YiiDetailView
      */
     protected function runWidget()
     {
+
         if (empty($this->container['id'])) {
             $this->container['id'] = $this->getId();
         }
@@ -919,14 +940,45 @@ class DetailView extends YiiDetailView
     protected function renderDetailView()
     {
         $rows = [];
+        $buffer = [];
         foreach ($this->attributes as $attribute) {
-            $rows[] = $this->renderAttributeRow($attribute);
+
+            if( ($result = $this->renderAttributeRow($attribute)) ) {
+                $rows[] = $result;
+            }
         }
+
         $tag = ArrayHelper::remove($this->options, 'tag', 'table');
-        $output = Html::tag($tag, implode("\n", $rows), $this->options);
-        return ($this->bootstrap && $this->responsive) ?
-            '<div class="table-responsive kv-detail-view">' . $output . '</div>' :
-            '<div class="kv-detail-view">' . $output . '</div>';
+        $output = ($this->bootstrap && $this->responsive) ?
+                '<div class="table-responsive kv-detail-view">%s</div>' :
+                '<div class="kv-detail-view">%s</div>';
+
+        if($rows) {
+            $buffer[] = sprintf(
+                $output,
+                Html::tag($tag, implode("\n", $rows), $this->options)
+            );
+        }
+
+        if($this->_tabs) {
+            $tabItems = [];
+            $cnt=0;
+            foreach($this->_tabs as $label => $content) {
+                $cnt++;
+                $tabItems[] = [
+                    'label' => $label,
+                    'content' => sprintf(
+                        $output,
+                        Html::tag($tag, $content, $this->options)
+                    ),
+                    'active' => $cnt  === 1 ? 1 : 0
+                ];
+            }
+
+            $buffer[] = $this->tabConfig && is_callable($this->tabConfig) ? call_user_func($this->tabConfig,$tabItems) : \yii\bootstrap\Tabs::widget(['items' => $tabItems]);
+        }
+
+        return implode("\n",$buffer);
     }
 
     /**
@@ -939,6 +991,22 @@ class DetailView extends YiiDetailView
     protected function renderAttributeRow($attribute)
     {
         $this->_rowOptions = ArrayHelper::getValue($attribute, 'rowOptions', $this->rowOptions);
+
+        if (isset($attribute['tab'])) {
+            $content = '';
+
+            foreach($attribute['tab']['items'] as $cols) {
+                $content .= $this->renderAttributeRow($cols);
+            }
+
+            $this->registerTab(
+                $attribute['tab']['label'],
+                $content
+            );
+
+            return null;
+        }
+
         if (isset($attribute['columns'])) {
             Html::addCssClass($this->_rowOptions, 'kv-child-table-row');
             $content = '<td class="kv-child-table-cell" colspan=2><table class="kv-child-table"><tr>';
@@ -950,6 +1018,22 @@ class DetailView extends YiiDetailView
             $content = $this->renderAttributeItem($attribute);
         }
         return Html::tag('tr', $content, $this->_rowOptions);
+    }
+
+    /**
+     * register given content as tab
+     *
+     * @param string $label the Tab-Label
+     * @param string $html the html code to assign to the tab
+     */
+    public function registerTab($label,$html)
+    {
+        if(!$this->_tabs || !isset($this->_tabs[$label])) {
+            $this->_tabs[$label] = $html;
+        } else {
+            $this->_tabs[$label] .= $html;
+        }
+
     }
 
     /**
@@ -972,12 +1056,16 @@ class DetailView extends YiiDetailView
             }
             return Html::tag('th', $label, $groupOptions);
         }
+        if (ArrayHelper::getValue($attribute, 'tab', false)) {
+            return null;
+        }
         if ($this->hideIfEmpty === true && empty($attribute['value'])) {
             Html::addCssClass($this->_rowOptions, 'kv-view-hidden');
         }
         if (ArrayHelper::getValue($attribute, 'type', 'text') === self::INPUT_HIDDEN) {
             Html::addCssClass($this->_rowOptions, 'kv-edit-hidden');
         }
+
         /** issue #158 **/
         $value = is_array($attribute['value']) ? print_r($attribute['value'], true) : $attribute['value'];
 
@@ -1365,6 +1453,13 @@ class DetailView extends YiiDetailView
             }
             return $attribute;
         }
+        if (isset($attribute['tab'])) {
+            foreach ($attribute['tab']['items'] as $j => $child) {
+                $attr = $this->parseAttributeItem($child);    
+                $attribute['tab']['items'][$j] = $attr;
+            }
+            return $attribute;
+        }
         $attr = ArrayHelper::getValue($attribute, 'updateAttr');
         if ($attr && !ctype_alnum(str_replace('_', '', $attr))) {
             throw new InvalidConfigException("The 'updateAttr' name '{$attr}' is invalid.");
@@ -1393,7 +1488,11 @@ class DetailView extends YiiDetailView
                 $attribute['value'] = ArrayHelper::getValue($model, $attributeName);
             }
         } elseif (!isset($attribute['label']) || !array_key_exists('value', $attribute)) {
-            if (ArrayHelper::getValue($attribute, 'group', false) || isset($attribute['columns'])) {
+            if (
+                ArrayHelper::getValue($attribute, 'group', false) 
+                || isset($attribute['columns'])
+                || isset($attribute['tab'])
+            ) {
                 $attribute['value'] = '';
                 return $attribute;
             }
