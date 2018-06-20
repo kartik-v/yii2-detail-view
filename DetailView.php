@@ -962,16 +962,16 @@ class DetailView extends YiiDetailView
 
         if($this->_tabs) {
             $tabItems = [];
-            $cnt=0;
             foreach($this->_tabs as $label => $content) {
-                $cnt++;
+                if(!$content) {
+                    continue;
+                }
                 $tabItems[] = [
                     'label' => $label,
                     'content' => sprintf(
                         $output,
                         Html::tag($tag, $content, $this->options)
                     ),
-                    'active' => $cnt  === 1 ? 1 : 0
                 ];
             }
 
@@ -979,6 +979,17 @@ class DetailView extends YiiDetailView
         }
 
         return implode("\n",$buffer);
+    }
+
+    /**
+     * check if an tab hast attributes with validation errors
+     * @param $label label of the tab
+     *
+     * @return boolean true|false
+     */
+    public function hasTabErrors()
+    {
+
     }
 
     /**
@@ -990,6 +1001,16 @@ class DetailView extends YiiDetailView
      */
     protected function renderAttributeRow($attribute)
     {
+
+        if(
+            isset($attribute['visible'])
+            && false === $attribute['visible']
+        ) {
+            return null;
+        }
+
+        unset($attribute['visible']);
+
         $this->_rowOptions = ArrayHelper::getValue($attribute, 'rowOptions', $this->rowOptions);
 
         if (isset($attribute['tab'])) {
@@ -1008,9 +1029,10 @@ class DetailView extends YiiDetailView
         }
 
         if (isset($attribute['columns'])) {
+
             Html::addCssClass($this->_rowOptions, 'kv-child-table-row');
             $content = '<td class="kv-child-table-cell" colspan=2><table class="kv-child-table"><tr>';
-            foreach ($attribute['columns'] as $child) {
+            foreach ($attribute['columns'] as $key => $child) {
                 $content .= $this->renderAttributeItem($child);
             }
             $content .= '</tr></table></td>';
@@ -1454,8 +1476,16 @@ class DetailView extends YiiDetailView
             return $attribute;
         }
         if (isset($attribute['tab'])) {
+            if(isset($attribute['tab']['visible']) && !$attribute['tab']['visible']) {
+                $attribute['tab']['items'] =[];
+            }
             foreach ($attribute['tab']['items'] as $j => $child) {
                 $attr = $this->parseAttributeItem($child);    
+                if (isset($attr['visible']) && !$attr['visible']) {
+                    unset($attribute['tab']['items'][$j]);
+                    continue;
+                }
+
                 $attribute['tab']['items'][$j] = $attr;
             }
             return $attribute;
@@ -1492,6 +1522,7 @@ class DetailView extends YiiDetailView
                 ArrayHelper::getValue($attribute, 'group', false) 
                 || isset($attribute['columns'])
                 || isset($attribute['tab'])
+                || isset($attribute['visible'])
             ) {
                 $attribute['value'] = '';
                 return $attribute;
