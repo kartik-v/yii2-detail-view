@@ -3,6 +3,7 @@
 /**
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
+ * @author    Henry Volkmer <henry.volkmer@mailbox.org>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2017
  * @version   1.7.7
  */
@@ -54,6 +55,84 @@ use yii\widgets\DetailView as YiiDetailView;
  *     ],
  * ]);
  * ```
+ * A advanced useage with columns and tabs and label position at the top of first_name and state attributes:
+ *
+ * ```php
+ *  echo DetailView::widget([
+ *      'model' => $model,
+ *      ''
+ *      'attributes' => [
+ *          'title',               // title attribute (in plain text)
+ *          'description:html',    // description attribute in HTML
+ *          [                      // the owner name of the model
+ *              'label' => 'Owner',
+ *              'value' => $model->owner->name,
+ *          ],
+ *          'created_at:datetime', // creation date formatted as datetime
+ *          // Two Cols
+ *          [
+ *               'columns' => [
+ *                   [
+ *                         'attribute'=>'first_name',
+ *                         'type'=>DetailView::INPUT_TEXT,
+ *                         'labelPos' => DetailView::LABEL_POS_TOP,
+ *                     ],
+ *                     [
+ *                         'attribute' => 'state',
+ *                         'labelPos' => DetailView::LABEL_POS_TOP,
+ *                         'type' => DetailView::INPUT_DROPDOWN_LIST,
+ *                         'items' => [1=>'Active',0=>'inactive'],
+ *                         'format' => function($form, $widget) {
+ *                             return function() use ($widget) {
+ *                                 return $widget->model->state;
+ *                             };
+ *                         },
+ *                     ]
+ *                 ],
+ *             ],
+ *             // Tabs
+ *             // TAB "User Credentials"
+ *             ['tab' => [
+ *                 'visible' => true,
+ *                 'label' => 'User Credentials',
+ *                 'items' => [
+ *                     [
+ *                         'attribute' => 'username',
+ *                         'type'      => DetailView::INPUT_TEXT,
+ *                     ],
+ *                     [
+ *                         'attribute'=>'password',
+ *                         'type'=>DetailView::INPUT_PASSWORD,
+ *                         'visible' => ($this->viewMode == \kartik\detail\DetailView::MODE_EDIT)
+ *                     ],
+ * 
+ *                     [
+ *                         'attribute'=>'password_repeat', 
+ *                         'type'=>DetailView::INPUT_PASSWORD,
+ *                         'visible' => ($this->viewMode == \kartik\detail\DetailView::MODE_EDIT)
+ *                     ],
+ *                 ]
+ *            ]], // end tab "User Credentials"
+ *
+ *              // Tab Contact Data
+ *             ['tab' => [
+ *                 'visible' => true,
+ *                 'label' => 'Contact Data',
+ *                 'items' => [
+ *                     [
+ *                         'attribute' => 'telephone',
+ *                         'type'      => DetailView::INPUT_TEXT,
+ *                     ],
+ *                     [
+ *                         'attribute' => 'email',
+ *                         'type' => DetailView::INPUT_TEXT,
+ *                     ],
+ *                 ]
+ *            ]], // end tab "Contact Data"
+  *     ]
+ * ]);
+ * ```
+ *
  *
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  * @since  1.0
@@ -487,6 +566,7 @@ class DetailView extends YiiDetailView
      *   the `labelColOptions` set at the widget level)
      * - valueColOptions: array|Closure, HTML attributes for the value column (if not set, this will be defaulted to
      *   `valueColOptions` set at the widget level)
+     * - forceRenderEdit: boolean, whether to force this attribute to render in edit-mode. (usefull if you want to show Kartik FileUploads Preview in view-mode.)
      * - group: boolean|Closure, whether to group the selection by merging the label and value into a single column.
      * - groupOptions: array|Closure, HTML attributes for the grouped/merged column when `group` is set to `true`.
      * - type: string|Closure, the input type for rendering the attribute in edit mode. Must be one of the
@@ -708,6 +788,7 @@ class DetailView extends YiiDetailView
      *  },
      * ...
      * ]);
+     * ```
      */
     public $tabConfig = null;
 
@@ -747,7 +828,7 @@ class DetailView extends YiiDetailView
     protected $_rowOptions = [];
 
     /**
-     * @var array tabs and content
+     * @var array tabs and content (HTML)
      */
     protected $_tabs = [];
 
