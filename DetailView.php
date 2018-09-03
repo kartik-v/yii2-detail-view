@@ -757,7 +757,7 @@ class DetailView extends YiiDetailView
     public function init()
     {
         $this->initWidget();
-        parent:: init();
+        parent::init();
     }
 
     /**
@@ -1013,7 +1013,7 @@ class DetailView extends YiiDetailView
 
         $this->_rowOptions = ArrayHelper::getValue($attribute, 'rowOptions', $this->rowOptions);
 
-        if (isset($attribute['tab'])) {
+        if (ArrayHelper::getValue($attribute,'tab.items')) {
             $content = '';
 
             foreach($attribute['tab']['items'] as $cols) {
@@ -1021,7 +1021,7 @@ class DetailView extends YiiDetailView
             }
 
             $this->registerTab(
-                $attribute['tab']['label'],
+                ArrayHelper::getValue($attribute,'tab.label'),
                 $content
             );
 
@@ -1029,7 +1029,6 @@ class DetailView extends YiiDetailView
         }
 
         if (isset($attribute['columns'])) {
-
             Html::addCssClass($this->_rowOptions, 'kv-child-table-row');
             $content = '<td class="kv-child-table-cell" colspan=2><table class="kv-child-table"><tr>';
             foreach ($attribute['columns'] as $key => $child) {
@@ -1050,12 +1049,11 @@ class DetailView extends YiiDetailView
      */
     public function registerTab($label,$html)
     {
-        if(!$this->_tabs || !isset($this->_tabs[$label])) {
+        if (!ArrayHelper::getValue($this->_tabs,$label)) {
             $this->_tabs[$label] = $html;
         } else {
             $this->_tabs[$label] .= $html;
         }
-
     }
 
     /**
@@ -1106,14 +1104,12 @@ class DetailView extends YiiDetailView
         $output = Html::tag('div', $dispAttr, $this->viewAttributeContainer) . "\n";
 
         if ($this->enableEditMode || ArrayHelper::getValue($attribute, 'forceRenderEdit',false)) {
-
             $editInput = ArrayHelper::getValue($attribute, 'displayOnly', false) ? $dispAttr :
                 $this->renderFormAttribute($attribute);
             $output .= Html::tag('div', $editInput, $this->editAttributeContainer);
         }
 
         switch($labelPos) {
-
             case self::LABEL_POS_TOP:
                 if (empty($valueColOpts['colspan'])) {
                     $valueColOpts['colspan'] = 2;
@@ -1130,7 +1126,6 @@ class DetailView extends YiiDetailView
                 break;
             default:
                 return Html::tag('th', $attribute['label'], $labelColOpts) . "\n" . Html::tag('td', $output, $valueColOpts);
-
         }
 
     }
@@ -1475,7 +1470,8 @@ class DetailView extends YiiDetailView
             }
             return $attribute;
         }
-        if (isset($attribute['tab'])) {
+
+        if (ArrayHelper::getValue($attribute,'tab')) {
             if(isset($attribute['tab']['visible']) && !$attribute['tab']['visible']) {
                 $attribute['tab']['items'] =[];
             }
