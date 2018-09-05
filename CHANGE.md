@@ -5,6 +5,7 @@ Change Log: `yii2-detail-view`
 
 **Date:** _Work in process_
 
+- (kartik-v/yii2-krajee-base#94): Refactor code and consolidate / optimize properties within traits.
 - (bug #160, #161): Correct hidden row style when both view and edit modes are hidden.
 - (enh #158, #159): Correct multi select display.
 - (enh #155): Update Italian translations.

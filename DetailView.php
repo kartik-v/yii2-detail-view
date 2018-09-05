@@ -23,7 +23,6 @@ use yii\base\Model;
 use yii\bootstrap\Alert;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;
-use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\widgets\DetailView as YiiDetailView;
 
@@ -750,69 +749,6 @@ class DetailView extends YiiDetailView
     public $container = [];
 
     /**
-     * @var array the the internalization configuration for this widget
-     */
-    public $i18n = [];
-
-    /**
-     * @var string the Detail View plugin name
-     */
-    public $pluginName = 'kvDetailView';
-
-    /**
-     * @var array the Detail View plugin options
-     */
-    public $pluginOptions = [];
-
-    /**
-     * @var string the Detail View plugin destroy JS
-     */
-    public $pluginDestroyJs;
-    
-    /**
-     * @var integer the position where the client JS hash variables for the DetailView widget will be loaded. 
-     * Defaults to `View::POS_HEAD`. This can be set to `View::POS_READY` for specific scenarios like when
-     * rendering the widget via `renderAjax`.
-     */
-    public $hashVarLoadPosition = View::POS_HEAD;
-
-    /**
-     * @var callable the configuration of tab class. 
-     * e.g.:
-     *
-     * ```php
-     * DetailView::widget([
-     * ...
-     *  'tabConfig' => function($tabItems) {
-     *      return \yii\bootstrap\Tabs::widget(['items' => $tabItems]);
-     *  },
-     * ...
-     * ]);
-     * ```
-     */
-    public $tabConfig = null;
-
-    /**
-     * @var string translation message file category name for i18n
-     */
-    protected $_msgCat = 'kvdetail';
-
-    /**
-     * @var string the hashed global variable name storing the pluginOptions
-     */
-    protected $_hashVar;
-
-    /**
-     * @var string the element's HTML5 data variable name storing the pluginOptions
-     */
-    protected $_dataVar;
-
-    /**
-     * @var string the Json encoded options
-     */
-    protected $_encOptions = '';
-
-    /**
      * @var ActiveForm the form instance
      */
     protected $_form;
@@ -834,6 +770,7 @@ class DetailView extends YiiDetailView
 
     /**
      * @inheritdoc
+     * @throws InvalidConfigException
      */
     public function init()
     {
@@ -843,6 +780,7 @@ class DetailView extends YiiDetailView
 
     /**
      * @inheritdoc
+     * @throws \ReflectionException
      */
     public function run()
     {
@@ -856,12 +794,14 @@ class DetailView extends YiiDetailView
      */
     protected function initWidget()
     {
+        $this->_msgCat = 'kvdetail';
+        $this->pluginName = 'kvDetailView';
         if ($this->enableEditMode) {
             /**
              * @var ActiveForm $formClass
              */
             $formClass = $this->formClass;
-            $activeForm = ActiveForm::classname();
+            $activeForm = ActiveForm::class;
             if (!is_subclass_of($formClass, $activeForm) && $formClass !== $activeForm) {
                 throw new InvalidConfigException("Form class '{$formClass}' must exist and extend from '{$activeForm}'.");
             }
@@ -894,6 +834,8 @@ class DetailView extends YiiDetailView
 
     /**
      * Prepares and runs the detail view widget
+     * @throws \ReflectionException
+     * @throws \Exception
      */
     protected function runWidget()
     {
@@ -934,6 +876,7 @@ class DetailView extends YiiDetailView
 
     /**
      * Initializes and renders alert container block
+     * @throws \Exception
      */
     protected function renderAlertBlock()
     {
@@ -1017,6 +960,7 @@ class DetailView extends YiiDetailView
      * Renders the main detail view widget
      *
      * @return string the detail view content
+     * @throws InvalidConfigException
      */
     protected function renderDetailView()
     {
@@ -1079,6 +1023,7 @@ class DetailView extends YiiDetailView
      * @param array $attribute the specification of the attribute to be rendered.
      *
      * @return string the rendering result
+     * @throws InvalidConfigException
      */
     protected function renderAttributeRow($attribute)
     {
@@ -1143,6 +1088,7 @@ class DetailView extends YiiDetailView
      * @param array $attribute the specification of the attribute to be rendered.
      *
      * @return string the rendering result
+     * @throws InvalidConfigException
      */
     protected function renderAttributeItem($attribute)
     {
@@ -1313,6 +1259,7 @@ class DetailView extends YiiDetailView
      * @param string $content
      *
      * @return string
+     * @throws \Exception
      */
     protected function renderPanel($content)
     {
@@ -1438,6 +1385,7 @@ class DetailView extends YiiDetailView
 
     /**
      * Register assets
+     * @throws \Exception
      */
     protected function registerAssets()
     {
