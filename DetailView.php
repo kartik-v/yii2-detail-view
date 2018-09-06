@@ -749,6 +749,18 @@ class DetailView extends YiiDetailView
     public $container = [];
 
     /**
+     * @var closure Configure the Tab-Widget. Default is bootstrap\Tabs::widget
+     * ```php
+     * echo DetailView::widget([
+     *     'model' => $model,
+     *     'tabConfig' => function($items) { return \my\awesome\Tab::widget(['items'=>$items]); },
+     *     ...
+     * ]);
+     * ```     
+     */
+    public $tabConfig;
+
+    /**
      * @var ActiveForm the form instance
      */
     protected $_form;
