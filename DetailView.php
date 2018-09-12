@@ -1205,7 +1205,25 @@ class DetailView extends YiiDetailView
      */
     protected function renderFormAttribute($config)
     {
-        if (empty($config['attribute'])) {
+        $attribute = ArrayHelper::getValue($config, 'attribute');
+        $attr = ArrayHelper::getValue($config, 'updateAttr', $attribute);
+        $input = ArrayHelper::getValue($config, 'type', self::INPUT_TEXT);
+        $fieldConfig = ArrayHelper::getValue($config, 'fieldConfig', []);
+        $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
+        $container = ArrayHelper::getValue($config, 'inputContainer', []);
+        $options = ArrayHelper::getValue($config, 'options', []);
+        $widgetOptions = ArrayHelper::getValue($config, 'widgetOptions', []);
+        $class = ArrayHelper::remove($widgetOptions, 'class', '');
+
+        if ($input == 'plainWidget') {
+            return $class::widget($widgetOptions);
+        }
+
+        if ($input == 'plain') {
+            return ArrayHelper::getValue($config, 'value','');
+        }
+
+        if (!$attribute) {
             return '';
         }
         $model = ArrayHelper::getValue($config, 'editModel', $this->model);
@@ -1216,11 +1234,6 @@ class DetailView extends YiiDetailView
             $markup = $config['updateMarkup'];
             return $markup instanceof Closure ? $markup($this->_form, $this) : $markup;
         }
-        $attr = ArrayHelper::getValue($config, 'updateAttr', $config['attribute']);
-        $input = ArrayHelper::getValue($config, 'type', self::INPUT_TEXT);
-        $fieldConfig = ArrayHelper::getValue($config, 'fieldConfig', []);
-        $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
-        $container = ArrayHelper::getValue($config, 'inputContainer', []);
         if ($inputWidth != '') {
             Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.7
         }
@@ -1237,9 +1250,6 @@ class DetailView extends YiiDetailView
                 "Invalid input type '{$input}' defined for the attribute '" . $config['attribute'] . "'."
             );
         }
-        $options = ArrayHelper::getValue($config, 'options', []);
-        $widgetOptions = ArrayHelper::getValue($config, 'widgetOptions', []);
-        $class = ArrayHelper::remove($widgetOptions, 'class', '');
         if (!empty($config['options'])) {
             $widgetOptions['options'] = $config['options'];
         }
@@ -1254,6 +1264,7 @@ class DetailView extends YiiDetailView
 
             return $this->_form->field($model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }
+
         if (in_array($input, self::$_dropDownInputs)) {
             $items = ArrayHelper::getValue($config, 'items', []);
             return $this->_form->field($model, $attr, $fieldConfig)->$input($items, $options);
