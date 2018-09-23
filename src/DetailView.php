@@ -4,12 +4,13 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2018
- * @version   1.7.7
+ * @version   1.7.8
  */
 
 namespace kartik\detail;
 
 use Closure;
+use kartik\base\BootstrapInterface;
 use kartik\base\Config;
 use kartik\base\TranslationTrait;
 use kartik\base\WidgetTrait;
@@ -57,7 +58,7 @@ use yii\widgets\DetailView as YiiDetailView;
  * @author Kartik Visweswaran <kartikv2@gmail.com>
  * @since  1.0
  */
-class DetailView extends YiiDetailView
+class DetailView extends YiiDetailView implements BootstrapInterface
 {
     use WidgetTrait;
     use TranslationTrait;
@@ -530,7 +531,7 @@ class DetailView extends YiiDetailView
      * - inputType: string|Closure, the HTML 5 input type if `type` is set to [[DetailView::::INPUT_HTML 5]].
      * - inputContainer: array|Closure, HTML attributes for the input container
      * - inputWidth: string|Closure, the width of the container holding the input, should be appended along with the
-     *   width unit (`px` or `%`) - this property is deprecated since v1.7.7
+     *   width unit (`px` or `%`) - this property is deprecated since v1.7.8
      * - fieldConfig: array|Closure, optional, the Active field configuration.
      * - options: array|Closure, optional, the HTML attributes for the input.
      * - updateAttr: string|Closure, optional, the name of the attribute to be updated, when in edit mode. This will
@@ -1135,7 +1136,7 @@ HTML;
         $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
         $container = ArrayHelper::getValue($config, 'inputContainer', []);
         if ($inputWidth != '') {
-            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.7
+            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.8
         }
         $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
         $row = Html::tag('div', $template, $container);

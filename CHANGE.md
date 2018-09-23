@@ -1,6 +1,12 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.7.8
+
+**Date:** 23-Sep-2018
+
+- (enh #166): Refactor code to implement `kartik\base\BootstrapInterface`.
+
 ## Version 1.7.7
 
 **Date:** 11-Sep-2018
