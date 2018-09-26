@@ -1,6 +1,12 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.7.9
+
+**Date:** 26-Sep-2018
+
+- Enhancements in parsing Bootstrap CSS classes (ref: kartik-v/yii2-krajee-base#100).
+
 ## Version 1.7.8
 
 **Date:** 23-Sep-2018

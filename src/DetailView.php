@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2018
- * @version   1.7.8
+ * @version   1.7.9
  */
 
 namespace kartik\detail;
@@ -112,8 +112,8 @@ class DetailView extends YiiDetailView implements BootstrapInterface
      * @var string horizontal **right** alignment for grid cells
      */
     const ALIGN_RIGHT = 'right';
- 
-   /**
+
+    /**
      * @var string horizontal **center** alignment for grid cells
      */
     const ALIGN_CENTER = 'center';
@@ -531,7 +531,7 @@ class DetailView extends YiiDetailView implements BootstrapInterface
      * - inputType: string|Closure, the HTML 5 input type if `type` is set to [[DetailView::::INPUT_HTML 5]].
      * - inputContainer: array|Closure, HTML attributes for the input container
      * - inputWidth: string|Closure, the width of the container holding the input, should be appended along with the
-     *   width unit (`px` or `%`) - this property is deprecated since v1.7.8
+     *   width unit (`px` or `%`) - this property is deprecated since v1.7.9
      * - fieldConfig: array|Closure, optional, the Active field configuration.
      * - options: array|Closure, optional, the HTML attributes for the input.
      * - updateAttr: string|Closure, optional, the name of the attribute to be updated, when in edit mode. This will
@@ -821,9 +821,6 @@ HTML;
         $this->_msgCat = 'kvdetail';
         $this->pluginName = 'kvDetailView';
         $isBs4 = $this->isBs4();
-        if (!isset($this->panelCssPrefix)) {
-            $this->panelCssPrefix = $isBs4 ? 'card border-' : 'panel panel-';
-        }
         if ($isBs4) {
             Html::addCssClass($this->container, 'kv-container-bs4');
         }
@@ -851,7 +848,7 @@ HTML;
                 Html::addCssClass($this->options, 'table-bordered');
             }
             if ($this->condensed) {
-                Html::addCssClass($this->options, $isBs4 ? 'table-sm' : 'table-condensed');
+                $this->addCssClass($this->options, self::BS_TABLE_CONDENSED);
             }
             $this->_childTableOptions = $this->options;
             if ($this->striped) {
@@ -874,15 +871,16 @@ HTML;
             $this->container['id'] = $this->getId();
         }
         $this->initI18N(__DIR__);
-        Html::addCssClass($this->alertContainerOptions, [$this->isBs4() ? 'card-body' : 'panel-body', 'kv-alert-container']);
+        Html::addCssClass($this->alertContainerOptions,
+            [$this->getCssClass(self::BS_PANEL_BODY), 'kv-alert-container']);
         foreach ($this->alertMessageSettings as $key => $setting) {
-            $this->alertMessageSettings[$key] = (array) $setting;
+            $this->alertMessageSettings[$key] = (array)$setting;
         }
         $this->alertMessageSettings += [
             'kv-detail-error' => ['alert', 'alert-danger'],
             'kv-detail-success' => ['alert', 'alert-success'],
-            'kv-detail-info' =>  ['alert', 'alert-info'],
-            'kv-detail-warning' =>  ['alert', 'alert-warning'],
+            'kv-detail-info' => ['alert', 'alert-info'],
+            'kv-detail-warning' => ['alert', 'alert-warning'],
         ];
 
         $this->registerAssets();
@@ -1136,7 +1134,7 @@ HTML;
         $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
         $container = ArrayHelper::getValue($config, 'inputContainer', []);
         if ($inputWidth != '') {
-            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.8
+            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.9
         }
         $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
         $row = Html::tag('div', $template, $container);
@@ -1223,21 +1221,24 @@ HTML;
         $panelAfter = '';
         $panelFooter = '';
         $isBs4 = $this->isBs4();
-        static::initCss($options, $this->panelCssPrefix . $type);
+        if (isset($this->panelCssPrefix)) {
+            static::initCss($options, $this->panelCssPrefix . $type);
+        } else {
+            $this->addCssClass($options, self::BS_PANEL);
+            Html::addCssClass($options, $isBs4 ? "border-{$type}" : "panel-{$type}");
+        }
         if ($after === false && $footer === false) {
             Html::addCssClass($this->container, 'kv-flat-b');
         }
-        $titleTag = ArrayHelper::remove($titleOptions, 'tag', ($isBs4 ? 'span' : 'h3'));
-        if (!$isBs4) {
-            static::initCss($titleOptions, 'panel-title');
-        }
+        $titleTag = ArrayHelper::remove($titleOptions, 'tag', ($isBs4 ? 'h5' : 'h3'));
+        static::initCss($titleOptions, $isBs4 ? 'm-0' : $this->getCssClass(self::BS_PANEL_TITLE));
         if ($heading !== false) {
-            $color = $type === 'default' ? 'bg-light' : 'text-white bg-' . $type;
-            static::initCss($headingOptions, $isBs4 ? 'card-header ' . $color : 'panel-heading');
+            $color = $isBs4 ? ($type === 'default' ? ' bg-light' : " text-white bg-{$type}") : '';
+            static::initCss($headingOptions, $this->getCssClass(self::BS_PANEL_HEADING) . $color);
             $panelHeading = Html::tag('div', $this->panelHeadingTemplate, $headingOptions);
         }
         if ($footer !== false) {
-            static::initCss($footerOptions, $isBs4 ? 'card-footer border-top-0' : 'panel-footer');
+            static::initCss($footerOptions, $this->getCssClass(self::BS_PANEL_FOOTER));
             $panelFooter = Html::tag('div', $footer, $footerOptions);
         }
         if ($before !== false) {
@@ -1255,7 +1256,7 @@ HTML;
             '{items}' => $items,
             '{panelFooter}' => $panelFooter,
             '{panelBefore}' => $panelBefore,
-            '{panelAfter}' => $panelAfter
+            '{panelAfter}' => $panelAfter,
         ]);
 
         return Html::tag('div', strtr($out, [
@@ -1331,7 +1332,7 @@ HTML;
         $buttonOptions = $type . 'Options';
         $options = $this->$buttonOptions;
         $css = $this->getDefaultIconPrefix() . ($this->isBs4() ? $iconBs4 : $iconBs3);
-        $label = ArrayHelper::remove($options, 'label', '<i class="' . $css  . '"></i>');
+        $label = ArrayHelper::remove($options, 'label', '<i class="' . $css . '"></i>');
         if (empty($options['class'])) {
             $options['class'] = 'kv-action-btn';
         }
@@ -1375,7 +1376,7 @@ HTML;
             $button = Html::tag($tag, $label, $opts);
         }
         $opts = ArrayHelper::getValue($this->alertWidgetOptions, 'options', []);
-        $css = '{class} fade ' . ($this->isBs4() ? 'show' : 'in');
+        $css = '{class} fade ' . $this->getCssClass(self::BS_SHOW);
         if (!empty($opts['class'])) {
             $opts['class'] .= ' ' . $css;
         } else {

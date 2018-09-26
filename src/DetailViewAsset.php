@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2018
- * @version   1.7.8
+ * @version   1.7.9
  */
 
 namespace kartik\detail;
