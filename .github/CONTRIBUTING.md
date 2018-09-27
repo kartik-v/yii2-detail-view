@@ -116,7 +116,7 @@ Licensing
 ---------
 
 It should also be made clear that **all code contributed to yii2-detail-view** must be
-licensable under the [BSD-3 license][licensing].  Code that cannot be released
+licensable under the [BSD-3-CLause license][licensing].  Code that cannot be released
 under this license **cannot be accepted** into the project.
 
 [issue-search]: https://github.com/kartik-v/yii2-detail-view/search?q=&type=Issues

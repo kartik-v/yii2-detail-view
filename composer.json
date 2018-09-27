@@ -1,6 +1,6 @@
 {
     "name": "kartik-v/yii2-detail-view",
-    "description": "Various enhancements to the Yii 2 Detail View with multi models, ability to edit data, manage Bootstrap 3 styles and more.",
+    "description": "Enhanced Yii 2 Detail View widget with special Bootstrap styles, ability to edit data, and more.",
     "keywords": [
         "yii2",
         "extension",

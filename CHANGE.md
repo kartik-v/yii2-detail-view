@@ -1,6 +1,12 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.8.1
+
+**Date:** 27-Sep-2018
+
+- Enhancement for `BootstrapTrait::getCssClass`.
+
 ## Version 1.8.0
 
 **Date:** 27-Sep-2018
