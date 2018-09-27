@@ -1,6 +1,12 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.8.0
+
+**Date:** 27-Sep-2018
+
+- Bump up version.
+
 ## Version 1.7.9
 
 **Date:** 26-Sep-2018
