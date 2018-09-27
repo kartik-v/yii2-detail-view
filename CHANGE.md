@@ -1,10 +1,30 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.8.0
+
+**Date:** 27-Sep-2018
+
+- Bump up version.
+
+## Version 1.7.9
+
+**Date:** 26-Sep-2018
+
+- Enhancements in parsing Bootstrap CSS classes (ref: kartik-v/yii2-krajee-base#100).
+
+## Version 1.7.8
+
+**Date:** 23-Sep-2018
+
+- (enh #166): Refactor code to implement `kartik\base\BootstrapInterface`.
+
 ## Version 1.7.7
 
-**Date:** _Work in process_
+**Date:** 11-Sep-2018
 
+- Move all source code to `src` directory.
+- Updates to support Bootstrap v4.x.
 - (kartik-v/yii2-krajee-base#94): Refactor code and consolidate / optimize properties within traits.
 - (bug #160, #161): Correct hidden row style when both view and edit modes are hidden.
 - (enh #158, #159): Correct multi select display.
