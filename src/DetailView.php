@@ -218,15 +218,18 @@ class DetailView extends YiiDetailView implements BootstrapInterface
     const ALIGN_BOTTOM = 'bottom';
 
     /** 
-     * Input Label position LEFT
+     * @var string Input Label position LEFT
      */
+
     const LABEL_POS_LEFT = 'left';
+
     /** 
-     * Input Label position TOP
+     * @var string Input Label position TOP
      */
     const LABEL_POS_TOP = 'top';
+
     /** 
-     * Input Label position BOTTOM
+     * @var string Input Label position BOTTOM
      */
     const LABEL_POS_BOTTOM = 'BOTTOM';
 
