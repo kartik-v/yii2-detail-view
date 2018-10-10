@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2018
- * @version   1.8.1
+ * @version   1.8.2
  */
 
 namespace kartik\detail;
@@ -820,6 +820,7 @@ HTML;
     {
         $this->_msgCat = 'kvdetail';
         $this->pluginName = 'kvDetailView';
+        $this->initBsVersion();
         $isBs4 = $this->isBs4();
         if ($isBs4) {
             Html::addCssClass($this->container, 'kv-container-bs4');
@@ -1134,7 +1135,7 @@ HTML;
         $inputWidth = ArrayHelper::getValue($config, 'inputWidth', '');
         $container = ArrayHelper::getValue($config, 'inputContainer', []);
         if ($inputWidth != '') {
-            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.8.1
+            Html::addCssStyle($container, "width: {$inputWidth}"); // deprecated since v1.7.7
         }
         $template = ArrayHelper::getValue($fieldConfig, 'template', "{input}\n{error}\n{hint}");
         $row = Html::tag('div', $template, $container);

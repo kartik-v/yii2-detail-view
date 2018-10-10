@@ -1,6 +1,12 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.8.2
+
+**Date:** 10-Oct-2018
+
+- bug #167: Correct initBsVersion.
+
 ## Version 1.8.1
 
 **Date:** 27-Sep-2018
