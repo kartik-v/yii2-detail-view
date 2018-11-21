@@ -592,32 +592,6 @@ HTML;
 HTML;
 
     /**
-     * @var array the panel settings. If this is set, the grid widget
-     * will be embedded in a bootstrap panel. Applicable only if `bootstrap`
-     * is `true`. The following array keys are supported:
-     * - `type`: _string_, the panel contextual type (one of the TYPE constants, if not set will default to `default` or
-     *   `self::TYPE_DEFAULT`)
-     * - `heading`: string | boolean, the panel heading title value. If set to false, the entire heading will be not
-     *   displayed. Note that the `{title}` tag in the `headingOptions['template']` will be replaced with this value.
-     * - `headingOptions`: _array_, the HTML attributes for the panel heading. Defaults to `['class'=>'panel-title']`.
-     *   The following additional options are available:
-     *   - `tag`: _string_, the tag to render the heading. Defaults to `h3`.
-     *   - `template`: _string_, the template to render the heading. Defaults to `{buttons}{title}`, where:
-     *      - `{title}` will be replaced with the `heading` value, and
-     *      -`{buttons}` will be replaced by the rendered buttons.
-     * - `footer`: string | boolean, the panel footer title value. Defaults to `false`. If set to false, the entire
-     *   footer will be not displayed. Note that the `{title}` tag in the `footerOptions['template']` will be
-     *   replaced with this value.
-     * - `footerOptions`: _array_, the HTML attributes for the panel footer. Defaults to `['class'=>'panel-title']`. The
-     *   following additional options are available:
-     *   - `tag`: _string_, the tag to render the footer. Defaults to `h4`.
-     *   - `template`: _string_, the template to render the footer. Defaults to `{title}`, where:
-     *      - `{title}` will be replaced with the `footer`, and
-     *      -`{buttons}` will be replaced by the rendered buttons.
-     */
-    public $panel1 = [];
-
-    /**
      * @var array the panel settings for displaying the grid view within a bootstrap styled panel. This property is
      * therefore applicable only if [[bootstrap]] property is `true`. The following array keys can be configured:
      * - `type`: _string_, the panel contextual type. Set it to one of the TYPE constants. If not set, will default to
