@@ -1280,16 +1280,19 @@ HTML;
         if ($this->notSetIfEmpty && ($value === '' || $value === null)) {
             $value = null;
         }
+
         $dispAttr = $this->formatter->format($value, $attribute['format']);
+
         Html::addCssClass($this->viewAttributeContainer, 'kv-attribute');
         Html::addCssClass($this->editAttributeContainer, 'kv-form-attribute');
 
-        if(ArrayHelper::getValue($attribute, 'forceRenderEdit',false)) {
+        if (ArrayHelper::getValue($attribute, 'forceRenderEdit',false)) {
             Html::removeCssStyle($this->editAttributeContainer,['display']);
             Html::addCssStyle($this->viewAttributeContainer,'display: none');
-        };
+        }
 
         $output = Html::tag('div', $dispAttr, $this->viewAttributeContainer) . "\n";
+
 
         if ($this->enableEditMode || ArrayHelper::getValue($attribute, 'forceRenderEdit',false)) {
             $editInput = ArrayHelper::getValue($attribute, 'displayOnly', false) ? $dispAttr :
@@ -1363,6 +1366,7 @@ HTML;
         $options = ArrayHelper::getValue($config, 'options', []);
         $widgetOptions = ArrayHelper::getValue($config, 'widgetOptions', []);
         $class = ArrayHelper::remove($widgetOptions, 'class', '');
+        $forceRenderEdit = ArrayHelper::getValue($attribute,'forceRenderEdit',false);
 
         if ($input == 'plainWidget') {
             return $class::widget($widgetOptions);
@@ -1404,6 +1408,12 @@ HTML;
         }
         if (Config::isInputWidget($input)) {
             $class = $input;
+            if (!$this->_form) {
+                $widgetOptions['model'] = $this->model;
+                $widgetOptions['attribute'] = $attribute;
+                return $class::widget($widgetOptions);
+            }
+
             return $this->_form->field($model, $attr, $fieldConfig)->widget($class, $widgetOptions);
         }
         if ($input === self::INPUT_WIDGET) {
@@ -1422,6 +1432,7 @@ HTML;
             $inputType = ArrayHelper::getValue($config, 'inputType', self::INPUT_TEXT);
             return $this->_form->field($model, $attr, $fieldConfig)->$input($inputType, $options);
         }
+
         return $this->_form->field($model, $attr, $fieldConfig)->$input($options);
     }
 
