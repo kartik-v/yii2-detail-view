@@ -1289,6 +1289,9 @@ HTML;
         if (ArrayHelper::getValue($attribute, 'forceRenderEdit',false)) {
             Html::removeCssStyle($this->editAttributeContainer,['display']);
             Html::addCssStyle($this->viewAttributeContainer,'display: none');
+        } else {
+            Html::addCssStyle($this->editAttributeContainer,['display']);
+            Html::addCssStyle($this->viewAttributeContainer,'display: block');
         }
 
         $output = Html::tag('div', $dispAttr, $this->viewAttributeContainer) . "\n";
