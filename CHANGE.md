@@ -1,11 +1,17 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.8.3
+
+**Date:** 15-May-2020
+
+- (enh #176): Correct container identifier.
+
 ## Version 1.8.2
 
 **Date:** 10-Oct-2018
 
-- bug #167: Correct initBsVersion.
+- (bug #167): Correct initBsVersion.
 
 ## Version 1.8.1
 

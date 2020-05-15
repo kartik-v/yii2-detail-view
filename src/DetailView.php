@@ -3,8 +3,8 @@
 /**
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2018
- * @version   1.8.2
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2020
+ * @version   1.8.3
  */
 
 namespace kartik\detail;
@@ -843,7 +843,7 @@ HTML;
     protected function runWidget()
     {
         if (empty($this->container['id'])) {
-            $this->container['id'] = $this->getId();
+            $this->container['id'] = $this->getId() . '-container';
         }
         $this->initI18N(__DIR__);
         $this->addCssClass($this->alertContainerOptions, self::BS_PANEL_BODY);
