@@ -17,7 +17,7 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Cancel Changes' => '',
+    'Cancel Changes' => 'Változtatások visszavonása',
     'Are you sure you want to delete this item?' => 'Biztosan törölni szeretné ezt az elemet?',
     'Delete' => 'Törlés',
     'Save' => 'Mentés',
