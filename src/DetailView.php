@@ -903,6 +903,15 @@ HTML;
         $out = Html::beginTag('div', $this->alertContainerOptions);
         $alertWidgetClass = $this->isBs4() ? 'yii\bootstrap4\Alert' : 'yii\bootstrap\Alert';
         foreach ($flashes as $type => $message) {
+            if (is_array($message)) {
+                $messageArray = $message;
+                $newMassage = '';
+                foreach ($messageArray as $item) {
+                    $newMassage .= $item . Html::tag('br');
+                }
+                $message = $newMassage;
+            }
+            
             if (!isset($this->alertMessageSettings[$type])) {
                 continue;
             }
