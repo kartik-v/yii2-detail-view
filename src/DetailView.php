@@ -3,19 +3,21 @@
 /**
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
- * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2020
+ * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2021
  * @version   1.8.3
  */
 
 namespace kartik\detail;
 
 use Closure;
+use Exception;
 use kartik\base\BootstrapInterface;
 use kartik\base\Config;
 use kartik\base\TranslationTrait;
 use kartik\base\WidgetTrait;
 use kartik\base\PluginAssetBundle;
 use kartik\dialog\Dialog;
+use ReflectionException;
 use Yii;
 use yii\base\Arrayable;
 use yii\base\InvalidConfigException;
@@ -778,7 +780,7 @@ HTML;
 
     /**
      * @inheritdoc
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function run()
     {
@@ -795,17 +797,17 @@ HTML;
         $this->_msgCat = 'kvdetail';
         $this->pluginName = 'kvDetailView';
         $this->initBsVersion();
-        $isBs4 = $this->isBs4();
-        if ($isBs4) {
+        $notBs3 = !$this->isBs(3);
+        if ($notBs3) {
             Html::addCssClass($this->container, 'kv-container-bs4');
         }
         if ($this->enableEditMode) {
             /**
-             * @var ActiveForm $formClass
+             * @var string|ActiveForm $formClass
              */
             $formClass = $this->formClass;
             $activeForm = ActiveForm::class;
-            if (!is_subclass_of($formClass, $activeForm) && $formClass !== $activeForm) {
+            if (!is_subclass_of($formClass, $activeForm) && $formClass != $activeForm) {
                 throw new InvalidConfigException("Form class '{$formClass}' must exist and extend from '{$activeForm}'.");
             }
             $this->validateDisplay();
@@ -837,8 +839,8 @@ HTML;
 
     /**
      * Prepares and runs the detail view widget
-     * @throws \ReflectionException
-     * @throws \Exception
+     * @throws ReflectionException
+     * @throws Exception
      */
     protected function runWidget()
     {
@@ -860,12 +862,12 @@ HTML;
 
         $this->registerAssets();
         $output = $this->renderDetailView();
-        if (is_array($this->panel) && !empty($this->panel) && $this->panel !== false) {
+        if (is_array($this->panel) && !empty($this->panel)) {
             $output = $this->renderPanel($output);
         }
         $output = strtr(Html::tag('div', $this->mainTemplate, $this->container), ['{detail}' => $output]);
         Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
-        $buttons = Html::tag('span', $this->renderButtons(1), $this->viewButtonsContainer);
+        $buttons = Html::tag('span', $this->renderButtons(), $this->viewButtonsContainer);
         if ($this->enableEditMode) {
             Html::addCssClass($this->editButtonsContainer, 'kv-buttons-2');
             $buttons .= Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer);
@@ -883,7 +885,7 @@ HTML;
 
     /**
      * Initializes and renders alert container block
-     * @throws \Exception
+     * @throws Exception
      */
     protected function renderAlertBlock()
     {
@@ -901,7 +903,7 @@ HTML;
             Html::addCssStyle($this->alertContainerOptions, 'display:none;');
         }
         $out = Html::beginTag('div', $this->alertContainerOptions);
-        $alertWidgetClass = $this->isBs4() ? 'yii\bootstrap4\Alert' : 'yii\bootstrap\Alert';
+        $alertWidgetClass = !$this->isBs(3) ? 'yii\bootstrap4\Alert' : 'yii\bootstrap\Alert';
         foreach ($flashes as $type => $message) {
             if (!isset($this->alertMessageSettings[$type])) {
                 continue;
@@ -1059,9 +1061,10 @@ HTML;
     /**
      * Checks if a bootstrap grid column class has been added to the container
      *
-     * @param array $container
+     * @param  array  $container
      *
      * @return boolean
+     * @throws Exception
      */
     protected static function hasGridCol($container = [])
     {
@@ -1088,7 +1091,7 @@ HTML;
      * @param array $config the attribute config
      *
      * @return mixed
-     * @throws \yii\base\InvalidConfigException
+     * @throws InvalidConfigException
      */
     protected function renderFormAttribute($config)
     {
@@ -1173,7 +1176,7 @@ HTML;
      * Sets the grid panel layout based on the [[template]] and [[panel]] settings.
      * @param string $items
      * @return string
-     * @throws InvalidConfigException
+     * @throws InvalidConfigException|Exception
      */
     protected function renderPanel($items)
     {
@@ -1195,20 +1198,20 @@ HTML;
         $panelBefore = '';
         $panelAfter = '';
         $panelFooter = '';
-        $isBs4 = $this->isBs4();
+        $notBs3 = !$this->isBs(3);
         if (isset($this->panelCssPrefix)) {
             static::initCss($options, $this->panelCssPrefix . $type);
         } else {
             $this->addCssClass($options, self::BS_PANEL);
-            Html::addCssClass($options, $isBs4 ? "border-{$type}" : "panel-{$type}");
+            Html::addCssClass($options, $notBs3 ? "border-{$type}" : "panel-{$type}");
         }
         if ($after === false && $footer === false) {
             Html::addCssClass($this->container, 'kv-flat-b');
         }
-        $titleTag = ArrayHelper::remove($titleOptions, 'tag', ($isBs4 ? 'h5' : 'h3'));
-        static::initCss($titleOptions, $isBs4 ? 'm-0' : $this->getCssClass(self::BS_PANEL_TITLE));
+        $titleTag = ArrayHelper::remove($titleOptions, 'tag', ($notBs3 ? 'h5' : 'h3'));
+        static::initCss($titleOptions, $notBs3 ? 'm-0' : $this->getCssClass(self::BS_PANEL_TITLE));
         if ($heading !== false) {
-            $color = $isBs4 ? ($type === 'default' ? ' bg-light' : " text-white bg-{$type}") : '';
+            $color = $notBs3 ? ($type === 'default' ? ' bg-light' : " text-white bg-{$type}") : '';
             static::initCss($headingOptions, $this->getCssClass(self::BS_PANEL_HEADING) . $color);
             $panelHeading = Html::tag('div', $this->panelHeadingTemplate, $headingOptions);
         }
@@ -1296,17 +1299,17 @@ HTML;
      *
      * @param string $type the button type
      * @param string $iconBs3 the bootstrap 3 icon suffix name
-     * @param string $iconBs4 the bootstrap 4 icon suffix name
+     * @param string $iconNotBs3 the non bootstrap 3 icon suffix name
      * @param string $title the title to display on hover
      *
      * @return string
-     * @throws InvalidConfigException
+     * @throws InvalidConfigException|Exception
      */
-    protected function getDefaultButton($type, $iconBs3, $iconBs4, $title)
+    protected function getDefaultButton($type, $iconBs3, $iconNotBs3, $title)
     {
         $buttonOptions = $type . 'Options';
         $options = $this->$buttonOptions;
-        $css = $this->getDefaultIconPrefix() . ($this->isBs4() ? $iconBs4 : $iconBs3);
+        $css = $this->getDefaultIconPrefix() . (!$this->isBs(3) ? $iconNotBs3 : $iconBs3);
         $label = ArrayHelper::remove($options, 'label', '<i class="' . $css . '"></i>');
         if (empty($options['class'])) {
             $options['class'] = 'kv-action-btn';
@@ -1332,7 +1335,7 @@ HTML;
 
     /**
      * Register assets
-     * @throws \Exception
+     * @throws Exception
      */
     protected function registerAssets()
     {
@@ -1369,9 +1372,6 @@ HTML;
             'dialogLib' => ArrayHelper::getValue($this->krajeeDialogSettings, 'libName', 'krajeeDialog'),
         ];
         $id = 'jQuery("#' . $this->container['id'] . '")';
-        if ($this->enableEditMode) {
-            $options['mode'] = $this->mode;
-        }
         $this->registerPlugin($this->pluginName, $id);
         if ($this->tooltips) {
             PluginAssetBundle::registerBundle($view, $this->bsVersion);
@@ -1426,8 +1426,8 @@ HTML;
             }
             $attribute = [
                 'attribute' => $matches[1],
-                'format' => isset($matches[3]) ? $matches[3] : 'text',
-                'label' => isset($matches[5]) ? $matches[5] : null,
+                'format' => $matches[3] ?? 'text',
+                'label' => $matches[5] ?? null,
             ];
         }
         if (!is_array($attribute)) {
