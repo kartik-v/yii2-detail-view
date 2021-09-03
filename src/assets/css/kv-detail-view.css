@@ -2,7 +2,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2021
- * @version   1.8.3
+ * @version   1.8.5
  *
  * Styles for yii2-detail-view extension 
  * 
@@ -121,14 +121,12 @@
 }
 
 .kv-action-btn {
+    color: inherit;
     margin: 0 2px;
     padding: 0 5px;
     background: none;
     border: none;
     font-size: 16px;
-}
-
-.kv-action-btn {
     cursor: pointer;
 }
 
@@ -137,24 +135,16 @@
     cursor: not-allowed;
 }
 
-.kv-action-btn:focus {
-    outline: 0;
-}
-
 .kv-action-btn[disabled],
 .kv-action-btn.disabled {
     cursor: not-allowed;
 }
 
-.card .kv-action-btn {
-    color: #fff;
-}
-
-.card .kv-action-btn:focus,
-.card .kv-action-btn:hover {
-    color: #fff;
+.kv-action-btn:focus,
+.kv-action-btn:hover {
+    color: inherit;
     outline: 0;
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
 .card.border-default .kv-action-btn {
@@ -164,44 +154,4 @@
 .card.border-default .kv-action-btn:focus,
 .card.border-default .kv-action-btn:hover {
     color: #333;
-}
-
-.panel-default .kv-action-btn {
-    color: #333;
-}
-
-.panel-primary .kv-action-btn:hover {
-    color: #c4e3f3;
-}
-
-.panel-info .kv-action-btn {
-    color: #31708f;
-}
-
-.panel-info .kv-action-btn:hover {
-    color: #245269;
-}
-
-.panel-warning .kv-action-btn {
-    color: #8a6d3b;
-}
-
-.panel-warning .kv-action-btn:hover {
-    color: #66512c;
-}
-
-.panel-danger .kv-action-btn {
-    color: #a94442;
-}
-
-.panel-danger .kv-action-btn:hover {
-    color: #843534;
-}
-
-.panel-success .kv-action-btn {
-    color: #3c763d;
-}
-
-.panel-success .kv-action-btn:hover {
-    color: #2b542c;
 }

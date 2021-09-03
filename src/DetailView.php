@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2021
- * @version   1.8.3
+ * @version   1.8.5
  */
 
 namespace kartik\detail;
@@ -81,9 +81,24 @@ class DetailView extends YiiDetailView implements BootstrapInterface
     const TYPE_DEFAULT = 'default';
 
     /**
+     * @var string the **light** bootstrap contextual color type (applicable only for panel contextual style)
+     */
+    const TYPE_LIGHT = 'light';
+
+    /**
+     * @var string the **dark** bootstrap contextual color type (applicable only for panel contextual style)
+     */
+    const TYPE_DARK = 'dark';
+
+    /**
      * @var string the **primary** bootstrap contextual color type
      */
     const TYPE_PRIMARY = 'primary';
+
+    /**
+     * @var string the **secondary** bootstrap contextual color type
+     */
+    const TYPE_SECONDARY = 'secondary';
 
     /**
      * @var string the **information** bootstrap contextual color type
@@ -603,22 +618,19 @@ HTML;
      * - `heading`: `string`|`boolean`, the panel heading. If set to `false`, will not be displayed.
      * - `headingOptions`: _array_, HTML attributes for the panel heading container. Defaults to:
      *   - `['class'=>'panel-heading']` when [[bsVersion]] = `3.x`, and
-     *   - `['class'=>'card-heading <COLOR>']` when [[bsVersion]] = `4.x` - the color will be auto calculated based on
+     *   - `['class'=>'card-heading <COLOR>']` when [[bsVersion]] = `4.x` or `5.x` - the color will be auto calculated based on
      *      the `type` setting
      * - `titleOptions`: _array_, HTML attributes for the panel title container. The following tags are specially
      *   parsed:
      *   - `tag`: _string_, the HTML tag to render the title. Defaults to `h3` when [[bsVersion]] = `3.x` and `span`
-     *     when [[bsVersion]] = `4.x`
+     *     when [[bsVersion]] = `4.x` or `5.x`
      *   The `titleOptions` defaults to:
      *   - `['class'=>'panel-title']` when [[bsVersion]] = `3.x`, and
-     *   - `[]` when [[bsVersion]] = `4.x`
-     * - `summaryOptions`: _array_, HTML attributes for the panel summary section container. Defaults to:
-     *   - `['class'=>'pull-right']` when [[bsVersion]] = `3.x`, and
-     *   - `['class'=>'float-right']` when [[bsVersion]] = `4.x`, and
+     *   - `[]` when [[bsVersion]] = `4.x` or `5.x`
      * - `footer`: `string`|`boolean`, the panel footer. If set to `false` will not be displayed.
      * - `footerOptions`: _array_, HTML attributes for the panel footer container. Defaults to:
      *   - `['class'=>'panel-footer']` when [[bsVersion]] = `3.x`, and
-     *   - `['class'=>'card-footer']` when [[bsVersion]] = `4.x`
+     *   - `['class'=>'card-footer']` when [[bsVersion]] = `4.x` or `5.x`
      * - 'before': `string`|`boolean`, content to be placed before/above the grid (after the header). To not display
      *   this section, set this to `false`.
      * - `beforeOptions`: _array_, HTML attributes for the `before` text. If the `class` is not set, it will default to
@@ -652,7 +664,7 @@ HTML;
     /**
      * @var array the options for the button toolbar container
      */
-    public $buttonContainer = ['class' => 'float-right pull-right'];
+    public $buttonContainer = ['class' => 'float-right float-end pull-right'];
 
     /**
      * @var string the buttons to show when in view mode. The following tags will be replaced:
@@ -1120,6 +1132,11 @@ HTML;
             $row = '<div class="row">' . $row . '</div>';
         }
         $fieldConfig['template'] = $row;
+        if (!isset($fieldConfig['options'])) {
+            $fieldConfig['options'] = ['class' => ''];
+        } else {
+            Html::removeCssClass($fieldConfig['options'], 'mb-3');
+        }
         if (substr($input, 0, 8) == "\\kartik\\") {
             Config::validateInputWidget($input, 'as an input widget for DetailView edit mode');
         } elseif ($input !== self::INPUT_WIDGET && !in_array($input, self::$_inputsList)) {
@@ -1211,7 +1228,7 @@ HTML;
         $titleTag = ArrayHelper::remove($titleOptions, 'tag', ($notBs3 ? 'h5' : 'h3'));
         static::initCss($titleOptions, $notBs3 ? 'm-0' : $this->getCssClass(self::BS_PANEL_TITLE));
         if ($heading !== false) {
-            $color = $notBs3 ? ($type === 'default' ? ' bg-light' : " text-white bg-{$type}") : '';
+            $color = ' ' . $this->getCssClass("panel-{$type}");
             static::initCss($headingOptions, $this->getCssClass(self::BS_PANEL_HEADING) . $color);
             $panelHeading = Html::tag('div', $this->panelHeadingTemplate, $headingOptions);
         }

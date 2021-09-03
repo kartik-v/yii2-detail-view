@@ -1,6 +1,12 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.8.5
+
+**Date:** 03-Sep-2021
+
+- (enh #183): Enhancements to support Bootstrap v5.x
+
 ## Version 1.8.4
 
 **Date:** 01-Sep-2021

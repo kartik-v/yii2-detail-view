@@ -25,9 +25,9 @@ The widget by default can be styled within a Bootstrap 3 panel with a buttons to
 Refer [detailed documentation](http://demos.krajee.com/detail-view) and/or a [complete demo](http://demos.krajee.com/detail-view-demo).
 
 ### Latest Release
-Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of various releases.
+Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/CHANGE.md) for details of changes to various releases.
 
-> NOTE: Bootstrap 5.x support is available since v1.8.4. The extension includes a BC Breaking change with v1.7.0. With v1.7.0, the `template` property of the yii core DetailView is not anymore supported. One can use `rowOptions`, `labelColOptions`, `valueColOptions` at the widget level or widget `attributes` level to configure advanced layout functionality.
+> NOTE: Bootstrap 5.x support is added since v1.8.4. The extension includes a BC Breaking change with v1.7.0. With this release, the `template` property of the yii core DetailView is not anymore supported. One can use `rowOptions`, `labelColOptions`, `valueColOptions` at the widget level or widget `attributes` level to configure advanced layout functionality.
 
 ### Demo
 You can see detailed [documentation](http://demos.krajee.com/detail-view) and [demonstration](http://demos.krajee.com/detail-view-demo) on usage of the extension.
