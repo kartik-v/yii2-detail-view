@@ -17,10 +17,10 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Are you sure you want to delete this item?' => '',
-    'Cancel Changes' => '',
-    'Delete' => '',
-    'Save' => '',
-    'Update' => '',
-    'View' => '',
+    'Are you sure you want to delete this item?' => 'Naozaj chcete odstrániť túto položku?',
+    'Cancel Changes' => 'Zrušiť zmeny',
+    'Delete' => 'Vymazať',
+    'Save' => 'Uložiť',
+    'Update' => 'Upraviť',
+    'View' => 'Zobraziť',
 ];
