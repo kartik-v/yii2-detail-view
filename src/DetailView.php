@@ -940,7 +940,7 @@ HTML;
      */
     protected function hasEditErrors()
     {
-        if ($this->model->hasErrors()) {
+        if ($this->model instanceof Model && $this->model->hasErrors()) {
             return true;
         }
         foreach ($this->attributes as $attribute) {
