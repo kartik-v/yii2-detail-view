@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2021
- * @version   1.8.5
+ * @version   1.8.6
  */
 
 namespace kartik\detail;
@@ -493,6 +493,11 @@ class DetailView extends YiiDetailView implements BootstrapInterface
      * @var boolean whether to display bootstrap style tooltips for titles on hover of buttons.
      */
     public $tooltips = true;
+
+    /**
+     * @var boolean whether to convert array values to string using `print_r`.
+     */
+    public $arrayValueToString = false;
 
     /**
      * @var array configuration settings for the Krajee dialog widget that will be used to render alerts and
@@ -1052,8 +1057,14 @@ HTML;
         if (ArrayHelper::getValue($attribute, 'type', 'text') === self::INPUT_HIDDEN) {
             Html::addCssClass($this->_rowOptions, 'kv-edit-hidden');
         }
-        /** issue #158 **/
-        $value = is_array($attribute['value']) ? print_r($attribute['value'], true) : $attribute['value'];
+        /**
+         * issue #158 & enh #185
+         */
+        $value = $attribute['value'];
+
+        if ($this->arrayValueToString && is_array($attribute['value'])) {
+            $value =  print_r($value, true);
+        }
 
         if ($this->notSetIfEmpty && ($value === '' || $value === null)) {
             $value = null;
@@ -1182,11 +1193,6 @@ HTML;
         if (!isset($options['class'])) {
             $options['class'] = $css;
         }
-    }
-
-    protected function getPanelType()
-    {
-
     }
 
     /**

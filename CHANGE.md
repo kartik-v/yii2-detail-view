@@ -1,6 +1,13 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.8.6
+
+**Date:** _under development_
+
+- (enh #185): New property `arrayValueToString` to control array values being printed via `print_r`.
+- (enh #184): Add Slovak Translations and enhance model validation.
+
 ## Version 1.8.5
 
 **Date:** 03-Sep-2021
