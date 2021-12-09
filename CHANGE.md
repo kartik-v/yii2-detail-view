@@ -5,6 +5,7 @@ Change Log: `yii2-detail-view`
 
 **Date:** _under development_
 
+- (enh #186): Correct alignments of BS3 controls in edit mode.
 - (enh #185): New property `arrayValueToString` to control array values being printed via `print_r`.
 - (enh #184): Add Slovak Translations and enhance model validation.
 
