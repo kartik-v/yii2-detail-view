@@ -582,14 +582,14 @@ class DetailView extends YiiDetailView implements BootstrapInterface
     public $attributes;
 
     /**
-     * @var array the options for the ActiveForm that will be generated in edit mode.
-     */
-    public $formOptions = [];
-
-    /**
-     * @var string the ActiveForm widget class
+     * @var string the form widget class name (extending from [[ActiveForm]]) to be used for editing
      */
     public $formClass = 'kartik\form\ActiveForm';
+
+    /**
+     * @var array the options for the [[ActiveForm]] instance that will be generated in edit mode based on [[formClass]].
+     */
+    public $formOptions = [];
 
     /**
      * @var string the template for rendering the grid within a bootstrap styled panel / card layout.
