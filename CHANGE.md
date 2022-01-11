@@ -3,11 +3,17 @@ Change Log: `yii2-detail-view`
 
 ## Version 1.8.6
 
-**Date:** _under development_
+**Date:** 11-Jan-2022
 
+- New public property `DetailView::childTableOptions`.
+- Enhance & standardize php docs for new website https://docs.krajee.com.
+- (bug #187): Fix BootstrapTrait usage.
 - (enh #186): Correct alignments of BS3 controls in edit mode.
 - (enh #185): New property `arrayValueToString` to control array values being printed via `print_r`.
 - (enh #184): Add Slovak Translations and enhance model validation.
+- (enh #182): Document `showErrorSummary` in docs.
+- (enh #180): Accept array messages in flashes.
+- (enh #172): Correct table condensed styles for child columns.
 
 ## Version 1.8.5
 

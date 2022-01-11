@@ -33,8 +33,8 @@ Refer the [CHANGE LOG](https://github.com/kartik-v/yii2-detail-view/blob/master/
 
 > NOTE: Bootstrap 5.x support is added since v1.8.4. The extension includes a BC Breaking change with v1.7.0. With this release, the `template` property of the yii core DetailView is not anymore supported. One can use `rowOptions`, `labelColOptions`, `valueColOptions` at the widget level or widget `attributes` level to configure advanced layout functionality.
 
-### Demo
-You can see detailed [documentation](http://demos.krajee.com/detail-view) and [demonstration](http://demos.krajee.com/detail-view-demo) on usage of the extension.
+### Docs & Demo
+You can see detailed [documentation](http://demos.krajee.com/detail-view), [demonstration](http://demos.krajee.com/detail-view-demo) and API [code documentation](https://docs.krajee.com/kartik-detail-detailview) on usage of the extension.
 
 ## Installation
 
