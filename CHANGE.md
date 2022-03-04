@@ -1,6 +1,12 @@
 Change Log: `yii2-detail-view`
 ==============================
 
+## Version 1.8.7
+
+**Date:** 04-Mar-2022
+
+- Enhance compatibility for PHP 8.1.
+
 ## Version 1.8.6
 
 **Date:** 11-Jan-2022

@@ -4,7 +4,7 @@
  * @package   yii2-detail-view
  * @author    Kartik Visweswaran <kartikv2@gmail.com>
  * @copyright Copyright &copy; Kartik Visweswaran, Krajee.com, 2014 - 2022
- * @version   1.8.6
+ * @version   1.8.7
  */
 
 namespace kartik\detail;
@@ -14,6 +14,7 @@ use Exception;
 use kartik\base\BootstrapInterface;
 use kartik\base\BootstrapTrait;
 use kartik\base\Config;
+use kartik\base\Lib;
 use kartik\base\TranslationTrait;
 use kartik\base\WidgetTrait;
 use kartik\base\PluginAssetBundle;
@@ -642,6 +643,7 @@ HTML;
      *   - `tag`: _string_, the HTML tag to render the title. Defaults to:
      *      - `span` for Bootstrap 4.x & Bootstrap 5.x.
      *      - `h3` for Bootstrap 3.x.
+     *
      *   The `titleOptions` defaults to:
      *   - `[]` for Bootstrap 4.x & Bootstrap 5.x.
      *   - `['class'=>'panel-title']` for Bootstrap 3.x.
@@ -900,14 +902,14 @@ HTML;
         if (is_array($this->panel) && !empty($this->panel)) {
             $output = $this->renderPanel($output);
         }
-        $output = strtr(Html::tag('div', $this->mainTemplate, $this->container), ['{detail}' => $output]);
+        $output = Lib::strtr(Html::tag('div', $this->mainTemplate, $this->container), ['{detail}' => $output]);
         Html::addCssClass($this->viewButtonsContainer, 'kv-buttons-1');
         $buttons = Html::tag('span', $this->renderButtons(), $this->viewButtonsContainer);
         if ($this->enableEditMode) {
             Html::addCssClass($this->editButtonsContainer, 'kv-buttons-2');
             $buttons .= Html::tag('span', $this->renderButtons(2), $this->editButtonsContainer);
         }
-        echo str_replace('{buttons}', Html::tag('div', $buttons, $this->buttonContainer), $output);
+        echo Lib::str_replace('{buttons}', Html::tag('div', $buttons, $this->buttonContainer), $output);
         if ($this->enableEditMode) {
             /**
              * @var ActiveForm $formClass
@@ -1111,15 +1113,15 @@ HTML;
     protected static function hasGridCol($container = [])
     {
         $css = ArrayHelper::getValue($container, 'class', '');
-        $css = trim($css);
-        $css = preg_replace('/\s+/', ' ', $css);
+        $css = Lib::trim($css);
+        $css = Lib::preg_replace('/\s+/', ' ', $css);
         if (empty($css)) {
             return false;
         }
-        $classes = explode(' ', $css);
+        $classes = Lib::explode(' ', $css);
         if (!empty($classes)) {
             foreach ($classes as $class) {
-                if (substr(trim($class), 0, 4) === 'col-') {
+                if (Lib::substr(Lib::trim($class), 0, 4) === 'col-') {
                     return true;
                 }
             }
@@ -1167,7 +1169,7 @@ HTML;
         } else {
             Html::removeCssClass($fieldConfig['options'], 'mb-3');
         }
-        if (substr($input, 0, 8) == "\\kartik\\") {
+        if (Lib::substr($input, 0, 8) == "\\kartik\\") {
             Config::validateInputWidget($input, 'as an input widget for DetailView edit mode');
         } elseif ($input !== self::INPUT_WIDGET && !in_array($input, self::$_inputsList)) {
             throw new InvalidConfigException(
@@ -1271,7 +1273,7 @@ HTML;
             static::initCss($afterOptions, 'kv-panel-after');
             $panelAfter = Html::tag('div', $after, $afterOptions);
         }
-        $out = strtr($this->panelTemplate, [
+        $out = Lib::strtr($this->panelTemplate, [
             '{panelHeading}' => $panelHeading,
             '{type}' => $type,
             '{items}' => $items,
@@ -1280,7 +1282,7 @@ HTML;
             '{panelAfter}' => $panelAfter,
         ]);
 
-        return Html::tag('div', strtr($out, [
+        return Html::tag('div', Lib::strtr($out, [
             '{title}' => Html::tag($titleTag, $heading, $titleOptions),
         ]), $options);
     }
@@ -1296,7 +1298,7 @@ HTML;
     protected function renderButtons($mode = 1)
     {
         $buttons = "buttons{$mode}";
-        return strtr(
+        return Lib::strtr(
             $this->$buttons,
             [
                 '{view}' => $this->renderButton('view'),
@@ -1462,16 +1464,17 @@ HTML;
     protected function parseAttributeItem($attribute)
     {
         if (is_string($attribute)) {
-            if (!preg_match('/^([^:]+)(:(\w*))?(:(.*))?$/', $attribute, $matches)) {
+            $matches = [];
+            if (!Lib::preg_match('/^([^:]+)(:(\w*))?(:(.*))?$/', $attribute, $matches)) {
                 throw new InvalidConfigException(
                     'The attribute must be specified in the format of "attribute", "attribute:format" or ' .
                     '"attribute:format:label"'
                 );
             }
             $attribute = [
-                'attribute' => $matches[1],
-                'format' => $matches[3] ?? 'text',
-                'label' => $matches[5] ?? null,
+                'attribute' => ArrayHelper::getValue($matches, 1),
+                'format' => ArrayHelper::getValue($matches, 3, 'text'),
+                'label' => ArrayHelper::getValue($matches, 5),
             ];
         }
         if (!is_array($attribute)) {
@@ -1492,11 +1495,11 @@ HTML;
             return $attribute;
         }
         $attr = ArrayHelper::getValue($attribute, 'updateAttr');
-        if ($attr && !ctype_alnum(str_replace('_', '', $attr))) {
+        if ($attr && !ctype_alnum(Lib::str_replace('_', '', $attr))) {
             throw new InvalidConfigException("The 'updateAttr' name '{$attr}' is invalid.");
         }
         $attr = ArrayHelper::getValue($attribute, 'attribute', '');
-        if ($attr && strpos($attr, '.') !== false) {
+        if ($attr && Lib::strpos($attr, '.') !== false) {
             throw new InvalidConfigException(
                 "The attribute '{$attr}' is invalid. You cannot directly pass relational attributes in string format " .
                 "within '\\kartik\\widgets\\DetailView'. Instead use the array format with 'attribute' property " .
